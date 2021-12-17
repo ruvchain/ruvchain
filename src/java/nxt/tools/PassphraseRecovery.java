@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,14 +14,14 @@
  *
  */
 
-package nxt.tools;
+package ruv.tools;
 
-import nxt.Account;
-import nxt.Db;
-import nxt.Nxt;
-import nxt.crypto.Crypto;
-import nxt.util.Convert;
-import nxt.util.Logger;
+import ruv.Account;
+import ruv.Db;
+import ruv.Ruv;
+import ruv.crypto.Crypto;
+import ruv.util.Convert;
+import ruv.util.Logger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -51,14 +51,14 @@ public final class PassphraseRecovery {
     private void recover() {
         try {
             Map<Long, byte[]> publicKeys = getPublicKeys();
-            String wildcard = Nxt.getStringProperty("recoveryWildcard", "", false, "UTF-8"); // support UTF8 chars
+            String wildcard = Ruv.getStringProperty("recoveryWildcard", "", false, "UTF-8"); // support UTF8 chars
             if ("".equals(wildcard)) {
                 Logger.logInfoMessage("Specify in the recoveryWildcard setting, an approximate passphrase as close as possible to the real passphrase");
                 return;
             }
             int[] passphraseChars = wildcard.chars().toArray();
             Logger.logInfoMessage("wildcard=" + wildcard + ", wildcard chars=" + Arrays.toString(passphraseChars));
-            String positionsStr = Nxt.getStringProperty("recoveryPositions", "");
+            String positionsStr = Ruv.getStringProperty("recoveryPositions", "");
             int[] positions;
             try {
                 if (positionsStr.length() == 0) {
@@ -73,7 +73,7 @@ public final class PassphraseRecovery {
                 Logger.logInfoMessage("Specify in the recoveryPositions setting, a comma separated list of numeric positions pointing to the recoveryWildcard unknown characters (first position is 1)");
                 return;
             }
-            String dictionaryStr = Nxt.getStringProperty("recoveryDictionary", "");
+            String dictionaryStr = Ruv.getStringProperty("recoveryDictionary", "");
             char[] dictionary;
             switch(dictionaryStr.toLowerCase()) {
                 case "":

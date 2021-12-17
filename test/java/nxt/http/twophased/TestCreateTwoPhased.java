@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,14 +14,14 @@
  *
  */
 
-package nxt.http.twophased;
+package ruv.http.twophased;
 
-import nxt.BlockchainTest;
-import nxt.Constants;
-import nxt.Nxt;
-import nxt.VoteWeighting;
-import nxt.http.APICall;
-import nxt.util.Logger;
+import ruv.BlockchainTest;
+import ruv.Constants;
+import ruv.Ruv;
+import ruv.VoteWeighting;
+import ruv.http.APICall;
+import ruv.util.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.junit.Assert;
@@ -50,12 +50,12 @@ public class TestCreateTwoPhased extends BlockchainTest {
         public TwoPhasedMoneyTransferBuilder() {
             super("sendMoney");
 
-            int height = Nxt.getBlockchain().getHeight();
+            int height = Ruv.getBlockchain().getHeight();
 
             secretPhrase(ALICE.getSecretPhrase());
-            feeNQT(2*Constants.ONE_NXT);
+            feeNQT(2*Constants.ONE_RUV);
             recipient(BOB.getId());
-            param("amountNQT", 50 * Constants.ONE_NXT);
+            param("amountNQT", 50 * Constants.ONE_RUV);
             param("phased", "true");
             param("phasingVotingModel", VoteWeighting.VotingModel.ACCOUNT.getCode());
             param("phasingQuorum", 1);
@@ -114,7 +114,7 @@ public class TestCreateTwoPhased extends BlockchainTest {
 
     @Test
     public void invalidMoneyTransfer() {
-        int height = Nxt.getBlockchain().getHeight();
+        int height = Ruv.getBlockchain().getHeight();
 
         APICall apiCall = new TwoPhasedMoneyTransferBuilder().finishHeight(height).build();
         issueCreateTwoPhased(apiCall, true);

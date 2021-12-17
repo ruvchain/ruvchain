@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,16 +14,16 @@
  *
  */
 
-package nxt.http;
+package ruv.http;
 
-import nxt.Nxt;
-import nxt.Transaction;
+import ruv.Ruv;
+import ruv.Transaction;
 import org.json.simple.JSONStreamAware;
 
 import javax.servlet.http.HttpServletRequest;
 
-import static nxt.http.JSONResponses.PRUNED_TRANSACTION;
-import static nxt.http.JSONResponses.UNKNOWN_TRANSACTION;
+import static ruv.http.JSONResponses.PRUNED_TRANSACTION;
+import static ruv.http.JSONResponses.UNKNOWN_TRANSACTION;
 
 public class RetrievePrunedTransaction extends APIServlet.APIRequestHandler {
 
@@ -36,11 +36,11 @@ public class RetrievePrunedTransaction extends APIServlet.APIRequestHandler {
     @Override
     protected JSONStreamAware processRequest(HttpServletRequest req) throws ParameterException {
         long transactionId = ParameterParser.getUnsignedLong(req, "transaction", true);
-        Transaction transaction = Nxt.getBlockchain().getTransaction(transactionId);
+        Transaction transaction = Ruv.getBlockchain().getTransaction(transactionId);
         if (transaction == null) {
             return UNKNOWN_TRANSACTION;
         }
-        transaction = Nxt.getBlockchainProcessor().restorePrunedTransaction(transactionId);
+        transaction = Ruv.getBlockchainProcessor().restorePrunedTransaction(transactionId);
         if (transaction == null) {
             return PRUNED_TRANSACTION;
         }

@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,43 +14,43 @@
  *
  */
 
-package nxt;
+package ruv;
 
 import java.math.BigInteger;
 
 public final class Constants {
 
-    public static final boolean isTestnet = Nxt.getBooleanProperty("nxt.isTestnet");
-    public static final boolean isOffline = Nxt.getBooleanProperty("nxt.isOffline");
-    public static final boolean isLightClient = Nxt.getBooleanProperty("nxt.isLightClient");
-    public static final String customLoginWarning = Nxt.getStringProperty("nxt.customLoginWarning", null, false, "UTF-8");
+    public static final boolean isTestnet = Ruv.getBooleanProperty("ruv.isTestnet");
+    public static final boolean isOffline = Ruv.getBooleanProperty("ruv.isOffline");
+    public static final boolean isLightClient = Ruv.getBooleanProperty("ruv.isLightClient");
+    public static final String customLoginWarning = Ruv.getStringProperty("ruv.customLoginWarning", null, false, "UTF-8");
 
     public static final String COIN_SYMBOL = "RUV";
     public static final String ACCOUNT_PREFIX = "RUV";
     public static final String PROJECT_NAME  = "RuvChain";
-    public static final int MAX_NUMBER_OF_TRANSACTIONS = Nxt.getIntProperty("nxt.maxNumberOfTransactions", 255);
+    public static final int MAX_NUMBER_OF_TRANSACTIONS = Ruv.getIntProperty("ruv.maxNumberOfTransactions", 255);
     public static final int MIN_TRANSACTION_SIZE = 176;
     public static final int MAX_PAYLOAD_LENGTH = MAX_NUMBER_OF_TRANSACTIONS * MIN_TRANSACTION_SIZE;
-    public static final long MAX_BALANCE_NXT = 1000000000;
-    public static final long ONE_NXT = 100000000;
-    public static final long MAX_BALANCE_NQT = MAX_BALANCE_NXT * ONE_NXT;
+    public static final long MAX_BALANCE_RUV = 1000000000;
+    public static final long ONE_RUV = 100000000;
+    public static final long MAX_BALANCE_NQT = MAX_BALANCE_RUV * ONE_RUV;
 
     public static final int BLOCK_TIME = 60;
-    public static final long INITIAL_BASE_TARGET = BigInteger.valueOf(2).pow(63).divide(BigInteger.valueOf(BLOCK_TIME * MAX_BALANCE_NXT)).longValue(); //153722867;
-    public static final long MAX_BASE_TARGET = INITIAL_BASE_TARGET * (isTestnet ? MAX_BALANCE_NXT : 50);
+    public static final long INITIAL_BASE_TARGET = BigInteger.valueOf(2).pow(63).divide(BigInteger.valueOf(BLOCK_TIME * MAX_BALANCE_RUV)).longValue(); //153722867;
+    public static final long MAX_BASE_TARGET = INITIAL_BASE_TARGET * (isTestnet ? MAX_BALANCE_RUV : 50);
     public static final long MIN_BASE_TARGET = INITIAL_BASE_TARGET * 9 / 10;
     public static final int MIN_BLOCKTIME_LIMIT = BLOCK_TIME - 7;
     public static final int MAX_BLOCKTIME_LIMIT = BLOCK_TIME + 7;
     public static final int BASE_TARGET_GAMMA = 64;
-    public static final int MAX_ROLLBACK = Math.max(Nxt.getIntProperty("nxt.maxRollback"), 720);
-    public static final int GUARANTEED_BALANCE_CONFIRMATIONS = isTestnet ? Nxt.getIntProperty("nxt.testnetGuaranteedBalanceConfirmations", 1440) : 1440;
-    public static final int LEASING_DELAY = isTestnet ? Nxt.getIntProperty("nxt.testnetLeasingDelay", 1440) : 1440;
-    public static final long MIN_FORGING_BALANCE_NQT = 1000 * ONE_NXT;
+    public static final int MAX_ROLLBACK = Math.max(Ruv.getIntProperty("ruv.maxRollback"), 720);
+    public static final int GUARANTEED_BALANCE_CONFIRMATIONS = isTestnet ? Ruv.getIntProperty("ruv.testnetGuaranteedBalanceConfirmations", 1440) : 1440;
+    public static final int LEASING_DELAY = isTestnet ? Ruv.getIntProperty("ruv.testnetLeasingDelay", 1440) : 1440;
+    public static final long MIN_FORGING_BALANCE_NQT = 1000 * ONE_RUV;
 
     public static final int MAX_TIMEDRIFT = 15; // allow up to 15 s clock difference
-    public static final int FORGING_DELAY = Nxt.getIntProperty("nxt.forgingDelay");
-    public static final int FORGING_SPEEDUP = Nxt.getIntProperty("nxt.forgingSpeedup");
-    public static final int BATCH_COMMIT_SIZE = Nxt.getIntProperty("nxt.batchCommitSize", Integer.MAX_VALUE);
+    public static final int FORGING_DELAY = Ruv.getIntProperty("ruv.forgingDelay");
+    public static final int FORGING_SPEEDUP = Ruv.getIntProperty("ruv.forgingSpeedup");
+    public static final int BATCH_COMMIT_SIZE = Ruv.getIntProperty("ruv.batchCommitSize", Integer.MAX_VALUE);
 
     public static final byte MAX_PHASING_VOTE_TRANSACTIONS = 10;
     public static final byte MAX_PHASING_WHITELIST_SIZE = 10;
@@ -71,11 +71,11 @@ public final class Constants {
     public static final int MAX_PRUNABLE_LIFETIME;
     public static final boolean ENABLE_PRUNING;
     static {
-        int maxPrunableLifetime = Nxt.getIntProperty("nxt.maxPrunableLifetime");
+        int maxPrunableLifetime = Ruv.getIntProperty("ruv.maxPrunableLifetime");
         ENABLE_PRUNING = maxPrunableLifetime >= 0;
         MAX_PRUNABLE_LIFETIME = ENABLE_PRUNING ? Math.max(maxPrunableLifetime, MIN_PRUNABLE_LIFETIME) : Integer.MAX_VALUE;
     }
-    public static final boolean INCLUDE_EXPIRED_PRUNABLE = Nxt.getBooleanProperty("nxt.includeExpiredPrunable");
+    public static final boolean INCLUDE_EXPIRED_PRUNABLE = Ruv.getBooleanProperty("ruv.includeExpiredPrunable");
 
     public static final int MAX_ACCOUNT_NAME_LENGTH = 100;
     public static final int MAX_ACCOUNT_DESCRIPTION_LENGTH = 1000;
@@ -137,10 +137,10 @@ public final class Constants {
     public static final int[] MIN_VERSION = new int[] {1, 0};
     public static final int[] MIN_PROXY_VERSION = new int[] {1, 0};
 
-    static final long UNCONFIRMED_POOL_DEPOSIT_NQT = (isTestnet ? 50 : 100) * ONE_NXT;
-    public static final long SHUFFLING_DEPOSIT_NQT = (isTestnet ? 7 : 1000) * ONE_NXT;
+    static final long UNCONFIRMED_POOL_DEPOSIT_NQT = (isTestnet ? 50 : 100) * ONE_RUV;
+    public static final long SHUFFLING_DEPOSIT_NQT = (isTestnet ? 7 : 1000) * ONE_RUV;
 
-    public static final boolean correctInvalidFees = Nxt.getBooleanProperty("nxt.correctInvalidFees");
+    public static final boolean correctInvalidFees = Ruv.getBooleanProperty("ruv.correctInvalidFees");
 
     public static final String ALPHABET = "0123456789abcdefghijklmnopqrstuvwxyz";
     public static final String ALLOWED_CURRENCY_CODE_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";

@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,14 +14,14 @@
  *
  */
 
-package nxt.http;
+package ruv.http;
 
 
-import nxt.Nxt;
-import nxt.NxtException;
-import nxt.Poll;
-import nxt.db.DbIterator;
-import nxt.db.DbUtils;
+import ruv.Ruv;
+import ruv.RuvException;
+import ruv.Poll;
+import ruv.db.DbIterator;
+import ruv.db.DbUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
@@ -37,7 +37,7 @@ public class GetPolls extends APIServlet.APIRequestHandler {
     }
 
     @Override
-    protected JSONStreamAware processRequest(HttpServletRequest req) throws NxtException {
+    protected JSONStreamAware processRequest(HttpServletRequest req) throws RuvException {
         long accountId = ParameterParser.getAccountId(req, "account", false);
         boolean includeFinished = "true".equalsIgnoreCase(req.getParameter("includeFinished"));
         boolean finishedOnly = "true".equalsIgnoreCase(req.getParameter("finishedOnly"));
@@ -50,7 +50,7 @@ public class GetPolls extends APIServlet.APIRequestHandler {
         try {
             if (accountId == 0) {
                 if (finishedOnly) {
-                    polls = Poll.getPollsFinishingAtOrBefore(Nxt.getBlockchain().getHeight(), firstIndex, lastIndex);
+                    polls = Poll.getPollsFinishingAtOrBefore(Ruv.getBlockchain().getHeight(), firstIndex, lastIndex);
                 } else if (includeFinished) {
                     polls = Poll.getAllPolls(firstIndex, lastIndex);
                 } else {

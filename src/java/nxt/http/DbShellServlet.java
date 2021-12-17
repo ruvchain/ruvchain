@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,11 +14,11 @@
  *
  */
 
-package nxt.http;
+package ruv.http;
 
-import nxt.Db;
-import nxt.util.Convert;
-import nxt.util.JSON;
+import ruv.Db;
+import ruv.util.Convert;
+import ruv.util.JSON;
 import org.h2.tools.Shell;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -38,7 +38,7 @@ public final class DbShellServlet extends HttpServlet {
                     "<html>\n" +
                     "<head>\n" +
                     "    <meta charset=\"UTF-8\"/>\n" +
-                    "    <title>Nxt H2 Database Shell</title>\n" +
+                    "    <title>Ruv H2 Database Shell</title>\n" +
                     "    <script type=\"text/javascript\">\n" +
                     "        function submitForm(form, adminPassword) {\n" +
                     "            var url = '/dbshell';\n" +
@@ -84,8 +84,8 @@ public final class DbShellServlet extends HttpServlet {
                     "</form>";
 
     private static final String errorNoPasswordIsConfigured =
-            "This page is password-protected, but no password is configured in nxt.properties. " +
-                    "Please set nxt.adminPassword or disable the password protection with nxt.disableAdminPassword";
+            "This page is password-protected, but no password is configured in ruv.properties. " +
+                    "Please set ruv.adminPassword or disable the password protection with ruv.disableAdminPassword";
 
     private static final String passwordFormTemplate =
             "<form action=\"/dbshell\" method=\"POST\">" +

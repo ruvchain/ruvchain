@@ -1,12 +1,12 @@
 /******************************************************************************
- * Copyright © 2013-2016 The Nxt Core Developers.                             *
+ * Copyright © 2013-2016 The Ruv Core Developers.                             *
  * Copyright © 2016-2019 Jelurida IP B.V.                                     *
  *                                                                            *
  * See the LICENSE.txt file at the top-level directory of this distribution   *
  * for licensing information.                                                 *
  *                                                                            *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,*
- * no part of the Nxt software, including this file, may be copied, modified, *
+ * no part of the Ruv software, including this file, may be copied, modified, *
  * propagated, or distributed except according to the terms contained in the  *
  * LICENSE.txt file.                                                          *
  *                                                                            *
@@ -68,9 +68,9 @@ var NRS = (function (NRS, $, undefined) {
         }
         NRS.pageNumber = 1;
         var currencyCode = $.trim($("#currency_search").find("input[name=q]").val());
-        $("#buy_currency_with_nxt").html($.t("buy_currency_param", { currency: currencyCode}));
+        $("#buy_currency_with_ruv").html($.t("buy_currency_param", { currency: currencyCode}));
         $("#buy_currency_offers").html($.t("offers_to_buy_currency_param", { currency: currencyCode}));
-        $("#sell_currency_with_nxt").html($.t("sell_currency_param", { currency: currencyCode}));
+        $("#sell_currency_with_ruv").html($.t("sell_currency_param", { currency: currencyCode}));
         $("#sell_currency_offers").html($.t("offers_to_sell_currency_param", { currency: currencyCode}));
         $(".currency_code").html(NRS.escapeRespStr(currencyCode));
 
@@ -135,9 +135,9 @@ var NRS = (function (NRS, $, undefined) {
                 NRS.getExchangeRequests(currencyId, refresh);
                 NRS.getExchangeHistory(currencyId, refresh);
                 if (NRS.accountInfo.unconfirmedBalanceNQT == "0") {
-                    $("#ms_your_nxt_balance").html("0");
+                    $("#ms_your_ruv_balance").html("0");
                 } else {
-                    $("#ms_your_nxt_balance").html(NRS.formatAmount(NRS.accountInfo.unconfirmedBalanceNQT));
+                    $("#ms_your_ruv_balance").html(NRS.formatAmount(NRS.accountInfo.unconfirmedBalanceNQT));
                 }
                 NRS.pageLoaded();
                 callback(null);
@@ -442,8 +442,8 @@ var NRS = (function (NRS, $, undefined) {
                     var percentage = NRS.calculatePercentage(amountPerUnitNQT, minReservePerUnitNQT);
                     rows += "<tr>" +
                     "<td>" + NRS.getAccountLink(response.founders[i], "account")+ "</td>" +
-                    "<td>" + NRS.convertToNXT(amountPerUnitNQT) + "</td>" +
-                    "<td>" + NRS.convertToNXT(amountPerUnitNQT.multiply(new BigInteger(NRS.convertToQNTf(resSupply, decimals)))) + "</td>" +
+                    "<td>" + NRS.convertToRUV(amountPerUnitNQT) + "</td>" +
+                    "<td>" + NRS.convertToRUV(amountPerUnitNQT.multiply(new BigInteger(NRS.convertToQNTf(resSupply, decimals)))) + "</td>" +
                     "<td>" + NRS.formatQuantity(resSupply.subtract(initialSupply).multiply(amountPerUnitNQT).divide(totalAmountReserved), decimals) + "</td>" +
                     "<td>" + percentage + "</td>" +
                     "</tr>";
@@ -453,8 +453,8 @@ var NRS = (function (NRS, $, undefined) {
             }
             rows += "<tr>" +
             "<td><b>Totals</b></td>" +
-            "<td>" + NRS.convertToNXT(totalAmountReserved) + "</td>" +
-            "<td>" + NRS.convertToNXT(totalAmountReserved.multiply(new BigInteger(NRS.convertToQNTf(resSupply, decimals)))) + "</td>" +
+            "<td>" + NRS.convertToRUV(totalAmountReserved) + "</td>" +
+            "<td>" + NRS.convertToRUV(totalAmountReserved.multiply(new BigInteger(NRS.convertToQNTf(resSupply, decimals)))) + "</td>" +
             "<td>" + NRS.formatQuantity(resSupply.subtract(initialSupply), decimals) + "</td>" +
             "<td>" + NRS.calculatePercentage(totalAmountReserved, minReservePerUnitNQT) + "</td>" +
             "</tr>";
@@ -683,7 +683,7 @@ var NRS = (function (NRS, $, undefined) {
         var effectiveRate = $invoker.data("effectiveRate");
         var isScheduled = $invoker.data("scheduled");
         var totalNQT = $invoker.data("totalNQT");
-        var totalNXT = NRS.formatAmount(totalNQT, false, true);
+        var totalRUV = NRS.formatAmount(totalNQT, false, true);
         var submitButton = $("#currency_order_modal_button");
         submitButton.html($.t(exchangeType + "_currency")).data("resetText", $.t(exchangeType + "_currency"));
         submitButton.prop('disabled', false);
@@ -700,7 +700,7 @@ var NRS = (function (NRS, $, undefined) {
 
         if (exchangeType == "buy") {
             description = $.t("buy_currency_description", {
-                "total": totalNXT,
+                "total": totalRUV,
                 "symbol": NRS.constants.COIN_SYMBOL,
                 "quantity": NRS.formatQuantity(unitsQNT, currencyDecimals, true),
                 "currency_code": currencyCode.escapeHTML(),
@@ -708,12 +708,12 @@ var NRS = (function (NRS, $, undefined) {
             });
             tooltipTitle = $.t("buy_currency_description_help", {
                 "rate": effectiveRate,
-                "total": totalNXT,
+                "total": totalRUV,
                 "symbol": NRS.constants.COIN_SYMBOL
             });
         } else {
             description = $.t("sell_currency_description", {
-                "total": totalNXT,
+                "total": totalRUV,
                 "symbol": NRS.constants.COIN_SYMBOL,
                 "quantity": NRS.formatQuantity(unitsQNT, currencyDecimals, true),
                 "currency_code": currencyCode.escapeHTML(),
@@ -721,13 +721,13 @@ var NRS = (function (NRS, $, undefined) {
             });
             tooltipTitle = $.t("sell_currency_description_help", {
                 "rate": effectiveRate,
-                "total": totalNXT,
+                "total": totalRUV,
                 "symbol": NRS.constants.COIN_SYMBOL
             });
         }
 
         $("#currency_order_description").html(description);
-        $("#currency_order_total").html(totalNXT + " " + NRS.constants.COIN_SYMBOL);
+        $("#currency_order_total").html(totalRUV + " " + NRS.constants.COIN_SYMBOL);
 
         var totalTooltip = $("#currency_order_total_tooltip");
         if (units != "1") {
@@ -826,7 +826,7 @@ var NRS = (function (NRS, $, undefined) {
             unitsField.val(units);
             var rate = NRS.calculateOrderPricePerWholeQNT(response.rateNQT, decimals);
             rateField.val(rate);
-            var amount = NRS.convertToNXT(response.amountNQT);
+            var amount = NRS.convertToRUV(response.amountNQT);
             totalField.val(amount);
             NRS.sendRequest("getBalance", {
                 "account": NRS.accountRS
@@ -1464,10 +1464,10 @@ var NRS = (function (NRS, $, undefined) {
                 $("#reserve_currency_decimals").val(decimals);
                 $("#reserve_currency_minReserve").val(minReserve);
                 var minReservePerUnitNQT = new BigInteger(minReserve).multiply(new BigInteger("" + Math.pow(10, decimals)));
-                $("#reserve_currency_minReserve_text").html(NRS.formatQuantity(NRS.convertToNXT(minReservePerUnitNQT.multiply(new BigInteger(resSupply))), decimals));
+                $("#reserve_currency_minReserve_text").html(NRS.formatQuantity(NRS.convertToRUV(minReservePerUnitNQT.multiply(new BigInteger(resSupply))), decimals));
                 $("#reserve_currency_currentReserve").val(currentReserve);
                 var currentReservePerUnitNQT = new BigInteger(currentReserve).multiply(new BigInteger("" + Math.pow(10, decimals)));
-                $("#reserve_currency_currentReserve_text").html(NRS.formatQuantity(NRS.convertToNXT(currentReservePerUnitNQT.multiply(new BigInteger(resSupply))), decimals));
+                $("#reserve_currency_currentReserve_text").html(NRS.formatQuantity(NRS.convertToRUV(currentReservePerUnitNQT.multiply(new BigInteger(resSupply))), decimals));
                 $("#reserve_currency_resSupply").val(resSupply);
                 $("#reserve_currency_resSupply_text").html(NRS.formatQuantity(resSupply, decimals));
                 $("#reserve_currency_initialSupply_text").html(NRS.formatQuantity(initialSupply, decimals));
@@ -1491,9 +1491,9 @@ var NRS = (function (NRS, $, undefined) {
         var resSupply = NRS.convertToQNTf($("#reserve_currency_resSupply").val(), decimals);
         var amountNQT = NRS.convertToNQT(this.value);
         var unitAmountNQT = new BigInteger(amountNQT).divide(new BigInteger(resSupply));
-        var roundUnitAmountNQT = NRS.convertToNQT(NRS.amountToPrecision(NRS.convertToNXT(unitAmountNQT), decimals));
-        $("#reserve_currency_total").val(NRS.convertToNXT(roundUnitAmountNQT));
-        reserveCurrencyAmount.val(NRS.convertToNXT(new BigInteger(roundUnitAmountNQT).multiply(new BigInteger(resSupply)).toString()));
+        var roundUnitAmountNQT = NRS.convertToNQT(NRS.amountToPrecision(NRS.convertToRUV(unitAmountNQT), decimals));
+        $("#reserve_currency_total").val(NRS.convertToRUV(roundUnitAmountNQT));
+        reserveCurrencyAmount.val(NRS.convertToRUV(new BigInteger(roundUnitAmountNQT).multiply(new BigInteger(resSupply)).toString()));
     });
 
     NRS.forms.currencyReserveIncrease = function ($modal) {

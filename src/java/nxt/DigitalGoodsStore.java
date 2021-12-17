@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,20 +14,20 @@
  *
  */
 
-package nxt;
+package ruv;
 
-import nxt.AccountLedger.LedgerEvent;
-import nxt.crypto.EncryptedData;
-import nxt.db.DbClause;
-import nxt.db.DbIterator;
-import nxt.db.DbKey;
-import nxt.db.DbUtils;
-import nxt.db.VersionedEntityDbTable;
-import nxt.db.VersionedValuesDbTable;
-import nxt.util.Convert;
-import nxt.util.Listener;
-import nxt.util.Listeners;
-import nxt.util.Search;
+import ruv.AccountLedger.LedgerEvent;
+import ruv.crypto.EncryptedData;
+import ruv.db.DbClause;
+import ruv.db.DbIterator;
+import ruv.db.DbKey;
+import ruv.db.DbUtils;
+import ruv.db.VersionedEntityDbTable;
+import ruv.db.VersionedValuesDbTable;
+import ruv.util.Convert;
+import ruv.util.Listener;
+import ruv.util.Listeners;
+import ruv.util.Search;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -45,7 +45,7 @@ public final class DigitalGoodsStore {
     }
 
     static {
-        Nxt.getBlockchainProcessor().addListener(block -> {
+        Ruv.getBlockchainProcessor().addListener(block -> {
             if (block.getHeight() == 0) {
                 return;
             }
@@ -194,7 +194,7 @@ public final class DigitalGoodsStore {
                 pstmt.setString(++i, this.tag);
                 pstmt.setInt(++i, this.inStockCount);
                 pstmt.setInt(++i, this.totalCount);
-                pstmt.setInt(++i, Nxt.getBlockchain().getHeight());
+                pstmt.setInt(++i, Ruv.getBlockchain().getHeight());
                 pstmt.executeUpdate();
             }
         }
@@ -311,7 +311,7 @@ public final class DigitalGoodsStore {
             this.quantity = attachment.getQuantity();
             this.priceNQT = attachment.getPriceNQT();
             this.delisted = false;
-            this.timestamp = Nxt.getBlockchain().getLastBlockTimestamp();
+            this.timestamp = Ruv.getBlockchain().getLastBlockTimestamp();
             this.hasImage = transaction.getPrunablePlainMessage() != null;
         }
 
@@ -346,7 +346,7 @@ public final class DigitalGoodsStore {
                 pstmt.setLong(++i, this.priceNQT);
                 pstmt.setBoolean(++i, this.delisted);
                 pstmt.setBoolean(++i, this.hasImage);
-                pstmt.setInt(++i, Nxt.getBlockchain().getHeight());
+                pstmt.setInt(++i, Ruv.getBlockchain().getHeight());
                 pstmt.executeUpdate();
             }
         }
@@ -481,7 +481,7 @@ public final class DigitalGoodsStore {
                     int i = 0;
                     pstmt.setLong(++i, purchase.getId());
                     i = setEncryptedData(pstmt, encryptedData, ++i);
-                    pstmt.setInt(i, Nxt.getBlockchain().getHeight());
+                    pstmt.setInt(i, Ruv.getBlockchain().getHeight());
                     pstmt.executeUpdate();
                 }
             }
@@ -511,7 +511,7 @@ public final class DigitalGoodsStore {
                     int i = 0;
                     pstmt.setLong(++i, purchase.getId());
                     pstmt.setString(++i, publicFeedback);
-                    pstmt.setInt(++i, Nxt.getBlockchain().getHeight());
+                    pstmt.setInt(++i, Ruv.getBlockchain().getHeight());
                     pstmt.executeUpdate();
                 }
             }
@@ -646,7 +646,7 @@ public final class DigitalGoodsStore {
 
         private static DbIterator<Purchase> getExpiredPendingPurchases(Block block) {
             final int timestamp = block.getTimestamp();
-            final int previousTimestamp = Nxt.getBlockchain().getBlock(block.getPreviousBlockId()).getTimestamp();
+            final int previousTimestamp = Ruv.getBlockchain().getBlock(block.getPreviousBlockId()).getTimestamp();
             DbClause dbClause = new DbClause.LongClause("deadline", DbClause.Op.LT, timestamp)
                     .and(new DbClause.LongClause("deadline", DbClause.Op.GTE, previousTimestamp))
                     .and(new DbClause.BooleanClause("pending", true));
@@ -687,7 +687,7 @@ public final class DigitalGoodsStore {
             this.priceNQT = attachment.getPriceNQT();
             this.deadline = attachment.getDeliveryDeadlineTimestamp();
             this.note = transaction.getEncryptedMessage() == null ? null : transaction.getEncryptedMessage().getEncryptedData();
-            this.timestamp = Nxt.getBlockchain().getLastBlockTimestamp();
+            this.timestamp = Ruv.getBlockchain().getLastBlockTimestamp();
             this.isPending = true;
         }
 
@@ -735,7 +735,7 @@ public final class DigitalGoodsStore {
                 pstmt.setBoolean(++i, this.hasPublicFeedbacks);
                 pstmt.setLong(++i, this.discountNQT);
                 pstmt.setLong(++i, this.refundNQT);
-                pstmt.setInt(++i, Nxt.getBlockchain().getHeight());
+                pstmt.setInt(++i, Ruv.getBlockchain().getHeight());
                 pstmt.executeUpdate();
             }
         }

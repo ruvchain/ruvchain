@@ -1,8 +1,8 @@
-package nxt.http.accountproperties;
+package ruv.http.accountproperties;
 
-import nxt.BlockchainTest;
-import nxt.Constants;
-import nxt.http.APICall;
+import ruv.BlockchainTest;
+import ruv.Constants;
+import ruv.http.APICall;
 import org.json.simple.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
@@ -17,7 +17,7 @@ public class AccountPropertiesTest extends BlockchainTest {
     @Test
     public void accountProperty1() {
         JSONObject response = new APICall.Builder("setAccountProperty").
-                param("secretPhrase", ALICE.getSecretPhrase()).feeNQT(Constants.ONE_NXT * 20).
+                param("secretPhrase", ALICE.getSecretPhrase()).feeNQT(Constants.ONE_RUV * 20).
                 param("recipient", BOB.getStrId()).
                 param("property", KEY1).
                 param("value", VALUE1).
@@ -37,7 +37,7 @@ public class AccountPropertiesTest extends BlockchainTest {
         }
         String value = sb.toString();
         JSONObject response = new APICall.Builder("setAccountProperty").
-                param("secretPhrase", ALICE.getSecretPhrase()).feeNQT(Constants.ONE_NXT * 20).
+                param("secretPhrase", ALICE.getSecretPhrase()).feeNQT(Constants.ONE_RUV * 20).
                 param("recipient", BOB.getStrId()).
                 param("property", KEY1).
                 param("value", value).
@@ -57,7 +57,7 @@ public class AccountPropertiesTest extends BlockchainTest {
         }
         String value = sb.toString();
         JSONObject response = new APICall.Builder("setAccountProperty").
-                param("secretPhrase", ALICE.getSecretPhrase()).feeNQT(Constants.ONE_NXT * 20).
+                param("secretPhrase", ALICE.getSecretPhrase()).feeNQT(Constants.ONE_RUV * 20).
                 param("recipient", BOB.getStrId()).
                 param("property", KEY1).
                 param("value", value).
@@ -76,7 +76,7 @@ public class AccountPropertiesTest extends BlockchainTest {
         }
         String name = sb.toString();
         JSONObject response = new APICall.Builder("setAccountProperty").
-                param("secretPhrase", ALICE.getSecretPhrase()).feeNQT(Constants.ONE_NXT * 20).
+                param("secretPhrase", ALICE.getSecretPhrase()).feeNQT(Constants.ONE_RUV * 20).
                 param("recipient", BOB.getStrId()).
                 param("property", name).
                 param("value", "").

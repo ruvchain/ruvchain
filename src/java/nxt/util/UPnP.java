@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,9 +14,9 @@
  *
  */
 
-package nxt.util;
+package ruv.util;
 
-import nxt.Nxt;
+import ruv.Ruv;
 import org.bitlet.weupnp.GatewayDevice;
 import org.bitlet.weupnp.GatewayDiscover;
 
@@ -58,7 +58,7 @@ public class UPnP {
         //
         try {
             if (gateway.addPortMapping(port, port, localAddress.getHostAddress(), "TCP",
-                                       Nxt.APPLICATION + " " + Nxt.VERSION)) {
+                                       Ruv.APPLICATION + " " + Ruv.VERSION)) {
                 Logger.logDebugMessage("Mapped port [" + externalAddress.getHostAddress() + "]:" + port);
             } else {
                 Logger.logDebugMessage("Unable to map port " + port);
@@ -122,9 +122,9 @@ public class UPnP {
         //
         try {
             Logger.logInfoMessage("Looking for UPnP gateway device...");
-            GatewayDevice.setHttpReadTimeout(Nxt.getIntProperty("nxt.upnpGatewayTimeout", GatewayDevice.getHttpReadTimeout()));
+            GatewayDevice.setHttpReadTimeout(Ruv.getIntProperty("ruv.upnpGatewayTimeout", GatewayDevice.getHttpReadTimeout()));
             GatewayDiscover discover = new GatewayDiscover();
-            discover.setTimeout(Nxt.getIntProperty("nxt.upnpDiscoverTimeout", discover.getTimeout()));
+            discover.setTimeout(Ruv.getIntProperty("ruv.upnpDiscoverTimeout", discover.getTimeout()));
             Map<InetAddress, GatewayDevice> gatewayMap = discover.discover();
             if (gatewayMap == null || gatewayMap.isEmpty()) {
                 Logger.logDebugMessage("There are no UPnP gateway devices");

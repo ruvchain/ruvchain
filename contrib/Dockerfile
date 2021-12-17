@@ -1,11 +1,11 @@
-# Nxt docker image
+# Ruv docker image
 #
 # to use:
 #
 # 1. install docker, see docker.com
 # 2. clone the git repo including this Dockerfile
-# 3. build the container with ```docker build -t nxt .```
-# 4. run the created nxt container with ```docker run -d -p 127.0.0.1:5251:7876 -p 5250:7874 nxt```
+# 3. build the container with ```docker build -t ruv .```
+# 4. run the created ruv container with ```docker run -d -p 127.0.0.1:5251:5251 -p 5250:5250 ruv```
 # 5. inspect with docker logs (image hash, find out with docker ps, or assign a name)
 
 FROM phusion/baseimage
@@ -25,17 +25,17 @@ RUN apt-get install -y wget unzip
 RUN echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | /usr/bin/debconf-set-selections
 RUN apt-get install -y oracle-java8-installer
 
-# run and compile nxt
-RUN mkdir /nxt
-ADD . /nxt
+# run and compile ruv
+RUN mkdir /ruvchain
+ADD . /ruvchain
 # repo has
 ADD contrib/docker_start.sh /docker_start.sh
-# set nxt to listen on all interfaces
-RUN echo 'nxt.allowedBotHosts=*' >> /nxt/conf/nxt.properties
-RUN echo 'nxt.apiServerHost=0.0.0.0' >> /nxt/conf/nxt.properties
+# set ruvchain to listen on all interfaces
+RUN echo 'ruv.allowedBotHosts=*' >> /ruvchain/conf/ruv.properties
+RUN echo 'ruv.apiServerHost=0.0.0.0' >> /ruvchain/conf/ruv.properties
 RUN chmod +x /docker_start.sh
 
-RUN cd /nxt; ./compile.sh
-# both Nxt ports get exposed
-EXPOSE 7874 7876
+RUN cd /ruvchain; ./compile.sh
+# both Ruv ports get exposed
+EXPOSE 5250 5251
 CMD ["/docker_start.sh"]

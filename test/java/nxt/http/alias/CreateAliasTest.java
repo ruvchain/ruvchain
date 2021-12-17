@@ -1,9 +1,9 @@
-package nxt.http.alias;
+package ruv.http.alias;
 
-import nxt.BlockchainTest;
-import nxt.Constants;
-import nxt.http.APICall;
-import nxt.util.Logger;
+import ruv.BlockchainTest;
+import ruv.Constants;
+import ruv.http.APICall;
+import ruv.util.Logger;
 import org.json.simple.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
@@ -17,9 +17,9 @@ public class CreateAliasTest extends BlockchainTest {
             sb.append(char3Byte);
         }
         String name = sb.toString();
-        String uri = "nxt://test " + name + name;
+        String uri = "ruv://test " + name + name;
         APICall.Builder builder = new APICall.Builder("setAlias").
-                param("publicKey", ALICE.getPublicKeyStr()).feeNQT(Constants.ONE_NXT * 20).
+                param("publicKey", ALICE.getPublicKeyStr()).feeNQT(Constants.ONE_RUV * 20).
                 param("broadcast", "false").
                 param("aliasName", "153307605").param("aliasURI", uri);
         JSONObject response = builder.build().invoke();

@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,15 +14,15 @@
  *
  */
 
-package nxt;
+package ruv;
 
-import nxt.AccountLedger.LedgerEvent;
-import nxt.db.DbClause;
-import nxt.db.DbIterator;
-import nxt.db.DbKey;
-import nxt.db.VersionedEntityDbTable;
-import nxt.util.Listener;
-import nxt.util.Listeners;
+import ruv.AccountLedger.LedgerEvent;
+import ruv.db.DbClause;
+import ruv.db.DbIterator;
+import ruv.db.DbKey;
+import ruv.db.VersionedEntityDbTable;
+import ruv.util.Listener;
+import ruv.util.Listeners;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -94,7 +94,7 @@ public final class Currency {
                 pstmt.setLong(++i, this.currencyId);
                 pstmt.setLong(++i, this.currentSupply);
                 pstmt.setLong(++i, this.currentReservePerUnitNQT);
-                pstmt.setInt(++i, Nxt.getBlockchain().getHeight());
+                pstmt.setInt(++i, Ruv.getBlockchain().getHeight());
                 pstmt.executeUpdate();
             }
         }
@@ -187,7 +187,7 @@ public final class Currency {
     }
 
     static {
-        Nxt.getBlockchainProcessor().addListener(new CrowdFundingListener(), BlockchainProcessor.Event.AFTER_BLOCK_APPLY);
+        Ruv.getBlockchainProcessor().addListener(new CrowdFundingListener(), BlockchainProcessor.Event.AFTER_BLOCK_APPLY);
     }
 
     static void init() {}
@@ -224,7 +224,7 @@ public final class Currency {
         this.initialSupply = attachment.getInitialSupply();
         this.reserveSupply = attachment.getReserveSupply();
         this.maxSupply = attachment.getMaxSupply();
-        this.creationHeight = Nxt.getBlockchain().getHeight();
+        this.creationHeight = Ruv.getBlockchain().getHeight();
         this.issuanceHeight = attachment.getIssuanceHeight();
         this.minReservePerUnitNQT = attachment.getMinReservePerUnitNQT();
         this.minDifficulty = attachment.getMinDifficulty();
@@ -279,7 +279,7 @@ public final class Currency {
             pstmt.setByte(++i, this.ruleset);
             pstmt.setByte(++i, this.algorithm);
             pstmt.setByte(++i, this.decimals);
-            pstmt.setInt(++i, Nxt.getBlockchain().getHeight());
+            pstmt.setInt(++i, Ruv.getBlockchain().getHeight());
             pstmt.executeUpdate();
         }
     }

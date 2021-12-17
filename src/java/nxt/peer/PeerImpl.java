@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,21 +14,21 @@
  *
  */
 
-package nxt.peer;
+package ruv.peer;
 
-import nxt.Account;
-import nxt.BlockchainProcessor;
-import nxt.Constants;
-import nxt.Nxt;
-import nxt.NxtException;
-import nxt.http.API;
-import nxt.http.APIEnum;
-import nxt.util.Convert;
-import nxt.util.CountingInputReader;
-import nxt.util.CountingInputStream;
-import nxt.util.CountingOutputWriter;
-import nxt.util.JSON;
-import nxt.util.Logger;
+import ruv.Account;
+import ruv.BlockchainProcessor;
+import ruv.Constants;
+import ruv.Ruv;
+import ruv.RuvException;
+import ruv.http.API;
+import ruv.http.APIEnum;
+import ruv.util.Convert;
+import ruv.util.CountingInputReader;
+import ruv.util.CountingInputStream;
+import ruv.util.CountingOutputWriter;
+import ruv.util.JSON;
+import ruv.util.Logger;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
 import org.json.simple.JSONValue;
@@ -170,7 +170,7 @@ final class PeerImpl implements Peer {
         boolean versionChanged = version == null || !version.equals(this.version);
         this.version = version;
         isOldVersion = false;
-        if (Nxt.APPLICATION.equals(application)) {
+        if (Ruv.APPLICATION.equals(application)) {
             isOldVersion = Peers.isOldVersion(version, Constants.MIN_VERSION);
             if (isOldVersion) {
                 if (versionChanged) {
@@ -331,13 +331,13 @@ final class PeerImpl implements Peer {
         if (hallmark == null) {
             return 0;
         }
-        if (hallmarkBalance == -1 || hallmarkBalanceHeight < Nxt.getBlockchain().getHeight() - 60) {
+        if (hallmarkBalance == -1 || hallmarkBalanceHeight < Ruv.getBlockchain().getHeight() - 60) {
             long accountId = hallmark.getAccountId();
             Account account = Account.getAccount(accountId);
             hallmarkBalance = account == null ? 0 : account.getBalanceNQT();
-            hallmarkBalanceHeight = Nxt.getBlockchain().getHeight();
+            hallmarkBalanceHeight = Ruv.getBlockchain().getHeight();
         }
-        return (int)(adjustedWeight * (hallmarkBalance / Constants.ONE_NXT) / Constants.MAX_BALANCE_NXT);
+        return (int)(adjustedWeight * (hallmarkBalance / Constants.ONE_RUV) / Constants.MAX_BALANCE_RUV);
     }
 
     @Override
@@ -348,7 +348,7 @@ final class PeerImpl implements Peer {
 
     @Override
     public void blacklist(Exception cause) {
-        if (cause instanceof NxtException.NotCurrentlyValidException || cause instanceof BlockchainProcessor.BlockOutOfOrderException
+        if (cause instanceof RuvException.NotCurrentlyValidException || cause instanceof BlockchainProcessor.BlockOutOfOrderException
                 || cause instanceof SQLException || cause.getCause() instanceof SQLException) {
             // don't blacklist peers just because a feature is not yet enabled, or because of database timeouts
             // prevents erroneous blacklisting during loading of blockchain from scratch
@@ -369,7 +369,7 @@ final class PeerImpl implements Peer {
 
     @Override
     public void blacklist(String cause) {
-        blacklistingTime = Nxt.getEpochTime();
+        blacklistingTime = Ruv.getEpochTime();
         blacklistingCause = cause;
         setState(State.NON_CONNECTED);
         lastInboundRequest = 0;
@@ -479,7 +479,7 @@ final class PeerImpl implements Peer {
             // Create a new WebSocket session if we don't have one
             //
             if (useWebSocket && !webSocket.isOpen())
-                useWebSocket = webSocket.startClient(URI.create("ws://" + host + ":" + getPort() + "/nxt"));
+                useWebSocket = webSocket.startClient(URI.create("ws://" + host + ":" + getPort() + "/ruv"));
             //
             // Send the request and process the response
             //
@@ -500,7 +500,7 @@ final class PeerImpl implements Peer {
                         showLog = true;
                     }
                     if (wsResponse.length() > maxResponseSize)
-                        throw new NxtException.NxtIOException("Maximum size exceeded: " + wsResponse.length());
+                        throw new RuvException.RuvIOException("Maximum size exceeded: " + wsResponse.length());
                     response = (JSONObject)JSONValue.parseWithException(wsResponse);
                     updateDownloadedVolume(wsResponse.length());
                 }
@@ -508,7 +508,7 @@ final class PeerImpl implements Peer {
                 //
                 // Send the request using HTTP
                 //
-                URL url = new URL("http://" + host + ":" + getPort() + "/nxt");
+                URL url = new URL("http://" + host + ":" + getPort() + "/ruv");
                 if (communicationLoggingMask != 0)
                     log = "\"" + url.toString() + "\": " + JSON.toString(request);
                 connection = (HttpURLConnection) url.openConnection();
@@ -585,7 +585,7 @@ final class PeerImpl implements Peer {
                     }
                 }
             }
-        } catch (NxtException.NxtIOException e) {
+        } catch (RuvException.RuvIOException e) {
             blacklist(e);
             if (connection != null) {
                 connection.disconnect();
@@ -623,7 +623,7 @@ final class PeerImpl implements Peer {
     }
 
     void connect() {
-        lastConnectAttempt = Nxt.getEpochTime();
+        lastConnectAttempt = Ruv.getEpochTime();
         try {
             if (!Peers.ignorePeerAnnouncedAddress && announcedAddress != null) {
                 try {
@@ -809,7 +809,7 @@ final class PeerImpl implements Peer {
             }
 
             for (PeerImpl peer : groupedPeers) {
-                peer.adjustedWeight = Constants.MAX_BALANCE_NXT * peer.getHallmarkWeight(mostRecentDate) / totalWeight;
+                peer.adjustedWeight = Constants.MAX_BALANCE_RUV * peer.getHallmarkWeight(mostRecentDate) / totalWeight;
                 Peers.notifyListeners(peer, Peers.Event.WEIGHT);
             }
 

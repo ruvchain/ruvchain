@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,21 +14,21 @@
  *
  */
 
-package nxt.env.service;
+package ruv.env.service;
 
-import nxt.Nxt;
-import nxt.env.LookAndFeel;
+import ruv.Ruv;
+import ruv.env.LookAndFeel;
 
 import javax.swing.*;
 
 @SuppressWarnings("UnusedDeclaration")
-public class NxtService_ServiceManagement {
+public class RuvService_ServiceManagement {
 
     public static boolean serviceInit() {
         LookAndFeel.init();
         new Thread(() -> {
             String[] args = {};
-            Nxt.main(args);
+            Ruv.main(args);
         }).start();
         return true;
     }
@@ -36,8 +36,8 @@ public class NxtService_ServiceManagement {
     // Invoked when registering the service
     public static String[] serviceGetInfo() {
         return new String[]{
-                Nxt.APPLICATION + " Server", // Long name
-                "Manages the " + Nxt.APPLICATION + " cryptographic currency protocol", // Description
+                Ruv.APPLICATION + " Server", // Long name
+                "Manages the " + Ruv.APPLICATION + " cryptographic currency protocol", // Description
                 "true", // IsAutomatic
                 "true", // IsAcceptStop
                 "", // failure exe
@@ -52,7 +52,7 @@ public class NxtService_ServiceManagement {
     }
 
     public static boolean serviceIsCreate() {
-        return JOptionPane.showConfirmDialog(null, "Do you want to install the " + Nxt.APPLICATION + " service ?", "Create Service", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
+        return JOptionPane.showConfirmDialog(null, "Do you want to install the " + Ruv.APPLICATION + " service ?", "Create Service", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
     }
 
     public static boolean serviceIsLaunch() {
@@ -60,7 +60,7 @@ public class NxtService_ServiceManagement {
     }
 
     public static boolean serviceIsDelete() {
-        return JOptionPane.showConfirmDialog(null, "This " + Nxt.APPLICATION + " service is already installed. Do you want to delete it ?", "Delete Service", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
+        return JOptionPane.showConfirmDialog(null, "This " + Ruv.APPLICATION + " service is already installed. Do you want to delete it ?", "Delete Service", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
     }
 
     public static boolean serviceControl_Pause() {

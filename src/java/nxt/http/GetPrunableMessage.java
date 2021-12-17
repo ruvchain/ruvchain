@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,17 +14,17 @@
  *
  */
 
-package nxt.http;
+package ruv.http;
 
-import nxt.Nxt;
-import nxt.NxtException;
-import nxt.PrunableMessage;
-import nxt.util.JSON;
+import ruv.Ruv;
+import ruv.RuvException;
+import ruv.PrunableMessage;
+import ruv.util.JSON;
 import org.json.simple.JSONStreamAware;
 
 import javax.servlet.http.HttpServletRequest;
 
-import static nxt.http.JSONResponses.PRUNED_TRANSACTION;
+import static ruv.http.JSONResponses.PRUNED_TRANSACTION;
 
 public final class GetPrunableMessage extends APIServlet.APIRequestHandler {
 
@@ -35,7 +35,7 @@ public final class GetPrunableMessage extends APIServlet.APIRequestHandler {
     }
 
     @Override
-    protected JSONStreamAware processRequest(HttpServletRequest req) throws NxtException {
+    protected JSONStreamAware processRequest(HttpServletRequest req) throws RuvException {
         long transactionId = ParameterParser.getUnsignedLong(req, "transaction", true);
         String secretPhrase = ParameterParser.getSecretPhrase(req, false);
         byte[] sharedKey = ParameterParser.getBytes(req, "sharedKey", false);
@@ -45,7 +45,7 @@ public final class GetPrunableMessage extends APIServlet.APIRequestHandler {
         boolean retrieve = "true".equalsIgnoreCase(req.getParameter("retrieve"));
         PrunableMessage prunableMessage = PrunableMessage.getPrunableMessage(transactionId);
         if (prunableMessage == null && retrieve) {
-            if (Nxt.getBlockchainProcessor().restorePrunedTransaction(transactionId) == null) {
+            if (Ruv.getBlockchainProcessor().restorePrunedTransaction(transactionId) == null) {
                 return PRUNED_TRANSACTION;
             }
             prunableMessage = PrunableMessage.getPrunableMessage(transactionId);

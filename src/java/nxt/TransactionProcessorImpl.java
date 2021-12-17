@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,15 +14,15 @@
  *
  */
 
-package nxt;
+package ruv;
 
-import nxt.db.DbClause;
-import nxt.db.DbIterator;
-import nxt.db.DbKey;
-import nxt.db.EntityDbTable;
-import nxt.peer.Peer;
-import nxt.peer.Peers;
-import nxt.util.*;
+import ruv.db.DbClause;
+import ruv.db.DbIterator;
+import ruv.db.DbKey;
+import ruv.db.EntityDbTable;
+import ruv.peer.Peer;
+import ruv.peer.Peers;
+import ruv.util.*;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -35,11 +35,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
 final class TransactionProcessorImpl implements TransactionProcessor {
 
-    private static final boolean enableTransactionRebroadcasting = Nxt.getBooleanProperty("nxt.enableTransactionRebroadcasting");
-    private static final boolean testUnconfirmedTransactions = Nxt.getBooleanProperty("nxt.testUnconfirmedTransactions");
+    private static final boolean enableTransactionRebroadcasting = Ruv.getBooleanProperty("ruv.enableTransactionRebroadcasting");
+    private static final boolean testUnconfirmedTransactions = Ruv.getBooleanProperty("ruv.testUnconfirmedTransactions");
     private static final int maxUnconfirmedTransactions;
     static {
-        int n = Nxt.getIntProperty("nxt.maxUnconfirmedTransactions");
+        int n = Ruv.getIntProperty("ruv.maxUnconfirmedTransactions");
         maxUnconfirmedTransactions = n <= 0 ? Integer.MAX_VALUE : n;
     }
 
@@ -152,12 +152,12 @@ final class TransactionProcessorImpl implements TransactionProcessor {
 
         try {
             try {
-                if (Nxt.getBlockchainProcessor().isDownloading() && ! testUnconfirmedTransactions) {
+                if (Ruv.getBlockchainProcessor().isDownloading() && ! testUnconfirmedTransactions) {
                     return;
                 }
                 List<UnconfirmedTransaction> expiredTransactions = new ArrayList<>();
                 try (DbIterator<UnconfirmedTransaction> iterator = unconfirmedTransactionTable.getManyBy(
-                        new DbClause.IntClause("expiration", DbClause.Op.LT, Nxt.getEpochTime()), 0, -1, "")) {
+                        new DbClause.IntClause("expiration", DbClause.Op.LT, Ruv.getEpochTime()), 0, -1, "")) {
                     while (iterator.hasNext()) {
                         expiredTransactions.add(iterator.next());
                     }
@@ -197,11 +197,11 @@ final class TransactionProcessorImpl implements TransactionProcessor {
 
         try {
             try {
-                if (Nxt.getBlockchainProcessor().isDownloading() && ! testUnconfirmedTransactions) {
+                if (Ruv.getBlockchainProcessor().isDownloading() && ! testUnconfirmedTransactions) {
                     return;
                 }
                 List<Transaction> transactionList = new ArrayList<>();
-                int curTime = Nxt.getEpochTime();
+                int curTime = Ruv.getEpochTime();
                 for (TransactionImpl transaction : broadcastedTransactions) {
                     if (transaction.getExpiration() < curTime || TransactionDb.hasTransaction(transaction.getId())) {
                         broadcastedTransactions.remove(transaction);
@@ -229,7 +229,7 @@ final class TransactionProcessorImpl implements TransactionProcessor {
 
         try {
             try {
-                if (Nxt.getBlockchainProcessor().isDownloading() && ! testUnconfirmedTransactions) {
+                if (Ruv.getBlockchainProcessor().isDownloading() && ! testUnconfirmedTransactions) {
                     return;
                 }
                 Peer peer = Peers.getAnyPeer(Peer.State.CONNECTED, true);
@@ -252,7 +252,7 @@ final class TransactionProcessorImpl implements TransactionProcessor {
                 }
                 try {
                     processPeerTransactions(transactionsData);
-                } catch (NxtException.ValidationException|RuntimeException e) {
+                } catch (RuvException.ValidationException|RuntimeException e) {
                     peer.blacklist(e);
                 }
             } catch (Exception e) {
@@ -270,7 +270,7 @@ final class TransactionProcessorImpl implements TransactionProcessor {
 
         try {
             try {
-                if (Nxt.getBlockchainProcessor().isDownloading() && ! testUnconfirmedTransactions) {
+                if (Ruv.getBlockchainProcessor().isDownloading() && ! testUnconfirmedTransactions) {
                     return;
                 }
                 processWaitingTransactions();
@@ -339,14 +339,14 @@ final class TransactionProcessorImpl implements TransactionProcessor {
     }
 
     private Transaction getUnconfirmedTransaction(DbKey dbKey) {
-        Nxt.getBlockchain().readLock();
+        Ruv.getBlockchain().readLock();
         try {
             Transaction transaction = transactionCache.get(dbKey);
             if (transaction != null) {
                 return transaction;
             }
         } finally {
-            Nxt.getBlockchain().readUnlock();
+            Ruv.getBlockchain().readUnlock();
         }
         return unconfirmedTransactionTable.get(dbKey);
     }
@@ -393,7 +393,7 @@ final class TransactionProcessorImpl implements TransactionProcessor {
     }
 
     @Override
-    public void broadcast(Transaction transaction) throws NxtException.ValidationException {
+    public void broadcast(Transaction transaction) throws RuvException.ValidationException {
         BlockchainImpl.getInstance().writeLock();
         try {
             if (TransactionDb.hasTransaction(transaction.getId())) {
@@ -432,7 +432,7 @@ final class TransactionProcessorImpl implements TransactionProcessor {
     }
 
     @Override
-    public void processPeerTransactions(JSONObject request) throws NxtException.ValidationException {
+    public void processPeerTransactions(JSONObject request) throws RuvException.ValidationException {
         JSONArray transactionsData = (JSONArray)request.get("transactions");
         processPeerTransactions(transactionsData);
     }
@@ -576,7 +576,7 @@ final class TransactionProcessorImpl implements TransactionProcessor {
         BlockchainImpl.getInstance().writeLock();
         try {
             if (waitingTransactions.size() > 0) {
-                int currentTime = Nxt.getEpochTime();
+                int currentTime = Ruv.getEpochTime();
                 List<Transaction> addedUnconfirmedTransactions = new ArrayList<>();
                 Iterator<UnconfirmedTransaction> iterator = waitingTransactions.iterator();
                 while (iterator.hasNext()) {
@@ -586,14 +586,14 @@ final class TransactionProcessorImpl implements TransactionProcessor {
                         processTransaction(unconfirmedTransaction);
                         iterator.remove();
                         addedUnconfirmedTransactions.add(unconfirmedTransaction.getTransaction());
-                    } catch (NxtException.ExistingTransactionException e) {
+                    } catch (RuvException.ExistingTransactionException e) {
                         iterator.remove();
-                    } catch (NxtException.NotCurrentlyValidException e) {
+                    } catch (RuvException.NotCurrentlyValidException e) {
                         if (unconfirmedTransaction.getExpiration() < currentTime
                                 || currentTime - Convert.toEpochTime(unconfirmedTransaction.getArrivalTimestamp()) > 3600) {
                             iterator.remove();
                         }
-                    } catch (NxtException.ValidationException|RuntimeException e) {
+                    } catch (RuvException.ValidationException|RuntimeException e) {
                         iterator.remove();
                     }
                 }
@@ -606,8 +606,8 @@ final class TransactionProcessorImpl implements TransactionProcessor {
         }
     }
 
-    private void processPeerTransactions(JSONArray transactionsData) throws NxtException.NotValidException {
-        if (Nxt.getBlockchain().getHeight() <= Constants.LAST_KNOWN_BLOCK && !testUnconfirmedTransactions) {
+    private void processPeerTransactions(JSONArray transactionsData) throws RuvException.NotValidException {
+        if (Ruv.getBlockchain().getHeight() <= Constants.LAST_KNOWN_BLOCK && !testUnconfirmedTransactions) {
             return;
         }
         if (transactionsData == null || transactionsData.isEmpty()) {
@@ -636,8 +636,8 @@ final class TransactionProcessorImpl implements TransactionProcessor {
                 }
                 addedUnconfirmedTransactions.add(transaction);
 
-            } catch (NxtException.NotCurrentlyValidException ignore) {
-            } catch (NxtException.ValidationException|RuntimeException e) {
+            } catch (RuvException.NotCurrentlyValidException ignore) {
+            } catch (RuvException.ValidationException|RuntimeException e) {
                 Logger.logDebugMessage(String.format("Invalid transaction from peer: %s", ((JSONObject) transactionData).toJSONString()), e);
                 exceptions.add(e);
             }
@@ -650,49 +650,49 @@ final class TransactionProcessorImpl implements TransactionProcessor {
         }
         broadcastedTransactions.removeAll(receivedTransactions);
         if (!exceptions.isEmpty()) {
-            throw new NxtException.NotValidException("Peer sends invalid transactions: " + exceptions.toString());
+            throw new RuvException.NotValidException("Peer sends invalid transactions: " + exceptions.toString());
         }
     }
 
-    private void processTransaction(UnconfirmedTransaction unconfirmedTransaction) throws NxtException.ValidationException {
+    private void processTransaction(UnconfirmedTransaction unconfirmedTransaction) throws RuvException.ValidationException {
         TransactionImpl transaction = unconfirmedTransaction.getTransaction();
-        int curTime = Nxt.getEpochTime();
+        int curTime = Ruv.getEpochTime();
         if (transaction.getTimestamp() > curTime + Constants.MAX_TIMEDRIFT || transaction.getExpiration() < curTime) {
-            throw new NxtException.NotCurrentlyValidException("Invalid transaction timestamp");
+            throw new RuvException.NotCurrentlyValidException("Invalid transaction timestamp");
         }
         if (transaction.getVersion() < 1) {
-            throw new NxtException.NotValidException("Invalid transaction version");
+            throw new RuvException.NotValidException("Invalid transaction version");
         }
         if (transaction.getId() == 0L) {
-            throw new NxtException.NotValidException("Invalid transaction id 0");
+            throw new RuvException.NotValidException("Invalid transaction id 0");
         }
 
         BlockchainImpl.getInstance().writeLock();
         try {
             try {
                 Db.db.beginTransaction();
-                if (Nxt.getBlockchain().getHeight() < Constants.LAST_KNOWN_BLOCK && !testUnconfirmedTransactions) {
-                    throw new NxtException.NotCurrentlyValidException("Blockchain not ready to accept transactions");
+                if (Ruv.getBlockchain().getHeight() < Constants.LAST_KNOWN_BLOCK && !testUnconfirmedTransactions) {
+                    throw new RuvException.NotCurrentlyValidException("Blockchain not ready to accept transactions");
                 }
 
                 if (getUnconfirmedTransaction(transaction.getDbKey()) != null || TransactionDb.hasTransaction(transaction.getId())) {
-                    throw new NxtException.ExistingTransactionException("Transaction already processed");
+                    throw new RuvException.ExistingTransactionException("Transaction already processed");
                 }
 
                 if (! transaction.verifySignature()) {
                     if (Account.getAccount(transaction.getSenderId()) != null) {
-                        throw new NxtException.NotValidException("Transaction signature verification failed");
+                        throw new RuvException.NotValidException("Transaction signature verification failed");
                     } else {
-                        throw new NxtException.NotCurrentlyValidException("Unknown transaction sender");
+                        throw new RuvException.NotCurrentlyValidException("Unknown transaction sender");
                     }
                 }
 
                 if (! transaction.applyUnconfirmed()) {
-                    throw new NxtException.InsufficientBalanceException("Insufficient balance");
+                    throw new RuvException.InsufficientBalanceException("Insufficient balance");
                 }
 
                 if (transaction.isUnconfirmedDuplicate(unconfirmedDuplicates)) {
-                    throw new NxtException.NotCurrentlyValidException("Duplicate unconfirmed transaction");
+                    throw new RuvException.NotCurrentlyValidException("Duplicate unconfirmed transaction");
                 }
 
                 unconfirmedTransactionTable.insert(unconfirmedTransaction);
@@ -735,7 +735,7 @@ final class TransactionProcessorImpl implements TransactionProcessor {
     @Override
     public SortedSet<? extends Transaction> getCachedUnconfirmedTransactions(List<String> exclude) {
         SortedSet<UnconfirmedTransaction> transactionSet = new TreeSet<>(cachedUnconfirmedTransactionComparator);
-        Nxt.getBlockchain().readLock();
+        Ruv.getBlockchain().readLock();
         try {
             //
             // Initialize the unconfirmed transaction cache if it hasn't been done yet
@@ -759,7 +759,7 @@ final class TransactionProcessorImpl implements TransactionProcessor {
                 }
             });
         } finally {
-            Nxt.getBlockchain().readUnlock();
+            Ruv.getBlockchain().readUnlock();
         }
         return transactionSet;
     }
@@ -769,12 +769,12 @@ final class TransactionProcessorImpl implements TransactionProcessor {
      *
      * @param   transactions                        Transactions containing prunable data
      * @return                                      Processed transactions
-     * @throws  NxtException.NotValidException    Transaction is not valid
+     * @throws  RuvException.NotValidException    Transaction is not valid
      */
     @Override
-    public List<Transaction> restorePrunableData(JSONArray transactions) throws NxtException.NotValidException {
+    public List<Transaction> restorePrunableData(JSONArray transactions) throws RuvException.NotValidException {
         List<Transaction> processed = new ArrayList<>();
-        Nxt.getBlockchain().readLock();
+        Ruv.getBlockchain().readLock();
         try {
             Db.db.beginTransaction();
             try {
@@ -833,7 +833,7 @@ final class TransactionProcessorImpl implements TransactionProcessor {
                 Db.db.endTransaction();
             }
         } finally {
-            Nxt.getBlockchain().readUnlock();
+            Ruv.getBlockchain().readUnlock();
         }
         return processed;
     }

@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,14 +14,14 @@
  *
  */
 
-package nxt;
+package ruv;
 
-import nxt.db.DbUtils;
-import nxt.db.DerivedDbTable;
-import nxt.util.Convert;
-import nxt.util.Listener;
-import nxt.util.Listeners;
-import nxt.util.Logger;
+import ruv.db.DbUtils;
+import ruv.db.DerivedDbTable;
+import ruv.util.Convert;
+import ruv.util.Listener;
+import ruv.util.Listeners;
+import ruv.util.Logger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -54,22 +54,22 @@ public class AccountLedger {
     private static final int logUnconfirmed;
 
     /** Number of blocks to keep when trimming */
-    public static final int trimKeep = Nxt.getIntProperty("nxt.ledgerTrimKeep", 30000);
+    public static final int trimKeep = Ruv.getIntProperty("ruv.ledgerTrimKeep", 30000);
 
     /** Blockchain */
-    private static final Blockchain blockchain = Nxt.getBlockchain();
+    private static final Blockchain blockchain = Ruv.getBlockchain();
 
     /** Blockchain processor */
-    private static final BlockchainProcessor blockchainProcessor = Nxt.getBlockchainProcessor();
+    private static final BlockchainProcessor blockchainProcessor = Ruv.getBlockchainProcessor();
 
     /** Pending ledger entries */
     private static final List<LedgerEntry> pendingEntries = new ArrayList<>();
 
     /*
-      Process nxt.ledgerAccounts
+      Process ruv.ledgerAccounts
      */
     static {
-        List<String> ledgerAccounts = Nxt.getStringListProperty("nxt.ledgerAccounts");
+        List<String> ledgerAccounts = Ruv.getStringListProperty("ruv.ledgerAccounts");
         ledgerEnabled = !ledgerAccounts.isEmpty();
         trackAllAccounts = ledgerAccounts.contains("*");
         if (ledgerEnabled) {
@@ -88,7 +88,7 @@ public class AccountLedger {
         } else {
             Logger.logInfoMessage("Account ledger is not enabled");
         }
-        int temp = Nxt.getIntProperty("nxt.ledgerLogUnconfirmed", 1);
+        int temp = Ruv.getIntProperty("ruv.ledgerLogUnconfirmed", 1);
         logUnconfirmed = (temp >= 0 && temp <= 2 ? temp : 1);
     }
 
@@ -144,7 +144,7 @@ public class AccountLedger {
     /**
      * Initialization
      *
-     * We don't do anything but we need to be called from Nxt.init() in order to
+     * We don't do anything but we need to be called from Ruv.init() in order to
      * register our table
      */
     static void init() {
@@ -525,8 +525,8 @@ public class AccountLedger {
      * they are stored in the holding_type field of the account_ledger table.
      */
     public enum LedgerHolding {
-        UNCONFIRMED_NXT_BALANCE(1, true),
-        NXT_BALANCE(2, false),
+        UNCONFIRMED_RUV_BALANCE(1, true),
+        RUV_BALANCE(2, false),
         UNCONFIRMED_ASSET_BALANCE(3, true),
         ASSET_BALANCE(4, false),
         UNCONFIRMED_CURRENCY_BALANCE(5, true),

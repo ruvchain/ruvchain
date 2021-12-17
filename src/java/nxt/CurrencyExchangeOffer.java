@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,11 +14,11 @@
  *
  */
 
-package nxt;
+package ruv;
 
-import nxt.AccountLedger.LedgerEvent;
-import nxt.db.DbClause;
-import nxt.db.DbIterator;
+import ruv.AccountLedger.LedgerEvent;
+import ruv.db.DbClause;
+import ruv.db.DbIterator;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -57,7 +57,7 @@ public abstract class CurrencyExchangeOffer {
 
     static {
 
-        Nxt.getBlockchainProcessor().addListener(block -> {
+        Ruv.getBlockchainProcessor().addListener(block -> {
             List<CurrencyBuyOffer> expired = new ArrayList<>();
             try (DbIterator<CurrencyBuyOffer> offers = CurrencyBuyOffer.getOffers(new DbClause.IntClause("expiration_height", block.getHeight()), 0, -1)) {
                 for (CurrencyBuyOffer offer : offers) {
@@ -117,7 +117,7 @@ public abstract class CurrencyExchangeOffer {
         return currencyExchangeOffers;
     }
 
-    static void exchangeCurrencyForNXT(Transaction transaction, Account account, final long currencyId, final long rateNQT, final long units) {
+    static void exchangeCurrencyForRUV(Transaction transaction, Account account, final long currencyId, final long rateNQT, final long units) {
         List<CurrencyExchangeOffer> currencyBuyOffers = getAvailableBuyOffers(currencyId, rateNQT);
 
         long totalAmountNQT = 0;
@@ -166,7 +166,7 @@ public abstract class CurrencyExchangeOffer {
         return currencySellOffers;
     }
 
-    static void exchangeNXTForCurrency(Transaction transaction, Account account, final long currencyId, final long rateNQT, final long units) {
+    static void exchangeRUVForCurrency(Transaction transaction, Account account, final long currencyId, final long rateNQT, final long units) {
         List<CurrencyExchangeOffer> currencySellOffers = getAvailableSellOffers(currencyId, rateNQT);
         long totalAmountNQT = 0;
         long remainingUnits = units;
@@ -234,7 +234,7 @@ public abstract class CurrencyExchangeOffer {
         this.limit = limit;
         this.supply = supply;
         this.expirationHeight = expirationHeight;
-        this.creationHeight = Nxt.getBlockchain().getHeight();
+        this.creationHeight = Ruv.getBlockchain().getHeight();
         this.transactionIndex = transactionIndex;
         this.transactionHeight = transactionHeight;
     }
@@ -267,7 +267,7 @@ public abstract class CurrencyExchangeOffer {
             pstmt.setInt(++i, this.creationHeight);
             pstmt.setShort(++i, this.transactionIndex);
             pstmt.setInt(++i, this.transactionHeight);
-            pstmt.setInt(++i, Nxt.getBlockchain().getHeight());
+            pstmt.setInt(++i, Ruv.getBlockchain().getHeight());
             pstmt.executeUpdate();
         }
     }

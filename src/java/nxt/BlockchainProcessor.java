@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,11 +14,11 @@
  *
  */
 
-package nxt;
+package ruv;
 
-import nxt.db.DerivedDbTable;
-import nxt.peer.Peer;
-import nxt.util.Observable;
+import ruv.db.DerivedDbTable;
+import ruv.peer.Peer;
+import ruv.util.Observable;
 import org.json.simple.JSONObject;
 
 import java.util.List;
@@ -46,7 +46,7 @@ public interface BlockchainProcessor extends Observable<Block,BlockchainProcesso
 
     int getInitialScanHeight();
 
-    void processPeerBlock(JSONObject request) throws NxtException;
+    void processPeerBlock(JSONObject request) throws RuvException;
 
     void fullReset();
 
@@ -68,7 +68,7 @@ public interface BlockchainProcessor extends Observable<Block,BlockchainProcesso
 
     long getGenesisBlockId();
 
-    class BlockNotAcceptedException extends NxtException {
+    class BlockNotAcceptedException extends RuvException {
 
         private final BlockImpl block;
 

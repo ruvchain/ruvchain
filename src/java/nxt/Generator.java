@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,14 +14,14 @@
  *
  */
 
-package nxt;
+package ruv;
 
-import nxt.crypto.Crypto;
-import nxt.util.Convert;
-import nxt.util.Listener;
-import nxt.util.Listeners;
-import nxt.util.Logger;
-import nxt.util.ThreadPool;
+import ruv.crypto.Crypto;
+import ruv.util.Convert;
+import ruv.util.Listener;
+import ruv.util.Listeners;
+import ruv.util.Logger;
+import ruv.util.ThreadPool;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -43,9 +43,9 @@ public final class Generator implements Comparable<Generator> {
         GENERATION_DEADLINE, START_FORGING, STOP_FORGING
     }
 
-    private static final int MAX_FORGERS = Nxt.getIntProperty("nxt.maxNumberOfForgers");
-    private static final byte[] fakeForgingPublicKey = Nxt.getBooleanProperty("nxt.enableFakeForging") ?
-            Account.getPublicKey(Convert.parseAccountId(Nxt.getStringProperty("nxt.fakeForgingAccount"))) : null;
+    private static final int MAX_FORGERS = Ruv.getIntProperty("ruv.maxNumberOfForgers");
+    private static final byte[] fakeForgingPublicKey = Ruv.getBooleanProperty("ruv.enableFakeForging") ?
+            Account.getPublicKey(Convert.parseAccountId(Ruv.getStringProperty("ruv.fakeForgingAccount"))) : null;
 
     private static final Listeners<Generator,Event> listeners = new Listeners<>();
 
@@ -66,15 +66,15 @@ public final class Generator implements Comparable<Generator> {
                 try {
                     BlockchainImpl.getInstance().updateLock();
                     try {
-                        Block lastBlock = Nxt.getBlockchain().getLastBlock();
+                        Block lastBlock = Ruv.getBlockchain().getLastBlock();
                         if (lastBlock == null || lastBlock.getHeight() < Constants.LAST_KNOWN_BLOCK) {
                             return;
                         }
-                        final int generationLimit = Nxt.getEpochTime() - delayTime;
+                        final int generationLimit = Ruv.getEpochTime() - delayTime;
                         if (lastBlock.getId() != lastBlockId || sortedForgers == null) {
                             lastBlockId = lastBlock.getId();
-                            if (lastBlock.getTimestamp() > Nxt.getEpochTime() - 600) {
-                                Block previousBlock = Nxt.getBlockchain().getBlock(lastBlock.getPreviousBlockId());
+                            if (lastBlock.getTimestamp() > Ruv.getEpochTime() - 600) {
+                                Block previousBlock = Ruv.getBlockchain().getBlock(lastBlock.getPreviousBlockId());
                                 for (Generator generator : generators.values()) {
                                     generator.setLastBlock(previousBlock);
                                     int timestamp = generator.getTimestamp(generationLimit);
@@ -165,11 +165,11 @@ public final class Generator implements Comparable<Generator> {
     public static Generator stopForging(String secretPhrase) {
         Generator generator = generators.remove(secretPhrase);
         if (generator != null) {
-            Nxt.getBlockchain().updateLock();
+            Ruv.getBlockchain().updateLock();
             try {
                 sortedForgers = null;
             } finally {
-                Nxt.getBlockchain().updateUnlock();
+                Ruv.getBlockchain().updateUnlock();
             }
             Logger.logDebugMessage(generator + " stopped");
             listeners.notify(generator, Event.STOP_FORGING);
@@ -186,11 +186,11 @@ public final class Generator implements Comparable<Generator> {
             Logger.logDebugMessage(generator + " stopped");
             listeners.notify(generator, Event.STOP_FORGING);
         }
-        Nxt.getBlockchain().updateLock();
+        Ruv.getBlockchain().updateLock();
         try {
             sortedForgers = null;
         } finally {
-            Nxt.getBlockchain().updateUnlock();
+            Ruv.getBlockchain().updateUnlock();
         }
         return count;
     }
@@ -278,14 +278,14 @@ public final class Generator implements Comparable<Generator> {
         this.secretPhrase = secretPhrase;
         this.publicKey = Crypto.getPublicKey(secretPhrase);
         this.accountId = Account.getId(publicKey);
-        Nxt.getBlockchain().updateLock();
+        Ruv.getBlockchain().updateLock();
         try {
-            if (Nxt.getBlockchain().getHeight() >= Constants.LAST_KNOWN_BLOCK) {
-                setLastBlock(Nxt.getBlockchain().getLastBlock());
+            if (Ruv.getBlockchain().getHeight() >= Constants.LAST_KNOWN_BLOCK) {
+                setLastBlock(Ruv.getBlockchain().getLastBlock());
             }
             sortedForgers = null;
         } finally {
-            Nxt.getBlockchain().updateUnlock();
+            Ruv.getBlockchain().updateUnlock();
         }
     }
 
@@ -325,7 +325,7 @@ public final class Generator implements Comparable<Generator> {
         if (account == null) {
             effectiveBalance = BigInteger.ZERO;
         } else {
-            effectiveBalance = BigInteger.valueOf(Math.max(account.getEffectiveBalanceNXT(height), 0));
+            effectiveBalance = BigInteger.valueOf(Math.max(account.getEffectiveBalanceRUV(height), 0));
         }
         if (effectiveBalance.signum() == 0) {
             hitTime = 0;
@@ -344,7 +344,7 @@ public final class Generator implements Comparable<Generator> {
             Logger.logDebugMessage(this.toString() + " failed to forge at " + timestamp + " height " + lastBlock.getHeight() + " last timestamp " + lastBlock.getTimestamp());
             return false;
         }
-        int start = Nxt.getEpochTime();
+        int start = Ruv.getEpochTime();
         while (true) {
             try {
                 BlockchainProcessorImpl.getInstance().generateBlock(secretPhrase, timestamp);
@@ -352,7 +352,7 @@ public final class Generator implements Comparable<Generator> {
                 return true;
             } catch (BlockchainProcessor.TransactionNotAcceptedException e) {
                 // the bad transaction has been expunged, try again
-                if (Nxt.getEpochTime() - start > 10) { // give up after trying for 10 s
+                if (Ruv.getEpochTime() - start > 10) { // give up after trying for 10 s
                     throw e;
                 }
             }
@@ -383,13 +383,13 @@ public final class Generator implements Comparable<Generator> {
      */
     public static List<ActiveGenerator> getNextGenerators() {
         List<ActiveGenerator> generatorList;
-        Blockchain blockchain = Nxt.getBlockchain();
+        Blockchain blockchain = Ruv.getBlockchain();
         synchronized(activeGenerators) {
             if (!generatorsInitialized) {
                 activeGeneratorIds.addAll(BlockDb.getBlockGenerators(Math.max(1, blockchain.getHeight() - 10000)));
                 activeGeneratorIds.forEach(activeGeneratorId -> activeGenerators.add(new ActiveGenerator(activeGeneratorId)));
                 Logger.logDebugMessage(activeGeneratorIds.size() + " block generators found");
-                Nxt.getBlockchainProcessor().addListener(block -> {
+                Ruv.getBlockchainProcessor().addListener(block -> {
                     long generatorId = block.getGeneratorId();
                     synchronized(activeGenerators) {
                         if (!activeGeneratorIds.contains(generatorId)) {
@@ -420,7 +420,7 @@ public final class Generator implements Comparable<Generator> {
     public static class ActiveGenerator implements Comparable<ActiveGenerator> {
         private final long accountId;
         private long hitTime;
-        private long effectiveBalanceNXT;
+        private long effectiveBalanceRUV;
         private byte[] publicKey;
 
         private ActiveGenerator(long accountId) {
@@ -433,7 +433,7 @@ public final class Generator implements Comparable<Generator> {
         }
 
         public long getEffectiveBalance() {
-            return effectiveBalanceNXT;
+            return effectiveBalanceRUV;
         }
 
         public long getHitTime() {
@@ -454,12 +454,12 @@ public final class Generator implements Comparable<Generator> {
                 hitTime = Long.MAX_VALUE;
                 return;
             }
-            effectiveBalanceNXT = Math.max(account.getEffectiveBalanceNXT(height), 0);
-            if (effectiveBalanceNXT == 0) {
+            effectiveBalanceRUV = Math.max(account.getEffectiveBalanceRUV(height), 0);
+            if (effectiveBalanceRUV == 0) {
                 hitTime = Long.MAX_VALUE;
                 return;
             }
-            BigInteger effectiveBalance = BigInteger.valueOf(effectiveBalanceNXT);
+            BigInteger effectiveBalance = BigInteger.valueOf(effectiveBalanceRUV);
             BigInteger hit = Generator.getHit(publicKey, lastBlock);
             hitTime = Generator.getHitTime(effectiveBalance, hit, lastBlock);
         }

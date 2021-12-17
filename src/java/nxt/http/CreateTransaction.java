@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,18 +14,18 @@
  *
  */
 
-package nxt.http;
+package ruv.http;
 
-import nxt.*;
-import nxt.crypto.Crypto;
-import nxt.util.Convert;
+import ruv.*;
+import ruv.crypto.Crypto;
+import ruv.util.Convert;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 
-import static nxt.http.JSONResponses.*;
+import static ruv.http.JSONResponses.*;
 
 abstract class CreateTransaction extends APIServlet.APIRequestHandler {
 
@@ -62,19 +62,19 @@ abstract class CreateTransaction extends APIServlet.APIRequestHandler {
     }
 
     final JSONStreamAware createTransaction(HttpServletRequest req, Account senderAccount, Attachment attachment)
-            throws NxtException {
+            throws RuvException {
         return createTransaction(req, senderAccount, 0, 0, attachment);
     }
 
     final JSONStreamAware createTransaction(HttpServletRequest req, Account senderAccount, long recipientId, long amountNQT)
-            throws NxtException {
+            throws RuvException {
         return createTransaction(req, senderAccount, recipientId, amountNQT, Attachment.ORDINARY_PAYMENT);
     }
 
     private Appendix.Phasing parsePhasing(HttpServletRequest req) throws ParameterException {
         int finishHeight = ParameterParser.getInt(req, "phasingFinishHeight",
-                Nxt.getBlockchain().getHeight() + 1,
-                Nxt.getBlockchain().getHeight() + Constants.MAX_PHASING_DURATION + 1,
+                Ruv.getBlockchain().getHeight() + 1,
+                Ruv.getBlockchain().getHeight() + Constants.MAX_PHASING_DURATION + 1,
                 true);
         
         PhasingParams phasingParams = parsePhasingParams(req, "phasing");
@@ -118,7 +118,7 @@ abstract class CreateTransaction extends APIServlet.APIRequestHandler {
     }
 
     final JSONStreamAware createTransaction(HttpServletRequest req, Account senderAccount, long recipientId,
-                                            long amountNQT, Attachment attachment) throws NxtException {
+                                            long amountNQT, Attachment attachment) throws RuvException {
         String deadlineValue = req.getParameter("deadline");
         String referencedTransactionFullHash = Convert.emptyToNull(req.getParameter("referencedTransactionFullHash"));
         String secretPhrase = ParameterParser.getSecretPhrase(req, false);
@@ -173,11 +173,11 @@ abstract class CreateTransaction extends APIServlet.APIRequestHandler {
         long feeNQT = ParameterParser.getFeeNQT(req);
         int ecBlockHeight = ParameterParser.getInt(req, "ecBlockHeight", 0, Integer.MAX_VALUE, false);
         long ecBlockId = Convert.parseUnsignedLong(req.getParameter("ecBlockId"));
-        if (ecBlockId != 0 && ecBlockId != Nxt.getBlockchain().getBlockIdAtHeight(ecBlockHeight)) {
+        if (ecBlockId != 0 && ecBlockId != Ruv.getBlockchain().getBlockIdAtHeight(ecBlockHeight)) {
             return INCORRECT_EC_BLOCK;
         }
         if (ecBlockId == 0 && ecBlockHeight > 0) {
-            ecBlockId = Nxt.getBlockchain().getBlockIdAtHeight(ecBlockHeight);
+            ecBlockId = Ruv.getBlockchain().getBlockIdAtHeight(ecBlockHeight);
         }
 
         JSONObject response = new JSONObject();
@@ -186,7 +186,7 @@ abstract class CreateTransaction extends APIServlet.APIRequestHandler {
         byte[] publicKey = secretPhrase != null ? Crypto.getPublicKey(secretPhrase) : Convert.parseHexString(publicKeyValue);
 
         try {
-            Transaction.Builder builder = Nxt.newTransactionBuilder(publicKey, amountNQT, feeNQT,
+            Transaction.Builder builder = Ruv.newTransactionBuilder(publicKey, amountNQT, feeNQT,
                     deadline, attachment).referencedTransactionFullHash(referencedTransactionFullHash);
             if (attachment.getTransactionType().canHaveRecipient()) {
                 builder.recipientId(recipientId);
@@ -214,7 +214,7 @@ abstract class CreateTransaction extends APIServlet.APIRequestHandler {
             response.put("transactionJSON", transactionJSON);
             try {
                 response.put("unsignedTransactionBytes", Convert.toHexString(transaction.getUnsignedBytes()));
-            } catch (NxtException.NotYetEncryptedException ignore) {}
+            } catch (RuvException.NotYetEncryptedException ignore) {}
             if (secretPhrase != null) {
                 response.put("transaction", transaction.getStringId());
                 response.put("fullHash", transactionJSON.get("fullHash"));
@@ -222,17 +222,17 @@ abstract class CreateTransaction extends APIServlet.APIRequestHandler {
                 response.put("signatureHash", transactionJSON.get("signatureHash"));
             }
             if (broadcast) {
-                Nxt.getTransactionProcessor().broadcast(transaction);
+                Ruv.getTransactionProcessor().broadcast(transaction);
                 response.put("broadcasted", true);
             } else {
                 transaction.validate();
                 response.put("broadcasted", false);
             }
-        } catch (NxtException.NotYetEnabledException e) {
+        } catch (RuvException.NotYetEnabledException e) {
             return FEATURE_NOT_AVAILABLE;
-        } catch (NxtException.InsufficientBalanceException e) {
+        } catch (RuvException.InsufficientBalanceException e) {
             throw e;
-        } catch (NxtException.ValidationException e) {
+        } catch (RuvException.ValidationException e) {
             if (broadcast) {
                 response.clear();
             }

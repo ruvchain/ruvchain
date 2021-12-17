@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,15 +14,15 @@
  *
  */
 
-package nxt.http;
+package ruv.http;
 
-import nxt.Constants;
-import nxt.Db;
-import nxt.Nxt;
-import nxt.NxtException;
-import nxt.addons.AddOns;
-import nxt.util.JSON;
-import nxt.util.Logger;
+import ruv.Constants;
+import ruv.Db;
+import ruv.Ruv;
+import ruv.RuvException;
+import ruv.addons.AddOns;
+import ruv.util.JSON;
+import ruv.util.Logger;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
 
@@ -41,13 +41,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static nxt.http.JSONResponses.ERROR_DISABLED;
-import static nxt.http.JSONResponses.ERROR_INCORRECT_REQUEST;
-import static nxt.http.JSONResponses.ERROR_NOT_ALLOWED;
-import static nxt.http.JSONResponses.LIGHT_CLIENT_DISABLED_API;
-import static nxt.http.JSONResponses.POST_REQUIRED;
-import static nxt.http.JSONResponses.REQUIRED_BLOCK_NOT_FOUND;
-import static nxt.http.JSONResponses.REQUIRED_LAST_BLOCK_NOT_FOUND;
+import static ruv.http.JSONResponses.ERROR_DISABLED;
+import static ruv.http.JSONResponses.ERROR_INCORRECT_REQUEST;
+import static ruv.http.JSONResponses.ERROR_NOT_ALLOWED;
+import static ruv.http.JSONResponses.LIGHT_CLIENT_DISABLED_API;
+import static ruv.http.JSONResponses.POST_REQUIRED;
+import static ruv.http.JSONResponses.REQUIRED_BLOCK_NOT_FOUND;
+import static ruv.http.JSONResponses.REQUIRED_LAST_BLOCK_NOT_FOUND;
 
 public final class APIServlet extends HttpServlet {
 
@@ -88,9 +88,9 @@ public final class APIServlet extends HttpServlet {
             return fileParameter;
         }
 
-        protected abstract JSONStreamAware processRequest(HttpServletRequest request) throws NxtException;
+        protected abstract JSONStreamAware processRequest(HttpServletRequest request) throws RuvException;
 
-        protected JSONStreamAware processRequest(HttpServletRequest request, HttpServletResponse response) throws NxtException {
+        protected JSONStreamAware processRequest(HttpServletRequest request, HttpServletResponse response) throws RuvException {
             return processRequest(request);
         }
 
@@ -128,8 +128,8 @@ public final class APIServlet extends HttpServlet {
 
     }
 
-    private static final boolean enforcePost = Nxt.getBooleanProperty("nxt.apiServerEnforcePOST");
-    private static final boolean fixResponseContentType = Nxt.getBooleanProperty("nxt.apiFixResponseContentType");
+    private static final boolean enforcePost = Ruv.getBooleanProperty("ruv.apiServerEnforcePOST");
+    private static final boolean fixResponseContentType = Ruv.getBooleanProperty("ruv.apiFixResponseContentType");
     static final Map<String,APIRequestHandler> apiRequestHandlers;
     static final Map<String,APIRequestHandler> disabledRequestHandlers;
 
@@ -149,7 +149,7 @@ public final class APIServlet extends HttpServlet {
         API.disabledAPIs.forEach(api -> {
             APIRequestHandler handler = map.remove(api);
             if (handler == null) {
-                throw new RuntimeException("Invalid API in nxt.disabledAPIs: " + api);
+                throw new RuntimeException("Invalid API in ruv.disabledAPIs: " + api);
             }
             disabledMap.put(api, handler);
         });
@@ -245,24 +245,24 @@ public final class APIServlet extends HttpServlet {
             final long requireLastBlockId = apiRequestHandler.allowRequiredBlockParameters() ?
                     ParameterParser.getUnsignedLong(req, "requireLastBlock", false) : 0;
             if (requireBlockId != 0 || requireLastBlockId != 0) {
-                Nxt.getBlockchain().readLock();
+                Ruv.getBlockchain().readLock();
             }
             try {
                 try {
                     if (apiRequestHandler.startDbTransaction()) {
                         Db.db.beginTransaction();
                     }
-                    if (requireBlockId != 0 && !Nxt.getBlockchain().hasBlock(requireBlockId)) {
+                    if (requireBlockId != 0 && !Ruv.getBlockchain().hasBlock(requireBlockId)) {
                         response = REQUIRED_BLOCK_NOT_FOUND;
                         return;
                     }
-                    if (requireLastBlockId != 0 && requireLastBlockId != Nxt.getBlockchain().getLastBlock().getId()) {
+                    if (requireLastBlockId != 0 && requireLastBlockId != Ruv.getBlockchain().getLastBlock().getId()) {
                         response = REQUIRED_LAST_BLOCK_NOT_FOUND;
                         return;
                     }
                     response = apiRequestHandler.processRequest(req, resp);
                     if (requireLastBlockId == 0 && requireBlockId != 0 && response instanceof JSONObject) {
-                        ((JSONObject) response).put("lastBlock", Nxt.getBlockchain().getLastBlock().getStringId());
+                        ((JSONObject) response).put("lastBlock", Ruv.getBlockchain().getLastBlock().getStringId());
                     }
                 } finally {
                     if (apiRequestHandler.startDbTransaction()) {
@@ -271,12 +271,12 @@ public final class APIServlet extends HttpServlet {
                 }
             } finally {
                 if (requireBlockId != 0 || requireLastBlockId != 0) {
-                    Nxt.getBlockchain().readUnlock();
+                    Ruv.getBlockchain().readUnlock();
                 }
             }
         } catch (ParameterException e) {
             response = e.getErrorResponse();
-        } catch (NxtException | RuntimeException e) {
+        } catch (RuvException | RuntimeException e) {
             Logger.logDebugMessage("Error processing API request", e);
             JSONObject json = new JSONObject();
             JSONData.putException(json, e);

@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,12 +14,12 @@
  *
  */
 
-package nxt.util;
+package ruv.util;
 
-import nxt.Constants;
-import nxt.Genesis;
-import nxt.NxtException;
-import nxt.crypto.Crypto;
+import ruv.Constants;
+import ruv.Genesis;
+import ruv.RuvException;
+import ruv.crypto.Crypto;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -242,9 +242,9 @@ public final class Convert {
         return bytes;
     }
 
-    public static String readString(ByteBuffer buffer, int numBytes, int maxLength) throws NxtException.NotValidException {
+    public static String readString(ByteBuffer buffer, int numBytes, int maxLength) throws RuvException.NotValidException {
         if (numBytes > getMaxStringSize(maxLength)) {
-            throw new NxtException.NotValidException("Max parameter length exceeded");
+            throw new RuvException.NotValidException("Max parameter length exceeded");
         }
         byte[] bytes = new byte[numBytes];
         buffer.get(bytes);
@@ -259,8 +259,8 @@ public final class Convert {
         return s == null ? replaceNull : s.length() > limit ? (s.substring(0, dots ? limit - 3 : limit) + (dots ? "..." : "")) : s;
     }
 
-    public static long parseNXT(String nxt) {
-        return parseStringFraction(nxt, 8, Constants.MAX_BALANCE_NXT);
+    public static long parseRUV(String ruv) {
+        return parseStringFraction(ruv, 8, Constants.MAX_BALANCE_RUV);
     }
 
     private static long parseStringFraction(String value, int decimals, long maxValue) {

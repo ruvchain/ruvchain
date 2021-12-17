@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,15 +14,15 @@
  *
  */
 
-package nxt.peer;
+package ruv.peer;
 
-import nxt.BlockchainProcessor;
-import nxt.Constants;
-import nxt.Nxt;
-import nxt.util.CountingInputReader;
-import nxt.util.CountingOutputWriter;
-import nxt.util.JSON;
-import nxt.util.Logger;
+import ruv.BlockchainProcessor;
+import ruv.Constants;
+import ruv.Ruv;
+import ruv.util.CountingInputReader;
+import ruv.util.CountingOutputWriter;
+import ruv.util.JSON;
+import ruv.util.Logger;
 import org.eclipse.jetty.websocket.servlet.ServletUpgradeRequest;
 import org.eclipse.jetty.websocket.servlet.ServletUpgradeResponse;
 import org.eclipse.jetty.websocket.servlet.WebSocketCreator;
@@ -118,7 +118,7 @@ public final class PeerServlet extends WebSocketServlet {
         LIGHT_CLIENT = JSON.prepare(response);
     }
 
-    private static final BlockchainProcessor blockchainProcessor = Nxt.getBlockchainProcessor();
+    private static final BlockchainProcessor blockchainProcessor = Ruv.getBlockchainProcessor();
 
     static JSONStreamAware error(Exception e) {
         JSONObject response = new JSONObject();
@@ -278,7 +278,7 @@ public final class PeerServlet extends WebSocketServlet {
                 }
                 Peers.notifyListeners(peer, Peers.Event.ADD_INBOUND);
             }
-            peer.setLastInboundRequest(Nxt.getEpochTime());
+            peer.setLastInboundRequest(Ruv.getEpochTime());
             if (peerRequestHandler.rejectWhileDownloading()) {
                 if (blockchainProcessor.isDownloading()) {
                     return DOWNLOADING;

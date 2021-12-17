@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,10 +14,10 @@
  *
  */
 
-package nxt;
+package ruv;
 
-import nxt.util.Filter;
-import nxt.util.Logger;
+import ruv.util.Filter;
+import ruv.util.Logger;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -85,7 +85,7 @@ public class TransactionScheduler {
     }
 
     private boolean processEvent(Transaction unconfirmedTransaction) {
-        if (transaction.getExpiration() < Nxt.getEpochTime()) {
+        if (transaction.getExpiration() < Ruv.getEpochTime()) {
             Logger.logInfoMessage("Expired transaction in transaction scheduler " + transaction.getSenderId());
             return true;
         }
@@ -95,7 +95,7 @@ public class TransactionScheduler {
         try {
             TransactionProcessorImpl.getInstance().broadcast(transaction);
             return true;
-        } catch (NxtException.ValidationException e) {
+        } catch (RuvException.ValidationException e) {
             Logger.logInfoMessage("Failed to broadcast: " + e.getMessage());
             return true;
         }

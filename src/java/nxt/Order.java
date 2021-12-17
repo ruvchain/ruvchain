@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,13 +14,13 @@
  *
  */
 
-package nxt;
+package ruv;
 
-import nxt.AccountLedger.LedgerEvent;
-import nxt.db.DbClause;
-import nxt.db.DbIterator;
-import nxt.db.DbKey;
-import nxt.db.VersionedEntityDbTable;
+import ruv.AccountLedger.LedgerEvent;
+import ruv.db.DbClause;
+import ruv.db.DbIterator;
+import ruv.db.DbKey;
+import ruv.db.VersionedEntityDbTable;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -83,7 +83,7 @@ public abstract class Order {
         this.assetId = attachment.getAssetId();
         this.quantityQNT = attachment.getQuantityQNT();
         this.priceNQT = attachment.getPriceNQT();
-        this.creationHeight = Nxt.getBlockchain().getHeight();
+        this.creationHeight = Ruv.getBlockchain().getHeight();
         this.transactionIndex = transaction.getIndex();
         this.transactionHeight = transaction.getHeight();
     }
@@ -111,7 +111,7 @@ public abstract class Order {
             pstmt.setInt(++i, this.creationHeight);
             pstmt.setShort(++i, this.transactionIndex);
             pstmt.setInt(++i, this.transactionHeight);
-            pstmt.setInt(++i, Nxt.getBlockchain().getHeight());
+            pstmt.setInt(++i, Ruv.getBlockchain().getHeight());
             pstmt.executeUpdate();
         }
     }

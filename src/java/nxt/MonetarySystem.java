@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,9 +14,9 @@
  *
  */
 
-package nxt;
+package ruv;
 
-import nxt.AccountLedger.LedgerEvent;
+import ruv.AccountLedger.LedgerEvent;
 import org.json.simple.JSONObject;
 
 import java.nio.ByteBuffer;
@@ -87,9 +87,9 @@ public abstract class MonetarySystem extends TransactionType {
 
     public static final TransactionType CURRENCY_ISSUANCE = new MonetarySystem() {
 
-        private final Fee FIVE_LETTER_CURRENCY_ISSUANCE_FEE = new Fee.ConstantFee(40 * Constants.ONE_NXT);
-        private final Fee FOUR_LETTER_CURRENCY_ISSUANCE_FEE = new Fee.ConstantFee(1000 * Constants.ONE_NXT);
-        private final Fee THREE_LETTER_CURRENCY_ISSUANCE_FEE = new Fee.ConstantFee(25000 * Constants.ONE_NXT);
+        private final Fee FIVE_LETTER_CURRENCY_ISSUANCE_FEE = new Fee.ConstantFee(40 * Constants.ONE_RUV);
+        private final Fee FOUR_LETTER_CURRENCY_ISSUANCE_FEE = new Fee.ConstantFee(1000 * Constants.ONE_RUV);
+        private final Fee THREE_LETTER_CURRENCY_ISSUANCE_FEE = new Fee.ConstantFee(25000 * Constants.ONE_RUV);
 
         @Override
         public byte getSubtype() {
@@ -147,7 +147,7 @@ public abstract class MonetarySystem extends TransactionType {
         }
 
         @Override
-        Attachment.MonetarySystemCurrencyIssuance parseAttachment(ByteBuffer buffer) throws NxtException.NotValidException {
+        Attachment.MonetarySystemCurrencyIssuance parseAttachment(ByteBuffer buffer) throws RuvException.NotValidException {
             return new Attachment.MonetarySystemCurrencyIssuance(buffer);
         }
 
@@ -174,7 +174,7 @@ public abstract class MonetarySystem extends TransactionType {
         }
 
         @Override
-        void validateAttachment(Transaction transaction) throws NxtException.ValidationException {
+        void validateAttachment(Transaction transaction) throws RuvException.ValidationException {
             Attachment.MonetarySystemCurrencyIssuance attachment = (Attachment.MonetarySystemCurrencyIssuance) transaction.getAttachment();
             if (attachment.getMaxSupply() > Constants.MAX_CURRENCY_TOTAL_SUPPLY
                     || attachment.getMaxSupply() <= 0
@@ -186,12 +186,12 @@ public abstract class MonetarySystem extends TransactionType {
                     || attachment.getMinReservePerUnitNQT() < 0
                     || attachment.getDecimals() < 0 || attachment.getDecimals() > 8
                     || attachment.getRuleset() != 0) {
-                throw new NxtException.NotValidException("Invalid currency issuance: " + attachment.getJSONObject());
+                throw new RuvException.NotValidException("Invalid currency issuance: " + attachment.getJSONObject());
             }
             int t = 1;
             for (int i = 0; i < 32; i++) {
                 if ((t & attachment.getType()) != 0 && CurrencyType.get(t) == null) {
-                    throw new NxtException.NotValidException("Invalid currency type: " + attachment.getType());
+                    throw new RuvException.NotValidException("Invalid currency type: " + attachment.getType());
                 }
                 t <<= 1;
             }
@@ -253,10 +253,10 @@ public abstract class MonetarySystem extends TransactionType {
         }
 
         @Override
-        void validateAttachment(Transaction transaction) throws NxtException.ValidationException {
+        void validateAttachment(Transaction transaction) throws RuvException.ValidationException {
             Attachment.MonetarySystemReserveIncrease attachment = (Attachment.MonetarySystemReserveIncrease) transaction.getAttachment();
             if (attachment.getAmountPerUnitNQT() <= 0) {
-                throw new NxtException.NotValidException("Reserve increase amount must be positive: " + attachment.getAmountPerUnitNQT());
+                throw new RuvException.NotValidException("Reserve increase amount must be positive: " + attachment.getAmountPerUnitNQT());
             }
             CurrencyType.validate(Currency.getCurrency(attachment.getCurrencyId()), transaction);
         }
@@ -281,7 +281,7 @@ public abstract class MonetarySystem extends TransactionType {
             if (currency != null) {
                 reserveSupply = currency.getReserveSupply();
             } else { // currency must have been deleted, get reserve supply from the original issuance transaction
-                Transaction currencyIssuance = Nxt.getBlockchain().getTransaction(attachment.getCurrencyId());
+                Transaction currencyIssuance = Ruv.getBlockchain().getTransaction(attachment.getCurrencyId());
                 Attachment.MonetarySystemCurrencyIssuance currencyIssuanceAttachment = (Attachment.MonetarySystemCurrencyIssuance) currencyIssuance.getAttachment();
                 reserveSupply = currencyIssuanceAttachment.getReserveSupply();
             }
@@ -331,10 +331,10 @@ public abstract class MonetarySystem extends TransactionType {
         }
 
         @Override
-        void validateAttachment(Transaction transaction) throws NxtException.ValidationException {
+        void validateAttachment(Transaction transaction) throws RuvException.ValidationException {
             Attachment.MonetarySystemReserveClaim attachment = (Attachment.MonetarySystemReserveClaim) transaction.getAttachment();
             if (attachment.getUnits() <= 0) {
-                throw new NxtException.NotValidException("Reserve claim number of units must be positive: " + attachment.getUnits());
+                throw new RuvException.NotValidException("Reserve claim number of units must be positive: " + attachment.getUnits());
             }
             CurrencyType.validate(Currency.getCurrency(attachment.getCurrencyId()), transaction);
         }
@@ -402,18 +402,18 @@ public abstract class MonetarySystem extends TransactionType {
         }
 
         @Override
-        void validateAttachment(Transaction transaction) throws NxtException.ValidationException {
+        void validateAttachment(Transaction transaction) throws RuvException.ValidationException {
             Attachment.MonetarySystemCurrencyTransfer attachment = (Attachment.MonetarySystemCurrencyTransfer) transaction.getAttachment();
             if (attachment.getUnits() <= 0) {
-                throw new NxtException.NotValidException("Invalid currency transfer: " + attachment.getJSONObject());
+                throw new RuvException.NotValidException("Invalid currency transfer: " + attachment.getJSONObject());
             }
             if (transaction.getRecipientId() == Genesis.CREATOR_ID) {
-                throw new NxtException.NotValidException("Currency transfer to genesis account not allowed");
+                throw new RuvException.NotValidException("Currency transfer to genesis account not allowed");
             }
             Currency currency = Currency.getCurrency(attachment.getCurrencyId());
             CurrencyType.validate(currency, transaction);
             if (! currency.isActive()) {
-                throw new NxtException.NotCurrentlyValidException("Currency not currently active: " + attachment.getJSONObject());
+                throw new RuvException.NotCurrentlyValidException("Currency not currently active: " + attachment.getJSONObject());
             }
         }
 
@@ -481,12 +481,12 @@ public abstract class MonetarySystem extends TransactionType {
         }
 
         @Override
-        void validateAttachment(Transaction transaction) throws NxtException.ValidationException {
+        void validateAttachment(Transaction transaction) throws RuvException.ValidationException {
             Attachment.MonetarySystemPublishExchangeOffer attachment = (Attachment.MonetarySystemPublishExchangeOffer) transaction.getAttachment();
             if (attachment.getBuyRateNQT() <= 0
                     || attachment.getSellRateNQT() <= 0
                     || attachment.getBuyRateNQT() > attachment.getSellRateNQT()) {
-                throw new NxtException.NotValidException(String.format("Invalid exchange offer, buy rate %d and sell rate %d has to be larger than 0, buy rate cannot be larger than sell rate",
+                throw new RuvException.NotValidException(String.format("Invalid exchange offer, buy rate %d and sell rate %d has to be larger than 0, buy rate cannot be larger than sell rate",
                         attachment.getBuyRateNQT(), attachment.getSellRateNQT()));
             }
             if (attachment.getTotalBuyLimit() < 0
@@ -494,25 +494,25 @@ public abstract class MonetarySystem extends TransactionType {
                     || attachment.getInitialBuySupply() < 0
                     || attachment.getInitialSellSupply() < 0
                     || attachment.getExpirationHeight() < 0) {
-                throw new NxtException.NotValidException("Invalid exchange offer, units and height cannot be negative: " + attachment.getJSONObject());
+                throw new RuvException.NotValidException("Invalid exchange offer, units and height cannot be negative: " + attachment.getJSONObject());
             }
             if (attachment.getTotalBuyLimit() < attachment.getInitialBuySupply()
                     || attachment.getTotalSellLimit() < attachment.getInitialSellSupply()) {
-                throw new NxtException.NotValidException("Initial supplies must not exceed total limits");
+                throw new RuvException.NotValidException("Initial supplies must not exceed total limits");
             }
             if (attachment.getTotalBuyLimit() == 0 && attachment.getTotalSellLimit() == 0) {
-                throw new NxtException.NotValidException("Total buy and sell limits cannot be both 0");
+                throw new RuvException.NotValidException("Total buy and sell limits cannot be both 0");
             }
             if (attachment.getInitialBuySupply() == 0 && attachment.getInitialSellSupply() == 0) {
-                throw new NxtException.NotValidException("Initial buy and sell supply cannot be both 0");
+                throw new RuvException.NotValidException("Initial buy and sell supply cannot be both 0");
             }
             if (attachment.getExpirationHeight() <= attachment.getFinishValidationHeight(transaction)) {
-                throw new NxtException.NotCurrentlyValidException("Expiration height must be after transaction execution height");
+                throw new RuvException.NotCurrentlyValidException("Expiration height must be after transaction execution height");
             }
             Currency currency = Currency.getCurrency(attachment.getCurrencyId());
             CurrencyType.validate(currency, transaction);
             if (! currency.isActive()) {
-                throw new NxtException.NotCurrentlyValidException("Currency not currently active: " + attachment.getJSONObject());
+                throw new RuvException.NotCurrentlyValidException("Currency not currently active: " + attachment.getJSONObject());
             }
         }
 
@@ -558,15 +558,15 @@ public abstract class MonetarySystem extends TransactionType {
     abstract static class MonetarySystemExchange extends MonetarySystem {
 
         @Override
-        final void validateAttachment(Transaction transaction) throws NxtException.ValidationException {
+        final void validateAttachment(Transaction transaction) throws RuvException.ValidationException {
             Attachment.MonetarySystemExchange attachment = (Attachment.MonetarySystemExchange) transaction.getAttachment();
             if (attachment.getRateNQT() <= 0 || attachment.getUnits() == 0) {
-                throw new NxtException.NotValidException("Invalid exchange: " + attachment.getJSONObject());
+                throw new RuvException.NotValidException("Invalid exchange: " + attachment.getJSONObject());
             }
             Currency currency = Currency.getCurrency(attachment.getCurrencyId());
             CurrencyType.validate(currency, transaction);
             if (! currency.isActive()) {
-                throw new NxtException.NotCurrentlyValidException("Currency not active: " + attachment.getJSONObject());
+                throw new RuvException.NotCurrentlyValidException("Currency not active: " + attachment.getJSONObject());
             }
         }
 
@@ -627,7 +627,7 @@ public abstract class MonetarySystem extends TransactionType {
         void applyAttachment(Transaction transaction, Account senderAccount, Account recipientAccount) {
             Attachment.MonetarySystemExchangeBuy attachment = (Attachment.MonetarySystemExchangeBuy) transaction.getAttachment();
             ExchangeRequest.addExchangeRequest(transaction, attachment);
-            CurrencyExchangeOffer.exchangeNXTForCurrency(transaction, senderAccount, attachment.getCurrencyId(), attachment.getRateNQT(), attachment.getUnits());
+            CurrencyExchangeOffer.exchangeRUVForCurrency(transaction, senderAccount, attachment.getCurrencyId(), attachment.getRateNQT(), attachment.getUnits());
         }
 
     };
@@ -684,7 +684,7 @@ public abstract class MonetarySystem extends TransactionType {
         void applyAttachment(Transaction transaction, Account senderAccount, Account recipientAccount) {
             Attachment.MonetarySystemExchangeSell attachment = (Attachment.MonetarySystemExchangeSell) transaction.getAttachment();
             ExchangeRequest.addExchangeRequest(transaction, attachment);
-            CurrencyExchangeOffer.exchangeCurrencyForNXT(transaction, senderAccount, attachment.getCurrencyId(), attachment.getRateNQT(), attachment.getUnits());
+            CurrencyExchangeOffer.exchangeCurrencyForRUV(transaction, senderAccount, attachment.getCurrencyId(), attachment.getRateNQT(), attachment.getUnits());
         }
 
     };
@@ -717,25 +717,25 @@ public abstract class MonetarySystem extends TransactionType {
         }
 
         @Override
-        void validateAttachment(Transaction transaction) throws NxtException.ValidationException {
+        void validateAttachment(Transaction transaction) throws RuvException.ValidationException {
             Attachment.MonetarySystemCurrencyMinting attachment = (Attachment.MonetarySystemCurrencyMinting) transaction.getAttachment();
             Currency currency = Currency.getCurrency(attachment.getCurrencyId());
             CurrencyType.validate(currency, transaction);
             if (attachment.getUnits() <= 0) {
-                throw new NxtException.NotValidException("Invalid number of units: " + attachment.getUnits());
+                throw new RuvException.NotValidException("Invalid number of units: " + attachment.getUnits());
             }
             if (attachment.getUnits() > (currency.getMaxSupply() - currency.getReserveSupply()) / Constants.MAX_MINTING_RATIO) {
-                throw new NxtException.NotValidException(String.format("Cannot mint more than 1/%d of the total units supply in a single request", Constants.MAX_MINTING_RATIO));
+                throw new RuvException.NotValidException(String.format("Cannot mint more than 1/%d of the total units supply in a single request", Constants.MAX_MINTING_RATIO));
             }
             if (!currency.isActive()) {
-                throw new NxtException.NotCurrentlyValidException("Currency not currently active " + attachment.getJSONObject());
+                throw new RuvException.NotCurrentlyValidException("Currency not currently active " + attachment.getJSONObject());
             }
             long counter = CurrencyMint.getCounter(attachment.getCurrencyId(), transaction.getSenderId());
             if (attachment.getCounter() <= counter) {
-                throw new NxtException.NotCurrentlyValidException(String.format("Counter %d has to be bigger than %d", attachment.getCounter(), counter));
+                throw new RuvException.NotCurrentlyValidException(String.format("Counter %d has to be bigger than %d", attachment.getCounter(), counter));
             }
             if (!CurrencyMinting.meetsTarget(transaction.getSenderId(), currency, attachment)) {
-                throw new NxtException.NotCurrentlyValidException(String.format("Hash doesn't meet target %s", attachment.getJSONObject()));
+                throw new RuvException.NotCurrentlyValidException(String.format("Hash doesn't meet target %s", attachment.getJSONObject()));
             }
         }
 
@@ -815,12 +815,12 @@ public abstract class MonetarySystem extends TransactionType {
         }
 
         @Override
-        void validateAttachment(Transaction transaction) throws NxtException.ValidationException {
+        void validateAttachment(Transaction transaction) throws RuvException.ValidationException {
             Attachment.MonetarySystemCurrencyDeletion attachment = (Attachment.MonetarySystemCurrencyDeletion) transaction.getAttachment();
             Currency currency = Currency.getCurrency(attachment.getCurrencyId());
             CurrencyType.validate(currency, transaction);
             if (!currency.canBeDeletedBy(transaction.getSenderId())) {
-                throw new NxtException.NotCurrentlyValidException("Currency " + Long.toUnsignedString(currency.getId()) + " cannot be deleted by account " +
+                throw new RuvException.NotCurrentlyValidException("Currency " + Long.toUnsignedString(currency.getId()) + " cannot be deleted by account " +
                         Long.toUnsignedString(transaction.getSenderId()));
             }
         }

@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,7 +14,7 @@
  *
  */
 
-package nxt.http;
+package ruv.http;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
@@ -23,9 +23,9 @@ import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
-import nxt.NxtException;
-import nxt.util.Convert;
-import nxt.util.Logger;
+import ruv.RuvException;
+import ruv.util.Convert;
+import ruv.util.Logger;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
 
@@ -87,7 +87,7 @@ public final class EncodeQRCode extends APIServlet.APIRequestHandler {
     
     @Override
     protected JSONStreamAware processRequest(HttpServletRequest request)
-            throws NxtException {
+            throws RuvException {
         
         JSONObject response = new JSONObject();
 

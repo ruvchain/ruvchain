@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,25 +14,25 @@
  *
  */
 
-package nxt.peer;
+package ruv.peer;
 
-import nxt.Account;
-import nxt.Block;
-import nxt.Constants;
-import nxt.Db;
-import nxt.Nxt;
-import nxt.Transaction;
-import nxt.http.API;
-import nxt.http.APIEnum;
-import nxt.util.Convert;
-import nxt.util.Filter;
-import nxt.util.JSON;
-import nxt.util.Listener;
-import nxt.util.Listeners;
-import nxt.util.Logger;
-import nxt.util.QueuedThreadPool;
-import nxt.util.ThreadPool;
-import nxt.util.UPnP;
+import ruv.Account;
+import ruv.Block;
+import ruv.Constants;
+import ruv.Db;
+import ruv.Ruv;
+import ruv.Transaction;
+import ruv.http.API;
+import ruv.http.APIEnum;
+import ruv.util.Convert;
+import ruv.util.Filter;
+import ruv.util.JSON;
+import ruv.util.Listener;
+import ruv.util.Listeners;
+import ruv.util.Logger;
+import ruv.util.QueuedThreadPool;
+import ruv.util.ThreadPool;
+import ruv.util.UPnP;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
@@ -95,9 +95,9 @@ public final class Peers {
     static final int readTimeout;
     static final int blacklistingPeriod;
     static final boolean getMorePeers;
-    static final int MAX_REQUEST_SIZE = Nxt.getIntProperty("nxt.maxPeerRequestSize", 1024 * 1024);
-    static final int MAX_RESPONSE_SIZE = Nxt.getIntProperty("nxt.maxPeerResponseSize", 1024 * 1024);
-    static final int MAX_MESSAGE_SIZE = Nxt.getIntProperty("nxt.maxPeerMessageSize", 10 * 1024 * 1024);
+    static final int MAX_REQUEST_SIZE = Ruv.getIntProperty("ruv.maxPeerRequestSize", 1024 * 1024);
+    static final int MAX_RESPONSE_SIZE = Ruv.getIntProperty("ruv.maxPeerResponseSize", 1024 * 1024);
+    static final int MAX_MESSAGE_SIZE = Ruv.getIntProperty("ruv.maxPeerMessageSize", 10 * 1024 * 1024);
     public static final int MIN_COMPRESS_SIZE = 256;
     static final boolean useWebSockets;
     static final int webSocketIdleTimeout;
@@ -129,7 +129,7 @@ public final class Peers {
     static final int MAX_APPLICATION_LENGTH = 20;
     static final int MAX_PLATFORM_LENGTH = 30;
     static final int MAX_ANNOUNCED_ADDRESS_LENGTH = 100;
-    static final boolean hideErrorDetails = Nxt.getBooleanProperty("nxt.hideErrorDetails");
+    static final boolean hideErrorDetails = Ruv.getBooleanProperty("ruv.hideErrorDetails");
 
     private static final JSONObject myPeerInfo;
     private static final List<Peer.Service> myServices;
@@ -149,12 +149,12 @@ public final class Peers {
 
     static {
 
-        String platform = Nxt.getStringProperty("nxt.myPlatform", System.getProperty("os.name") + " " + System.getProperty("os.arch"));
+        String platform = Ruv.getStringProperty("ruv.myPlatform", System.getProperty("os.name") + " " + System.getProperty("os.arch"));
         if (platform.length() > MAX_PLATFORM_LENGTH) {
             platform = platform.substring(0, MAX_PLATFORM_LENGTH);
         }
         myPlatform = platform;
-        myAddress = Convert.emptyToNull(Nxt.getStringProperty("nxt.myAddress", "").trim());
+        myAddress = Convert.emptyToNull(Ruv.getStringProperty("ruv.myAddress", "").trim());
         if (myAddress != null && myAddress.endsWith(":" + TESTNET_PEER_PORT) && !Constants.isTestnet) {
             throw new RuntimeException("Port " + TESTNET_PEER_PORT + " should only be used for testnet!!!");
         }
@@ -201,13 +201,13 @@ public final class Peers {
                 Logger.logWarningMessage("Your announced address is not valid: " + e.toString());
             }
         }
-        myPeerServerPort = Nxt.getIntProperty("nxt.peerServerPort");
+        myPeerServerPort = Ruv.getIntProperty("ruv.peerServerPort");
         if (myPeerServerPort == TESTNET_PEER_PORT && !Constants.isTestnet) {
             throw new RuntimeException("Port " + TESTNET_PEER_PORT + " should only be used for testnet!!!");
         }
-        shareMyAddress = Nxt.getBooleanProperty("nxt.shareMyAddress") && ! Constants.isOffline;
-        enablePeerUPnP = Nxt.getBooleanProperty("nxt.enablePeerUPnP");
-        myHallmark = Convert.emptyToNull(Nxt.getStringProperty("nxt.myHallmark", "").trim());
+        shareMyAddress = Ruv.getBooleanProperty("ruv.shareMyAddress") && ! Constants.isOffline;
+        enablePeerUPnP = Ruv.getBooleanProperty("ruv.enablePeerUPnP");
+        myHallmark = Convert.emptyToNull(Ruv.getStringProperty("ruv.myHallmark", "").trim());
         if (Peers.myHallmark != null && Peers.myHallmark.length() > 0) {
             try {
                 Hallmark hallmark = Hallmark.parseHallmark(Peers.myHallmark);
@@ -256,8 +256,8 @@ public final class Peers {
             json.put("hallmark", Peers.myHallmark);
             servicesList.add(Peer.Service.HALLMARK);
         }
-        json.put("application", Nxt.APPLICATION);
-        json.put("version", Nxt.VERSION);
+        json.put("application", Ruv.APPLICATION);
+        json.put("version", Ruv.VERSION);
         json.put("platform", Peers.myPlatform);
         json.put("shareAddress", Peers.shareMyAddress);
         if (!Constants.ENABLE_PRUNING && Constants.INCLUDE_EXPIRED_PRUNABLE) {
@@ -306,40 +306,40 @@ public final class Peers {
         Logger.logDebugMessage("My peer info:\n" + json.toJSONString());
         myPeerInfo = json;
 
-        final List<String> defaultPeers = Constants.isTestnet ? Nxt.getStringListProperty("nxt.defaultTestnetPeers")
-                : Nxt.getStringListProperty("nxt.defaultPeers");
-        wellKnownPeers = Collections.unmodifiableList(Constants.isTestnet ? Nxt.getStringListProperty("nxt.testnetPeers")
-                : Nxt.getStringListProperty("nxt.wellKnownPeers"));
+        final List<String> defaultPeers = Constants.isTestnet ? Ruv.getStringListProperty("ruv.defaultTestnetPeers")
+                : Ruv.getStringListProperty("ruv.defaultPeers");
+        wellKnownPeers = Collections.unmodifiableList(Constants.isTestnet ? Ruv.getStringListProperty("ruv.testnetPeers")
+                : Ruv.getStringListProperty("ruv.wellKnownPeers"));
 
-        List<String> knownBlacklistedPeersList = Nxt.getStringListProperty("nxt.knownBlacklistedPeers");
+        List<String> knownBlacklistedPeersList = Ruv.getStringListProperty("ruv.knownBlacklistedPeers");
         if (knownBlacklistedPeersList.isEmpty()) {
             knownBlacklistedPeers = Collections.emptySet();
         } else {
             knownBlacklistedPeers = Collections.unmodifiableSet(new HashSet<>(knownBlacklistedPeersList));
         }
 
-        maxNumberOfInboundConnections = Nxt.getIntProperty("nxt.maxNumberOfInboundConnections");
-        maxNumberOfOutboundConnections = Nxt.getIntProperty("nxt.maxNumberOfOutboundConnections");
-        maxNumberOfConnectedPublicPeers = Math.min(Nxt.getIntProperty("nxt.maxNumberOfConnectedPublicPeers"),
+        maxNumberOfInboundConnections = Ruv.getIntProperty("ruv.maxNumberOfInboundConnections");
+        maxNumberOfOutboundConnections = Ruv.getIntProperty("ruv.maxNumberOfOutboundConnections");
+        maxNumberOfConnectedPublicPeers = Math.min(Ruv.getIntProperty("ruv.maxNumberOfConnectedPublicPeers"),
                 maxNumberOfOutboundConnections);
-        maxNumberOfKnownPeers = Nxt.getIntProperty("nxt.maxNumberOfKnownPeers");
-        minNumberOfKnownPeers = Nxt.getIntProperty("nxt.minNumberOfKnownPeers");
-        connectTimeout = Nxt.getIntProperty("nxt.connectTimeout");
-        readTimeout = Nxt.getIntProperty("nxt.readTimeout");
-        enableHallmarkProtection = Nxt.getBooleanProperty("nxt.enableHallmarkProtection") && !Constants.isLightClient;
-        pushThreshold = Nxt.getIntProperty("nxt.pushThreshold");
-        pullThreshold = Nxt.getIntProperty("nxt.pullThreshold");
-        useWebSockets = Nxt.getBooleanProperty("nxt.useWebSockets");
-        webSocketIdleTimeout = Nxt.getIntProperty("nxt.webSocketIdleTimeout");
-        isGzipEnabled = Nxt.getBooleanProperty("nxt.enablePeerServerGZIPFilter");
-        blacklistingPeriod = Nxt.getIntProperty("nxt.blacklistingPeriod") / 1000;
-        communicationLoggingMask = Nxt.getIntProperty("nxt.communicationLoggingMask");
-        sendToPeersLimit = Nxt.getIntProperty("nxt.sendToPeersLimit");
-        usePeersDb = Nxt.getBooleanProperty("nxt.usePeersDb") && ! Constants.isOffline;
-        savePeers = usePeersDb && Nxt.getBooleanProperty("nxt.savePeers");
-        getMorePeers = Nxt.getBooleanProperty("nxt.getMorePeers");
-        cjdnsOnly = Nxt.getBooleanProperty("nxt.cjdnsOnly");
-        ignorePeerAnnouncedAddress = Nxt.getBooleanProperty("nxt.ignorePeerAnnouncedAddress");
+        maxNumberOfKnownPeers = Ruv.getIntProperty("ruv.maxNumberOfKnownPeers");
+        minNumberOfKnownPeers = Ruv.getIntProperty("ruv.minNumberOfKnownPeers");
+        connectTimeout = Ruv.getIntProperty("ruv.connectTimeout");
+        readTimeout = Ruv.getIntProperty("ruv.readTimeout");
+        enableHallmarkProtection = Ruv.getBooleanProperty("ruv.enableHallmarkProtection") && !Constants.isLightClient;
+        pushThreshold = Ruv.getIntProperty("ruv.pushThreshold");
+        pullThreshold = Ruv.getIntProperty("ruv.pullThreshold");
+        useWebSockets = Ruv.getBooleanProperty("ruv.useWebSockets");
+        webSocketIdleTimeout = Ruv.getIntProperty("ruv.webSocketIdleTimeout");
+        isGzipEnabled = Ruv.getBooleanProperty("ruv.enablePeerServerGZIPFilter");
+        blacklistingPeriod = Ruv.getIntProperty("ruv.blacklistingPeriod") / 1000;
+        communicationLoggingMask = Ruv.getIntProperty("ruv.communicationLoggingMask");
+        sendToPeersLimit = Ruv.getIntProperty("ruv.sendToPeersLimit");
+        usePeersDb = Ruv.getBooleanProperty("ruv.usePeersDb") && ! Constants.isOffline;
+        savePeers = usePeersDb && Ruv.getBooleanProperty("ruv.savePeers");
+        getMorePeers = Ruv.getBooleanProperty("ruv.getMorePeers");
+        cjdnsOnly = Ruv.getBooleanProperty("ruv.cjdnsOnly");
+        ignorePeerAnnouncedAddress = Ruv.getBooleanProperty("ruv.ignorePeerAnnouncedAddress");
         if (useWebSockets && useProxy) {
             Logger.logMessage("Using a proxy, will not create outbound websockets.");
         }
@@ -353,7 +353,7 @@ public final class Peers {
 
                 @Override
                 public void run() {
-                    final int now = Nxt.getEpochTime();
+                    final int now = Ruv.getEpochTime();
                     wellKnownPeers.forEach(address -> entries.add(new PeerDb.Entry(address, 0, now)));
                     if (usePeersDb) {
                         Logger.logDebugMessage("Loading known peers from the database...");
@@ -362,7 +362,7 @@ public final class Peers {
                             List<PeerDb.Entry> dbPeers = PeerDb.loadPeers();
                             dbPeers.forEach(entry -> {
                                 if (!entries.add(entry)) {
-                                    // Database entries override entries from nxt.properties
+                                    // Database entries override entries from ruv.properties
                                     entries.remove(entry);
                                     entries.add(entry);
                                 }
@@ -415,9 +415,9 @@ public final class Peers {
                 ServerConnector connector = new ServerConnector(peerServer);
                 final int port = Constants.isTestnet ? TESTNET_PEER_PORT : Peers.myPeerServerPort;
                 connector.setPort(port);
-                final String host = Nxt.getStringProperty("nxt.peerServerHost");
+                final String host = Ruv.getStringProperty("ruv.peerServerHost");
                 connector.setHost(host);
-                connector.setIdleTimeout(Nxt.getIntProperty("nxt.peerServerIdleTimeout"));
+                connector.setIdleTimeout(Ruv.getIntProperty("ruv.peerServerIdleTimeout"));
                 connector.setReuseAddress(true);
                 peerServer.addConnector(connector);
 
@@ -427,12 +427,12 @@ public final class Peers {
                 ServletHolder peerServletHolder = new ServletHolder(new PeerServlet());
                 ctxHandler.addServlet(peerServletHolder, "/*");
 
-                if (Nxt.getBooleanProperty("nxt.enablePeerServerDoSFilter")) {
+                if (Ruv.getBooleanProperty("ruv.enablePeerServerDoSFilter")) {
                     FilterHolder dosFilterHolder = ctxHandler.addFilter(DoSFilter.class, "/*",
                             EnumSet.of(DispatcherType.REQUEST));
-                    dosFilterHolder.setInitParameter("maxRequestsPerSec", Nxt.getStringProperty("nxt.peerServerDoSFilter.maxRequestsPerSec"));
-                    dosFilterHolder.setInitParameter("delayMs", Nxt.getStringProperty("nxt.peerServerDoSFilter.delayMs"));
-                    dosFilterHolder.setInitParameter("maxRequestMs", Nxt.getStringProperty("nxt.peerServerDoSFilter.maxRequestMs"));
+                    dosFilterHolder.setInitParameter("maxRequestsPerSec", Ruv.getStringProperty("ruv.peerServerDoSFilter.maxRequestsPerSec"));
+                    dosFilterHolder.setInitParameter("delayMs", Ruv.getStringProperty("ruv.peerServerDoSFilter.delayMs"));
+                    dosFilterHolder.setInitParameter("maxRequestMs", Ruv.getStringProperty("ruv.peerServerDoSFilter.maxRequestMs"));
                     dosFilterHolder.setInitParameter("trackSessions", "false");
                     dosFilterHolder.setAsyncSupported(true);
                 }
@@ -480,7 +480,7 @@ public final class Peers {
         try {
             try {
 
-                int curTime = Nxt.getEpochTime();
+                int curTime = Ruv.getEpochTime();
                 for (PeerImpl peer : peers.values()) {
                     peer.updateBlacklistedStatus(curTime);
                 }
@@ -503,7 +503,7 @@ public final class Peers {
             try {
                 try {
 
-                    final int now = Nxt.getEpochTime();
+                    final int now = Ruv.getEpochTime();
                     if (!hasEnoughConnectedPublicPeers(Peers.maxNumberOfConnectedPublicPeers)) {
                         List<Future<?>> futures = new ArrayList<>();
                         List<Peer> hallmarkedPeers = getPeers(peer -> !peer.isBlacklisted()
@@ -636,7 +636,7 @@ public final class Peers {
                     if (peers != null) {
                         JSONArray services = (JSONArray)response.get("services");
                         boolean setServices = (services != null && services.size() == peers.size());
-                        int now = Nxt.getEpochTime();
+                        int now = Ruv.getEpochTime();
                         for (int i=0; i<peers.size(); i++) {
                             String announcedAddress = (String)peers.get(i);
                             PeerImpl newPeer = findOrCreatePeer(announcedAddress, true);
@@ -690,7 +690,7 @@ public final class Peers {
         }
 
         private void updateSavedPeers() {
-            int now = Nxt.getEpochTime();
+            int now = Ruv.getEpochTime();
             //
             // Load the current database entries and map announced address to database entry
             //
@@ -1136,7 +1136,7 @@ public final class Peers {
 
     private static final int[] MAX_VERSION;
     static {
-        String version = Nxt.VERSION;
+        String version = Ruv.VERSION;
         if (version.endsWith("e")) {
             version = version.substring(0, version.length() - 1);
         }
@@ -1227,8 +1227,8 @@ public final class Peers {
 
     private static void checkBlockchainState() {
         Peer.BlockchainState state = Constants.isLightClient ? Peer.BlockchainState.LIGHT_CLIENT :
-                (Nxt.getBlockchainProcessor().isDownloading() || Nxt.getBlockchain().getLastBlockTimestamp() < Nxt.getEpochTime() - 600) ? Peer.BlockchainState.DOWNLOADING :
-                        (Nxt.getBlockchain().getLastBlock().getBaseTarget() / Constants.INITIAL_BASE_TARGET > 10 && !Constants.isTestnet) ? Peer.BlockchainState.FORK :
+                (Ruv.getBlockchainProcessor().isDownloading() || Ruv.getBlockchain().getLastBlockTimestamp() < Ruv.getEpochTime() - 600) ? Peer.BlockchainState.DOWNLOADING :
+                        (Ruv.getBlockchain().getLastBlock().getBaseTarget() / Constants.INITIAL_BASE_TARGET > 10 && !Constants.isTestnet) ? Peer.BlockchainState.FORK :
                         Peer.BlockchainState.UP_TO_DATE;
         if (state != currentBlockchainState) {
             JSONObject json = new JSONObject(myPeerInfo);

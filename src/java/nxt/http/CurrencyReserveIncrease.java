@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,19 +14,19 @@
  *
  */
 
-package nxt.http;
+package ruv.http;
 
-import nxt.Account;
-import nxt.Attachment;
-import nxt.Constants;
-import nxt.Currency;
-import nxt.NxtException;
+import ruv.Account;
+import ruv.Attachment;
+import ruv.Constants;
+import ruv.Currency;
+import ruv.RuvException;
 import org.json.simple.JSONStreamAware;
 
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * Increase the value of currency units by paying NXT
+ * Increase the value of currency units by paying RUV
  * <p>
  * Parameters
  * <ul>
@@ -37,11 +37,11 @@ import javax.servlet.http.HttpServletRequest;
  * <p>
  * Constraints
  * <p>
- * This API is allowed only when the currency is {@link nxt.CurrencyType#RESERVABLE} and is not yet active.
+ * This API is allowed only when the currency is {@link ruv.CurrencyType#RESERVABLE} and is not yet active.
  * <p>
  * The sender account is registered as a founder. Once the currency becomes active
  * the total supply is distributed between the founders based on their proportional investment<br>
- * The list of founders and their NQT investment can be obtained using the {@link nxt.http.GetCurrencyFounders} API.
+ * The list of founders and their NQT investment can be obtained using the {@link ruv.http.GetCurrencyFounders} API.
  */
 
 public final class CurrencyReserveIncrease extends CreateTransaction {
@@ -53,7 +53,7 @@ public final class CurrencyReserveIncrease extends CreateTransaction {
     }
 
     @Override
-    protected JSONStreamAware processRequest(HttpServletRequest req) throws NxtException {
+    protected JSONStreamAware processRequest(HttpServletRequest req) throws RuvException {
         Currency currency = ParameterParser.getCurrency(req);
         long amountPerUnitNQT = ParameterParser.getLong(req, "amountPerUnitNQT", 1L, Constants.MAX_BALANCE_NQT, true);
         Account account = ParameterParser.getSenderAccount(req);

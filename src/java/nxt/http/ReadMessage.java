@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,26 +14,26 @@
  *
  */
 
-package nxt.http;
+package ruv.http;
 
-import nxt.Account;
-import nxt.Appendix;
-import nxt.Nxt;
-import nxt.PrunableMessage;
-import nxt.Transaction;
-import nxt.crypto.Crypto;
-import nxt.crypto.EncryptedData;
-import nxt.util.Convert;
-import nxt.util.Logger;
+import ruv.Account;
+import ruv.Appendix;
+import ruv.Ruv;
+import ruv.PrunableMessage;
+import ruv.Transaction;
+import ruv.crypto.Crypto;
+import ruv.crypto.EncryptedData;
+import ruv.util.Convert;
+import ruv.util.Logger;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 
-import static nxt.http.JSONResponses.NO_MESSAGE;
-import static nxt.http.JSONResponses.PRUNED_TRANSACTION;
-import static nxt.http.JSONResponses.UNKNOWN_TRANSACTION;
+import static ruv.http.JSONResponses.NO_MESSAGE;
+import static ruv.http.JSONResponses.PRUNED_TRANSACTION;
+import static ruv.http.JSONResponses.UNKNOWN_TRANSACTION;
 
 public final class ReadMessage extends APIServlet.APIRequestHandler {
 
@@ -48,13 +48,13 @@ public final class ReadMessage extends APIServlet.APIRequestHandler {
 
         long transactionId = ParameterParser.getUnsignedLong(req, "transaction", true);
         boolean retrieve = "true".equalsIgnoreCase(req.getParameter("retrieve"));
-        Transaction transaction = Nxt.getBlockchain().getTransaction(transactionId);
+        Transaction transaction = Ruv.getBlockchain().getTransaction(transactionId);
         if (transaction == null) {
             return UNKNOWN_TRANSACTION;
         }
         PrunableMessage prunableMessage = PrunableMessage.getPrunableMessage(transactionId);
         if (prunableMessage == null && (transaction.getPrunablePlainMessage() != null || transaction.getPrunableEncryptedMessage() != null) && retrieve) {
-            if (Nxt.getBlockchainProcessor().restorePrunedTransaction(transactionId) == null) {
+            if (Ruv.getBlockchainProcessor().restorePrunedTransaction(transactionId) == null) {
                 return PRUNED_TRANSACTION;
             }
             prunableMessage = PrunableMessage.getPrunableMessage(transactionId);

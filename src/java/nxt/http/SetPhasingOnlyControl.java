@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,13 +14,13 @@
  *
  */
 
-package nxt.http;
+package ruv.http;
 
-import nxt.Account;
-import nxt.Attachment;
-import nxt.Constants;
-import nxt.NxtException;
-import nxt.PhasingParams;
+import ruv.Account;
+import ruv.Attachment;
+import ruv.Constants;
+import ruv.RuvException;
+import ruv.PhasingParams;
 import org.json.simple.JSONStreamAware;
 
 import javax.servlet.http.HttpServletRequest;
@@ -44,7 +44,7 @@ import javax.servlet.http.HttpServletRequest;
  * <li>controlMinBalanceModel - The expected minimum balance model. Possible values:
  * <ul>
  *  <li>NONE(0) No minimum balance restriction</li>
- *  <li>NQT(1) Nxt balance threshold</li>
+ *  <li>NQT(1) Ruv balance threshold</li>
  *  <li>ASSET(2) Asset balance threshold</li>
  *  <li>CURRENCY(3) Currency balance threshold</li>
  * </ul>
@@ -69,7 +69,7 @@ public final class SetPhasingOnlyControl extends CreateTransaction {
     }
 
     @Override
-    protected JSONStreamAware processRequest(HttpServletRequest request) throws NxtException {
+    protected JSONStreamAware processRequest(HttpServletRequest request) throws RuvException {
         Account account = ParameterParser.getSenderAccount(request);
         PhasingParams phasingParams = parsePhasingParams(request, "control");
         long maxFees = ParameterParser.getLong(request, "controlMaxFees", 0, Constants.MAX_BALANCE_NQT, false);

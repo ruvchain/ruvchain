@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,18 +14,18 @@
  *
  */
 
-package nxt;
+package ruv;
 
-import nxt.db.DbClause;
-import nxt.db.DbIterator;
-import nxt.db.DbKey;
-import nxt.db.DbUtils;
-import nxt.db.VersionedEntityDbTable;
-import nxt.db.VersionedPersistentDbTable;
-import nxt.db.VersionedPrunableDbTable;
-import nxt.db.VersionedValuesDbTable;
-import nxt.util.Logger;
-import nxt.util.Search;
+import ruv.db.DbClause;
+import ruv.db.DbIterator;
+import ruv.db.DbKey;
+import ruv.db.DbUtils;
+import ruv.db.VersionedEntityDbTable;
+import ruv.db.VersionedPersistentDbTable;
+import ruv.db.VersionedPrunableDbTable;
+import ruv.db.VersionedValuesDbTable;
+import ruv.util.Logger;
+import ruv.util.Search;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -70,7 +70,7 @@ public class TaggedData {
                 try (Connection con = db.getConnection();
                      PreparedStatement pstmtSelect = con.prepareStatement("SELECT parsed_tags "
                              + "FROM tagged_data WHERE transaction_timestamp < ? AND latest = TRUE ")) {
-                    int expiration = Nxt.getEpochTime() - Constants.MAX_PRUNABLE_LIFETIME;
+                    int expiration = Ruv.getEpochTime() - Constants.MAX_PRUNABLE_LIFETIME;
                     pstmtSelect.setInt(1, expiration);
                     Map<String,Integer> expiredTags = new HashMap<>();
                     try (ResultSet rs = pstmtSelect.executeQuery()) {
@@ -116,7 +116,7 @@ public class TaggedData {
                 int i = 0;
                 pstmt.setLong(++i, this.id);
                 pstmt.setInt(++i, this.timestamp);
-                pstmt.setInt(++i, Nxt.getBlockchain().getHeight());
+                pstmt.setInt(++i, Ruv.getBlockchain().getHeight());
                 pstmt.executeUpdate();
             }
         }
@@ -195,7 +195,7 @@ public class TaggedData {
             for (String tagValue : taggedData.getParsedTags()) {
                 Tag tag = tagTable.get(tagDbKeyFactory.newKey(tagValue));
                 if (tag == null) {
-                    tag = new Tag(tagValue, Nxt.getBlockchain().getHeight());
+                    tag = new Tag(tagValue, Ruv.getBlockchain().getHeight());
                 }
                 tag.count += 1;
                 tagTable.insert(tag);
@@ -301,7 +301,7 @@ public class TaggedData {
                 int i = 0;
                 pstmt.setLong(++i, taggedDataId);
                 pstmt.setLong(++i, extendId);
-                pstmt.setInt(++i, Nxt.getBlockchain().getHeight());
+                pstmt.setInt(++i, Ruv.getBlockchain().getHeight());
                 pstmt.executeUpdate();
             }
         }
@@ -369,7 +369,7 @@ public class TaggedData {
     private int height;
 
     public TaggedData(Transaction transaction, Attachment.TaggedDataAttachment attachment) {
-        this(transaction, attachment, Nxt.getBlockchain().getLastBlockTimestamp(), Nxt.getBlockchain().getHeight());
+        this(transaction, attachment, Ruv.getBlockchain().getLastBlockTimestamp(), Ruv.getBlockchain().getHeight());
     }
 
     private TaggedData(Transaction transaction, Attachment.TaggedDataAttachment attachment, int blockTimestamp, int height) {
@@ -484,7 +484,7 @@ public class TaggedData {
     }
 
     static void add(TransactionImpl transaction, Attachment.TaggedDataUpload attachment) {
-        if (Nxt.getEpochTime() - transaction.getTimestamp() < Constants.MAX_PRUNABLE_LIFETIME && attachment.getData() != null) {
+        if (Ruv.getEpochTime() - transaction.getTimestamp() < Constants.MAX_PRUNABLE_LIFETIME && attachment.getData() != null) {
             TaggedData taggedData = taggedDataTable.get(transaction.getDbKey());
             if (taggedData == null) {
                 taggedData = new TaggedData(transaction, attachment);
@@ -509,7 +509,7 @@ public class TaggedData {
         List<Long> extendTransactionIds = extendTable.get(dbKey);
         extendTransactionIds.add(transaction.getId());
         extendTable.insert(taggedDataId, extendTransactionIds);
-        if (Nxt.getEpochTime() - Constants.MAX_PRUNABLE_LIFETIME < timestamp.timestamp) {
+        if (Ruv.getEpochTime() - Constants.MAX_PRUNABLE_LIFETIME < timestamp.timestamp) {
             TaggedData taggedData = taggedDataTable.get(dbKey);
             if (taggedData == null && attachment.getData() != null) {
                 TransactionImpl uploadTransaction = TransactionDb.findTransaction(taggedDataId);
@@ -518,8 +518,8 @@ public class TaggedData {
             }
             if (taggedData != null) {
                 taggedData.transactionTimestamp = timestamp.timestamp;
-                taggedData.blockTimestamp = Nxt.getBlockchain().getLastBlockTimestamp();
-                taggedData.height = Nxt.getBlockchain().getHeight();
+                taggedData.blockTimestamp = Ruv.getBlockchain().getLastBlockTimestamp();
+                taggedData.height = Ruv.getBlockchain().getHeight();
                 taggedDataTable.insert(taggedData);
             }
         }

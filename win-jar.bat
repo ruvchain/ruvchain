@@ -1,7 +1,7 @@
-java -cp classes nxt.tools.ManifestGenerator
-del nxt.jar
-jar cfm nxt.jar resource\nxt.manifest.mf -C classes .
-del nxtservice.jar
-jar cfm nxtservice.jar resource\nxtservice.manifest.mf -C classes .
+java -cp classes ruv.tools.ManifestGenerator
+del ruv.jar
+jar cfm ruv.jar resource\ruv.manifest.mf -C classes .
+del ruvservice.jar
+jar cfm ruvservice.jar resource\ruvservice.manifest.mf -C classes .
 
 echo "jar files generated successfully"

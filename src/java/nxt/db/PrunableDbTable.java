@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2018 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,11 +14,11 @@
  *
  */
 
-package nxt.db;
+package ruv.db;
 
-import nxt.Constants;
-import nxt.Nxt;
-import nxt.util.Logger;
+import ruv.Constants;
+import ruv.Ruv;
+import ruv.util.Logger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -48,7 +48,7 @@ public abstract class PrunableDbTable<T> extends PersistentDbTable<T> {
         if (Constants.ENABLE_PRUNING) {
             try (Connection con = db.getConnection();
                  PreparedStatement pstmt = con.prepareStatement("DELETE FROM " + table + " WHERE transaction_timestamp < ? LIMIT " + Constants.BATCH_COMMIT_SIZE)) {
-                pstmt.setInt(1, Nxt.getEpochTime() - Constants.MAX_PRUNABLE_LIFETIME);
+                pstmt.setInt(1, Ruv.getEpochTime() - Constants.MAX_PRUNABLE_LIFETIME);
                 int deleted;
                 do {
                     deleted = pstmt.executeUpdate();

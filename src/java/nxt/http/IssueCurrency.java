@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,23 +14,23 @@
  *
  */
 
-package nxt.http;
+package ruv.http;
 
-import nxt.Account;
-import nxt.Attachment;
-import nxt.Constants;
-import nxt.CurrencyType;
-import nxt.NxtException;
-import nxt.util.Convert;
+import ruv.Account;
+import ruv.Attachment;
+import ruv.Constants;
+import ruv.CurrencyType;
+import ruv.RuvException;
+import ruv.util.Convert;
 import org.json.simple.JSONStreamAware;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Locale;
 
 /**
- * Issue a currency on the NXT blockchain
+ * Issue a currency on the RUV blockchain
  * <p>
- * A currency is the basic block of the NXT Monetary System it can be exchanged with NXT, transferred between accounts,
+ * A currency is the basic block of the RUV Monetary System it can be exchanged with RUV, transferred between accounts,
  * minted using proof of work methods, reserved and claimed as a crowd funding tool.
  * <p>
  * Pass the following parameters in order to issue a currency
@@ -45,41 +45,41 @@ import java.util.Locale;
  * <li>initialSupply - the number of currency units created when the currency is issued (pre-mine)
  * <li>decimals - currency units are divisible to this number of decimals
  * <li>issuanceHeight - the blockchain height at which the currency would become active
- * For {@link nxt.CurrencyType#RESERVABLE} currency
- * <li>minReservePerUnitNQT - the minimum NXT value per unit to allow the currency to become active
- * For {@link nxt.CurrencyType#RESERVABLE} currency
+ * For {@link ruv.CurrencyType#RESERVABLE} currency
+ * <li>minReservePerUnitNQT - the minimum RUV value per unit to allow the currency to become active
+ * For {@link ruv.CurrencyType#RESERVABLE} currency
  * <li>reserveSupply - the number of units that will be distributed to founders when currency becomes active (less initialSupply)
- * For {@link nxt.CurrencyType#RESERVABLE} currency
+ * For {@link ruv.CurrencyType#RESERVABLE} currency
  * <li>minDifficulty - for mint-able currency, the exponent of the initial difficulty.
- * For {@link nxt.CurrencyType#MINTABLE} currency
+ * For {@link ruv.CurrencyType#MINTABLE} currency
  * <li>maxDifficulty - for mint-able currency, the exponent of the final difficulty.
- * For {@link nxt.CurrencyType#MINTABLE} currency
- * <li>algorithm - the hashing {@link nxt.crypto.HashFunction algorithm} used for minting.
- * For {@link nxt.CurrencyType#MINTABLE} currency
+ * For {@link ruv.CurrencyType#MINTABLE} currency
+ * <li>algorithm - the hashing {@link ruv.crypto.HashFunction algorithm} used for minting.
+ * For {@link ruv.CurrencyType#MINTABLE} currency
  * </ul>
  * <p>
  * Constraints
  * <ul>
- * <li>A given currency can not be neither {@link nxt.CurrencyType#EXCHANGEABLE} nor {@link nxt.CurrencyType#CLAIMABLE}.<br>
- * <li>A {@link nxt.CurrencyType#RESERVABLE} currency becomes active once the blockchain height reaches the currency issuance height.<br>
+ * <li>A given currency can not be neither {@link ruv.CurrencyType#EXCHANGEABLE} nor {@link ruv.CurrencyType#CLAIMABLE}.<br>
+ * <li>A {@link ruv.CurrencyType#RESERVABLE} currency becomes active once the blockchain height reaches the currency issuance height.<br>
  * At this time, if the minReservePerUnitNQT has not been reached the currency issuance is cancelled and
  * funds are returned to the founders.<br>
  * Otherwise the currency becomes active and remains active until deleted, provided deletion is possible.
- * When a {@link nxt.CurrencyType#RESERVABLE} becomes active, in case it is {@link nxt.CurrencyType#CLAIMABLE} the NXT used for
+ * When a {@link ruv.CurrencyType#RESERVABLE} becomes active, in case it is {@link ruv.CurrencyType#CLAIMABLE} the RUV used for
  * reserving the currency are locked until they are claimed back.
- * When a {@link nxt.CurrencyType#RESERVABLE} becomes active, in case it is non {@link nxt.CurrencyType#CLAIMABLE} the NXT used for
+ * When a {@link ruv.CurrencyType#RESERVABLE} becomes active, in case it is non {@link ruv.CurrencyType#CLAIMABLE} the RUV used for
  * reserving the currency are sent to the issuer account as crowd funding.
- * <li>When issuing a {@link nxt.CurrencyType#MINTABLE} currency, the number of units per {@link nxt.http.CurrencyMint} cannot exceed 0.01% of the
+ * <li>When issuing a {@link ruv.CurrencyType#MINTABLE} currency, the number of units per {@link ruv.http.CurrencyMint} cannot exceed 0.01% of the
  * total supply. Therefore make sure totalSupply &gt; 10000 or otherwise the currency cannot be minted
  * <li>difficulty is calculated as follows<br>
  * difficulty of minting the first unit is based on 2^minDifficulty<br>
  * difficulty of minting the last unit is based on 2^maxDifficulty<br>
  * difficulty increases linearly from min to max based on the ratio between the current number of units and the total supply<br>
- * difficulty increases linearly with the number units minted per {@link nxt.http.CurrencyMint}<br>
+ * difficulty increases linearly with the number units minted per {@link ruv.http.CurrencyMint}<br>
  * </ul>
  *
- * @see nxt.CurrencyType
- * @see nxt.crypto.HashFunction
+ * @see ruv.CurrencyType
+ * @see ruv.crypto.HashFunction
  */
 public final class IssueCurrency extends CreateTransaction {
 
@@ -92,7 +92,7 @@ public final class IssueCurrency extends CreateTransaction {
     }
 
     @Override
-    protected JSONStreamAware processRequest(HttpServletRequest req) throws NxtException {
+    protected JSONStreamAware processRequest(HttpServletRequest req) throws RuvException {
         String name = Convert.nullToEmpty(req.getParameter("name"));
         String code = Convert.nullToEmpty(req.getParameter("code"));
         String description = Convert.nullToEmpty(req.getParameter("description"));

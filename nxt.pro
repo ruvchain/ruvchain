@@ -1,5 +1,5 @@
 -injars classes
--outjars nxt/classes
+-outjars ruv/classes
 
 -libraryjars <java.home>/lib/rt.jar
 -libraryjars <java.home>/lib/jce.jar
@@ -8,25 +8,25 @@
 -libraryjars lib
 
 -dontoptimize
--printmapping ../nxt.map
+-printmapping ../ruv.map
 -dontusemixedcaseclassnames
--flattenpackagehierarchy nxt
--repackageclasses nxt
+-flattenpackagehierarchy ruv
+-repackageclasses ruv
 -verbose
 
 -keepattributes EnclosingMethod,Signature,*Annotation*
--keep,allowshrinking class nxt.util.NxtLogManager,nxt.util.MemoryHandler
--keep,includedescriptorclasses class nxt.peer.PeerWebSocket,nxt.db.FullTextTrigger {
+-keep,allowshrinking class ruv.util.RuvLogManager,ruv.util.MemoryHandler
+-keep,includedescriptorclasses class ruv.peer.PeerWebSocket,ruv.db.FullTextTrigger {
     <methods>;
 }
--keep class nxt.env.service.NxtService_ServiceManagement
--keep class * extends nxt.env.DirProvider
--keep class * extends nxt.addons.AddOn
--keep class nxt.addons.AddOn
--keep,includedescriptorclasses class nxtdesktop.JavaScriptBridge, nxtdesktop.DesktopApplication, nxtdesktop.WalletContextMenu {
+-keep class ruv.env.service.RuvService_ServiceManagement
+-keep class * extends ruv.env.DirProvider
+-keep class * extends ruv.addons.AddOn
+-keep class ruv.addons.AddOn
+-keep,includedescriptorclasses class ruvdesktop.JavaScriptBridge, ruvdesktop.DesktopApplication, ruvdesktop.WalletContextMenu {
     <methods>;
 }
--keepclassmembers class nxt.env.RuntimeEnvironment {
+-keepclassmembers class ruv.env.RuntimeEnvironment {
     static boolean isHeadless();
 }
 -keepclassmembers class * {

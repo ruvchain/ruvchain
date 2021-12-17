@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,11 +14,11 @@
  *
  */
 
-package nxt.http;
+package ruv.http;
 
-import nxt.BlockchainTest;
-import nxt.Constants;
-import nxt.util.Logger;
+import ruv.BlockchainTest;
+import ruv.Constants;
+import ruv.util.Logger;
 import org.json.simple.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
@@ -32,14 +32,14 @@ public class LeaseTest extends BlockchainTest {
                 param("secretPhrase", BOB.getSecretPhrase()).
                 param("recipient", ALICE.getStrId()).
                 param("period", "2").
-                param("feeNQT", Constants.ONE_NXT).
+                param("feeNQT", Constants.ONE_RUV).
                 build().invoke();
         Logger.logDebugMessage("leaseBalance: " + response);
         response = new APICall.Builder("leaseBalance").
                 param("secretPhrase", CHUCK.getSecretPhrase()).
                 param("recipient", ALICE.getStrId()).
                 param("period", "3").
-                param("feeNQT", Constants.ONE_NXT).
+                param("feeNQT", Constants.ONE_RUV).
                 build().invoke();
         Logger.logDebugMessage("leaseBalance: " + response);
         generateBlock();
@@ -50,7 +50,7 @@ public class LeaseTest extends BlockchainTest {
                 param("includeEffectiveBalance", "true").
                 build().invoke();
         Logger.logDebugMessage("getLesseeAccount: " + lesseeResponse);
-        Assert.assertEquals(ALICE.getInitialEffectiveBalance(), lesseeResponse.get("effectiveBalanceNXT"));
+        Assert.assertEquals(ALICE.getInitialEffectiveBalance(), lesseeResponse.get("effectiveBalanceRUV"));
 
         // lease is registered
         JSONObject leasedResponse1 = new APICall.Builder("getAccount").
@@ -75,8 +75,8 @@ public class LeaseTest extends BlockchainTest {
                 param("includeEffectiveBalance", "true").
                 build().invoke();
         Logger.logDebugMessage("getLesseeAccount: " + lesseeResponse);
-        Assert.assertEquals((ALICE.getInitialBalance() + BOB.getInitialBalance() + CHUCK.getInitialBalance()) / Constants.ONE_NXT - 2,
-                lesseeResponse.get("effectiveBalanceNXT"));
+        Assert.assertEquals((ALICE.getInitialBalance() + BOB.getInitialBalance() + CHUCK.getInitialBalance()) / Constants.ONE_RUV - 2,
+                lesseeResponse.get("effectiveBalanceRUV"));
         generateBlock();
         generateBlock();
         lesseeResponse = new APICall.Builder("getAccount").
@@ -84,15 +84,15 @@ public class LeaseTest extends BlockchainTest {
                 param("includeEffectiveBalance", "true").
                 build().invoke();
         Logger.logDebugMessage("getLesseeAccount: " + lesseeResponse);
-        Assert.assertEquals((ALICE.getInitialBalance() + CHUCK.getInitialBalance()) / Constants.ONE_NXT - 1 /* fees */,
-                lesseeResponse.get("effectiveBalanceNXT"));
+        Assert.assertEquals((ALICE.getInitialBalance() + CHUCK.getInitialBalance()) / Constants.ONE_RUV - 1 /* fees */,
+                lesseeResponse.get("effectiveBalanceRUV"));
         generateBlock();
         lesseeResponse = new APICall.Builder("getAccount").
                 param("account", ALICE.getRsAccount()).
                 param("includeEffectiveBalance", "true").
                 build().invoke();
         Logger.logDebugMessage("getLesseeAccount: " + lesseeResponse);
-        Assert.assertEquals((ALICE.getInitialBalance()) / Constants.ONE_NXT,
-                lesseeResponse.get("effectiveBalanceNXT"));
+        Assert.assertEquals((ALICE.getInitialBalance()) / Constants.ONE_RUV,
+                lesseeResponse.get("effectiveBalanceRUV"));
     }
 }

@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,29 +14,29 @@
  *
  */
 
-package nxt.util;
+package ruv.util;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.LogManager;
 
 /**
- * Java LogManager extension for use with Nxt
+ * Java LogManager extension for use with Ruv
  */
-public class NxtLogManager extends LogManager {
+public class RuvLogManager extends LogManager {
 
     /** Logging reconfiguration in progress */
     private volatile boolean loggingReconfiguration = false;
 
     /**
-     * Create the Nxt log manager
+     * Create the Ruv log manager
      *
      * We will let the Java LogManager create its shutdown hook so that the
      * shutdown context will be set up properly.  However, we will intercept
      * the reset() method so we can delay the actual shutdown until we are
-     * done terminating the Nxt processes.
+     * done terminating the Ruv processes.
      */
-    public NxtLogManager() {
+    public RuvLogManager() {
         super();
     }
 
@@ -59,7 +59,7 @@ public class NxtLogManager extends LogManager {
      *
      * This method is called to reset the log handlers.  We will forward the
      * call during logging reconfiguration but will ignore it otherwise.
-     * This allows us to continue to use logging facilities during Nxt shutdown.
+     * This allows us to continue to use logging facilities during Ruv shutdown.
      */
     @Override
     public void reset() {
@@ -68,10 +68,10 @@ public class NxtLogManager extends LogManager {
     }
 
     /**
-     * Nxt shutdown is now complete, so call LogManager.reset() to terminate
+     * Ruv shutdown is now complete, so call LogManager.reset() to terminate
      * the log handlers.
      */
-    void nxtShutdown() {
+    void ruvShutdown() {
         super.reset();
     }
 }

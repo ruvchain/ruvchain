@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,15 +14,15 @@
  *
  */
 
-package nxt.http;
+package ruv.http;
 
-import nxt.AccountLedger;
-import nxt.Block;
-import nxt.BlockchainProcessor;
-import nxt.Constants;
-import nxt.Nxt;
-import nxt.peer.Peer;
-import nxt.peer.Peers;
+import ruv.AccountLedger;
+import ruv.Block;
+import ruv.BlockchainProcessor;
+import ruv.Constants;
+import ruv.Ruv;
+import ruv.peer.Peer;
+import ruv.peer.Peers;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -39,21 +39,21 @@ public final class GetBlockchainStatus extends APIServlet.APIRequestHandler {
     @Override
     protected JSONObject processRequest(HttpServletRequest req) {
         JSONObject response = new JSONObject();
-        response.put("application", Nxt.APPLICATION);
-        response.put("version", Nxt.VERSION);
-        response.put("time", Nxt.getEpochTime());
-        Block lastBlock = Nxt.getBlockchain().getLastBlock();
+        response.put("application", Ruv.APPLICATION);
+        response.put("version", Ruv.VERSION);
+        response.put("time", Ruv.getEpochTime());
+        Block lastBlock = Ruv.getBlockchain().getLastBlock();
         response.put("lastBlock", lastBlock.getStringId());
         response.put("cumulativeDifficulty", lastBlock.getCumulativeDifficulty().toString());
         response.put("numberOfBlocks", lastBlock.getHeight() + 1);
-        BlockchainProcessor blockchainProcessor = Nxt.getBlockchainProcessor();
+        BlockchainProcessor blockchainProcessor = Ruv.getBlockchainProcessor();
         Peer lastBlockchainFeeder = blockchainProcessor.getLastBlockchainFeeder();
         response.put("lastBlockchainFeeder", lastBlockchainFeeder == null ? null : lastBlockchainFeeder.getAnnouncedAddress());
         response.put("lastBlockchainFeederHeight", blockchainProcessor.getLastBlockchainFeederHeight());
         response.put("isScanning", blockchainProcessor.isScanning());
         response.put("isDownloading", blockchainProcessor.isDownloading());
         response.put("maxRollback", Constants.MAX_ROLLBACK);
-        response.put("currentMinRollbackHeight", Nxt.getBlockchainProcessor().getMinRollbackHeight());
+        response.put("currentMinRollbackHeight", Ruv.getBlockchainProcessor().getMinRollbackHeight());
         response.put("isTestnet", Constants.isTestnet);
         response.put("maxPrunableLifetime", Constants.MAX_PRUNABLE_LIFETIME);
         response.put("includeExpiredPrunable", Constants.INCLUDE_EXPIRED_PRUNABLE);

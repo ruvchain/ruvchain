@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,9 +14,9 @@
  *
  */
 
-package nxt.util;
+package ruv.util;
 
-import nxt.Nxt;
+import ruv.Ruv;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -25,7 +25,7 @@ import java.util.Properties;
 import java.util.logging.LogManager;
 
 /**
- * Handle logging for the Nxt node server
+ * Handle logging for the Ruv node server
  */
 public final class Logger {
 
@@ -64,23 +64,23 @@ public final class Logger {
      *
      * The existing Java logging configuration will be used if the Java logger has already
      * been initialized.  Otherwise, we will configure our own log manager and log handlers.
-     * The nxt/conf/logging-default.properties and nxt/conf/logging.properties configuration
+     * The ruv/conf/logging-default.properties and ruv/conf/logging.properties configuration
      * files will be used.  Entries in logging.properties will override entries in
      * logging-default.properties.
      */
     static {
         String oldManager = System.getProperty("java.util.logging.manager");
-        System.setProperty("java.util.logging.manager", "nxt.util.NxtLogManager");
-        if (!(LogManager.getLogManager() instanceof NxtLogManager)) {
+        System.setProperty("java.util.logging.manager", "ruv.util.RuvLogManager");
+        if (!(LogManager.getLogManager() instanceof RuvLogManager)) {
             System.setProperty("java.util.logging.manager",
                     (oldManager != null ? oldManager : "java.util.logging.LogManager"));
         }
-        if (! Boolean.getBoolean("nxt.doNotConfigureLogging")) {
+        if (! Boolean.getBoolean("ruv.doNotConfigureLogging")) {
             try {
                 Properties loggingProperties = new Properties();
-                Nxt.loadProperties(loggingProperties, "logging-default.properties", true);
-                Nxt.loadProperties(loggingProperties, "logging.properties", false);
-                Nxt.updateLogFileHandler(loggingProperties);
+                Ruv.loadProperties(loggingProperties, "logging-default.properties", true);
+                Ruv.loadProperties(loggingProperties, "logging.properties", false);
+                Ruv.updateLogFileHandler(loggingProperties);
                 if (loggingProperties.size() > 0) {
                     ByteArrayOutputStream outStream = new ByteArrayOutputStream();
                     loggingProperties.store(outStream, "logging properties");
@@ -94,9 +94,9 @@ public final class Logger {
                 throw new RuntimeException("Error loading logging properties", e);
             }
         }
-        log = org.slf4j.LoggerFactory.getLogger(nxt.Nxt.class);
-        enableStackTraces = Nxt.getBooleanProperty("nxt.enableStackTraces");
-        enableLogTraceback = Nxt.getBooleanProperty("nxt.enableLogTraceback");
+        log = org.slf4j.LoggerFactory.getLogger(ruv.Ruv.class);
+        enableStackTraces = Ruv.getBooleanProperty("ruv.enableStackTraces");
+        enableLogTraceback = Ruv.getBooleanProperty("ruv.enableLogTraceback");
         logInfoMessage("logging enabled");
     }
 
@@ -109,8 +109,8 @@ public final class Logger {
      * Logger shutdown
      */
     public static void shutdown() {
-        if (LogManager.getLogManager() instanceof NxtLogManager) {
-            ((NxtLogManager) LogManager.getLogManager()).nxtShutdown();
+        if (LogManager.getLogManager() instanceof RuvLogManager) {
+            ((RuvLogManager) LogManager.getLogManager()).ruvShutdown();
         }
     }
 
@@ -201,7 +201,7 @@ public final class Logger {
     }
 
     public static void logShutdownMessage(String message) {
-        if (LogManager.getLogManager() instanceof NxtLogManager) {
+        if (LogManager.getLogManager() instanceof RuvLogManager) {
             logMessage(message);
         } else {
             System.out.println(message);
@@ -209,7 +209,7 @@ public final class Logger {
     }
 
     public static void logShutdownMessage(String message, Exception e) {
-        if (LogManager.getLogManager() instanceof NxtLogManager) {
+        if (LogManager.getLogManager() instanceof RuvLogManager) {
             logMessage(message, e);
         } else {
             System.out.println(message);

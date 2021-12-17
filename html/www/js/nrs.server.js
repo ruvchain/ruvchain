@@ -1,12 +1,12 @@
 /******************************************************************************
- * Copyright © 2013-2016 The Nxt Core Developers.                             *
+ * Copyright © 2013-2016 The Ruv Core Developers.                             *
  * Copyright © 2016-2019 Jelurida IP B.V.                                     *
  *                                                                            *
  * See the LICENSE.txt file at the top-level directory of this distribution   *
  * for licensing information.                                                 *
  *                                                                            *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,*
- * no part of the Nxt software, including this file, may be copied, modified, *
+ * no part of the Ruv software, including this file, may be copied, modified, *
  * propagated, or distributed except according to the terms contained in the  *
  * LICENSE.txt file.                                                          *
  *                                                                            *
@@ -57,32 +57,32 @@ var NRS = (function (NRS, $, undefined) {
                 }
             }
         });
-        //convert NXT to NQT...
+        //convert RUV to NQT...
         var field = "N/A";
         try {
-            var nxtFields = [
-                ["feeNXT", "feeNQT"],
-                ["amountNXT", "amountNQT"],
-                ["priceNXT", "priceNQT"],
-                ["refundNXT", "refundNQT"],
-                ["discountNXT", "discountNQT"],
-                ["phasingQuorumNXT", "phasingQuorum"],
-                ["phasingMinBalanceNXT", "phasingMinBalance"],
-                ["controlQuorumNXT", "controlQuorum"],
-                ["controlMinBalanceNXT", "controlMinBalance"],
-                ["controlMaxFeesNXT", "controlMaxFees"],
-                ["minBalanceNXT", "minBalance"],
-                ["shufflingAmountNXT", "amount"],
-                ["monitorAmountNXT", "amount"],
-                ["monitorThresholdNXT", "threshold"]
+            var ruvFields = [
+                ["feeRUV", "feeNQT"],
+                ["amountRUV", "amountNQT"],
+                ["priceRUV", "priceNQT"],
+                ["refundRUV", "refundNQT"],
+                ["discountRUV", "discountNQT"],
+                ["phasingQuorumRUV", "phasingQuorum"],
+                ["phasingMinBalanceRUV", "phasingMinBalance"],
+                ["controlQuorumRUV", "controlQuorum"],
+                ["controlMinBalanceRUV", "controlMinBalance"],
+                ["controlMaxFeesRUV", "controlMaxFees"],
+                ["minBalanceRUV", "minBalance"],
+                ["shufflingAmountRUV", "amount"],
+                ["monitorAmountRUV", "amount"],
+                ["monitorThresholdRUV", "threshold"]
             ];
 
-            for (i = 0; i < nxtFields.length; i++) {
-                var nxtField = nxtFields[i][0];
-                var nqtField = nxtFields[i][1];
-                if (nxtField in data) {
-                    data[nqtField] = NRS.convertToNQT(data[nxtField]);
-                    delete data[nxtField];
+            for (i = 0; i < ruvFields.length; i++) {
+                var ruvField = ruvFields[i][0];
+                var nqtField = ruvFields[i][1];
+                if (ruvField in data) {
+                    data[nqtField] = NRS.convertToNQT(data[ruvField]);
+                    delete data[ruvField];
                 }
             }
         } catch (err) {
@@ -139,7 +139,7 @@ var NRS = (function (NRS, $, undefined) {
                 callback({
                     "errorCode": 1,
                     "errorDescription": $.t("error_fee_exceeds_max_account_control_fee", {
-                        "maxFee": NRS.convertToNXT(phasingControl.maxFees), "symbol": NRS.constants.COIN_SYMBOL
+                        "maxFee": NRS.convertToRUV(phasingControl.maxFees), "symbol": NRS.constants.COIN_SYMBOL
                     })
                 });
                 return;
@@ -365,7 +365,7 @@ var NRS = (function (NRS, $, undefined) {
         }
         var url;
         if (options.remoteNode) {
-            url = options.remoteNode.getUrl() + "/nxt";
+            url = options.remoteNode.getUrl() + "/ruv";
         } else {
             url = NRS.getRequestPath(options.noProxy);
         }
@@ -1617,7 +1617,7 @@ var NRS = (function (NRS, $, undefined) {
 
     function addAddressData(data) {
         if (typeof data == "object" && ("recipient" in data)) {
-            var address = new NxtAddress();
+            var address = new RuvAddress();
             if (NRS.isRsAccount(data.recipient)) {
                 data.recipientRS = data.recipient;
                 if (address.set(data.recipient)) {

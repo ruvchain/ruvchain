@@ -1,12 +1,12 @@
 /******************************************************************************
- * Copyright © 2013-2016 The Nxt Core Developers.                             *
+ * Copyright © 2013-2016 The Ruv Core Developers.                             *
  * Copyright © 2016-2019 Jelurida IP B.V.                                     *
  *                                                                            *
  * See the LICENSE.txt file at the top-level directory of this distribution   *
  * for licensing information.                                                 *
  *                                                                            *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,*
- * no part of the Nxt software, including this file, may be copied, modified, *
+ * no part of the Ruv software, including this file, may be copied, modified, *
  * propagated, or distributed except according to the terms contained in the  *
  * LICENSE.txt file.                                                          *
  *                                                                            *
@@ -213,7 +213,7 @@ var NRS = (function(NRS, $) {
 
 		//solomon reed. Btw, this regex can be shortened..
 		if (NRS.isRsAccount(account)) {
-			var address = new NxtAddress();
+			var address = new RuvAddress();
 
 			if (address.set(account)) {
 				NRS.getAccountError(account, function(response) {
@@ -313,7 +313,7 @@ var NRS = (function(NRS, $) {
 					var alias = String(response.aliasURI);
 					var timestamp = response.timestamp;
 
-					var regex_1 = /acct:(.*)@nxt/;
+					var regex_1 = /acct:(.*)@ruv/;
 					var regex_2 = /nacc:(.*)/;
 
 					var match = alias.match(regex_1);
@@ -326,7 +326,7 @@ var NRS = (function(NRS, $) {
 						match[1] = String(match[1]).toUpperCase();
 
 						if (NRS.isNumericAccount(match[1])) {
-							var address = new NxtAddress();
+							var address = new RuvAddress();
 
 							if (address.set(match[1])) {
 								match[1] = address.toString();

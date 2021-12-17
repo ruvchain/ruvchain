@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,21 +14,21 @@
  *
  */
 
-package nxt;
+package ruv;
 
-import nxt.crypto.Crypto;
-import nxt.db.DbIterator;
-import nxt.db.DerivedDbTable;
-import nxt.db.FilteringIterator;
-import nxt.db.FullTextTrigger;
-import nxt.peer.Peer;
-import nxt.peer.Peers;
-import nxt.util.Convert;
-import nxt.util.JSON;
-import nxt.util.Listener;
-import nxt.util.Listeners;
-import nxt.util.Logger;
-import nxt.util.ThreadPool;
+import ruv.crypto.Crypto;
+import ruv.db.DbIterator;
+import ruv.db.DerivedDbTable;
+import ruv.db.FilteringIterator;
+import ruv.db.FullTextTrigger;
+import ruv.peer.Peer;
+import ruv.peer.Peers;
+import ruv.util.Convert;
+import ruv.util.JSON;
+import ruv.util.Listener;
+import ruv.util.Listeners;
+import ruv.util.Logger;
+import ruv.util.ThreadPool;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
@@ -82,10 +82,10 @@ final class BlockchainProcessorImpl implements BlockchainProcessor {
 
     private final ExecutorService networkService = Executors.newCachedThreadPool();
     private final List<DerivedDbTable> derivedTables = new CopyOnWriteArrayList<>();
-    private final boolean trimDerivedTables = Nxt.getBooleanProperty("nxt.trimDerivedTables");
-    private final int defaultNumberOfForkConfirmations = Nxt.getIntProperty(Constants.isTestnet
-            ? "nxt.testnetNumberOfForkConfirmations" : "nxt.numberOfForkConfirmations");
-    private final boolean simulateEndlessDownload = Nxt.getBooleanProperty("nxt.simulateEndlessDownload");
+    private final boolean trimDerivedTables = Ruv.getBooleanProperty("ruv.trimDerivedTables");
+    private final int defaultNumberOfForkConfirmations = Ruv.getIntProperty(Constants.isTestnet
+            ? "ruv.testnetNumberOfForkConfirmations" : "ruv.numberOfForkConfirmations");
+    private final boolean simulateEndlessDownload = Ruv.getBooleanProperty("ruv.simulateEndlessDownload");
 
     private int initialScanHeight;
     private volatile int lastTrimHeight;
@@ -144,7 +144,7 @@ final class BlockchainProcessorImpl implements BlockchainProcessor {
                 //
                 // Restore prunable data
                 //
-                int now = Nxt.getEpochTime();
+                int now = Ruv.getEpochTime();
                 if (!isRestoring && !prunableTransactions.isEmpty() && now - lastRestoreTime > 60 * 60) {
                     isRestoring = true;
                     lastRestoreTime = now;
@@ -288,7 +288,7 @@ final class BlockchainProcessorImpl implements BlockchainProcessor {
                     blockchain.updateUnlock();
                 }
 
-            } catch (NxtException.StopException e) {
+            } catch (RuvException.StopException e) {
                 Logger.logMessage("Blockchain download stopped: " + e.getMessage());
                 throw new InterruptedException("Blockchain download stopped");
             } catch (Exception e) {
@@ -675,7 +675,7 @@ final class BlockchainProcessorImpl implements BlockchainProcessor {
                     if (--count <= 0)
                         break;
                 }
-            } catch (RuntimeException | NxtException.NotValidException e) {
+            } catch (RuntimeException | RuvException.NotValidException e) {
                 Logger.logDebugMessage("Failed to parse block: " + e.toString(), e);
                 peer.blacklist(e);
                 stop = start + blockList.size();
@@ -878,7 +878,7 @@ final class BlockchainProcessorImpl implements BlockchainProcessor {
                     if (transactions == null || transactions.isEmpty()) {
                         return;
                     }
-                    List<Transaction> processed = Nxt.getTransactionProcessor().restorePrunableData(transactions);
+                    List<Transaction> processed = Ruv.getTransactionProcessor().restorePrunableData(transactions);
                     //
                     // Remove transactions that have been successfully processed
                     //
@@ -887,7 +887,7 @@ final class BlockchainProcessorImpl implements BlockchainProcessor {
                     }
                 }
                 Logger.logDebugMessage("Done retrieving prunable transactions from " + peer.getHost());
-            } catch (NxtException.ValidationException e) {
+            } catch (RuvException.ValidationException e) {
                 Logger.logErrorMessage("Peer " + peer.getHost() + " returned invalid prunable transaction", e);
                 peer.blacklist(e);
             } catch (RuntimeException e) {
@@ -936,7 +936,7 @@ final class BlockchainProcessorImpl implements BlockchainProcessor {
     };
 
     private BlockchainProcessorImpl() {
-        final int trimFrequency = Nxt.getIntProperty("nxt.trimFrequency");
+        final int trimFrequency = Ruv.getIntProperty("ruv.trimFrequency");
         blockListeners.addListener(block -> {
             if (block.getHeight() % 5000 == 0) {
                 Logger.logMessage("processed block " + block.getHeight());
@@ -969,8 +969,8 @@ final class BlockchainProcessorImpl implements BlockchainProcessor {
         ThreadPool.runBeforeStart(() -> {
             alreadyInitialized = true;
             addGenesisBlock();
-            if (Nxt.getBooleanProperty("nxt.forceScan")) {
-                scan(0, Nxt.getBooleanProperty("nxt.forceValidate"));
+            if (Ruv.getBooleanProperty("ruv.forceScan")) {
+                scan(0, Ruv.getBooleanProperty("ruv.forceValidate"));
             } else {
                 boolean rescan;
                 boolean validate;
@@ -1010,7 +1010,7 @@ final class BlockchainProcessorImpl implements BlockchainProcessor {
     @Override
     public void registerDerivedTable(DerivedDbTable table) {
         if (alreadyInitialized) {
-            throw new IllegalStateException("Too late to register table " + table + ", must have done it in Nxt.Init");
+            throw new IllegalStateException("Too late to register table " + table + ", must have done it in Ruv.Init");
         }
         derivedTables.add(table);
     }
@@ -1090,7 +1090,7 @@ final class BlockchainProcessorImpl implements BlockchainProcessor {
     }
 
     @Override
-    public void processPeerBlock(JSONObject request) throws NxtException {
+    public void processPeerBlock(JSONObject request) throws RuvException {
         BlockImpl block = BlockImpl.parseBlock(request);
         BlockImpl lastBlock = blockchain.getLastBlock();
         if (block.getPreviousBlockId() == lastBlock.getId()) {
@@ -1154,7 +1154,7 @@ final class BlockchainProcessorImpl implements BlockchainProcessor {
     public int restorePrunedData() {
         Db.db.beginTransaction();
         try (Connection con = Db.db.getConnection()) {
-            int now = Nxt.getEpochTime();
+            int now = Ruv.getEpochTime();
             int minTimestamp = Math.max(1, now - Constants.MAX_PRUNABLE_LIFETIME);
             int maxTimestamp = Math.max(minTimestamp, now - Constants.MIN_PRUNABLE_LIFETIME) - 1;
             List<TransactionDb.PrunableTransaction> transactionList =
@@ -1227,7 +1227,7 @@ final class BlockchainProcessorImpl implements BlockchainProcessor {
                 continue;
             }
             try {
-                List<Transaction> processed = Nxt.getTransactionProcessor().restorePrunableData(transactions);
+                List<Transaction> processed = Ruv.getTransactionProcessor().restorePrunableData(transactions);
                 if (processed.isEmpty()) {
                     continue;
                 }
@@ -1235,7 +1235,7 @@ final class BlockchainProcessorImpl implements BlockchainProcessor {
                     prunableTransactions.remove(transactionId);
                 }
                 return processed.get(0);
-            } catch (NxtException.NotValidException e) {
+            } catch (RuvException.NotValidException e) {
                 Logger.logErrorMessage("Peer " + peer.getHost() + " returned invalid prunable transaction", e);
                 peer.blacklist(e);
             }
@@ -1289,7 +1289,7 @@ final class BlockchainProcessorImpl implements BlockchainProcessor {
 
     private void pushBlock(final BlockImpl block) throws BlockNotAcceptedException {
 
-        int curTime = Nxt.getEpochTime();
+        int curTime = Ruv.getEpochTime();
 
         blockchain.writeLock();
         try {
@@ -1359,7 +1359,7 @@ final class BlockchainProcessorImpl implements BlockchainProcessor {
                         Logger.logDebugMessage("At height " + height + " phased transaction " + phasedTransaction.getStringId() + " is duplicate, will not apply");
                         invalidPhasedTransactions.add(phasedTransaction);
                     }
-                } catch (NxtException.ValidationException e) {
+                } catch (RuvException.ValidationException e) {
                     Logger.logDebugMessage("At height " + height + " phased transaction " + phasedTransaction.getStringId() + " no longer passes validation: "
                             + e.getMessage() + ", will not apply");
                     invalidPhasedTransactions.add(phasedTransaction);
@@ -1393,7 +1393,7 @@ final class BlockchainProcessorImpl implements BlockchainProcessor {
         }
         if (!block.verifyGenerationSignature() && !Generator.allowsFakeForging(block.getGeneratorPublicKey())) {
             Account generatorAccount = Account.getAccount(block.getGeneratorId());
-            long generatorBalance = generatorAccount == null ? 0 : generatorAccount.getEffectiveBalanceNXT();
+            long generatorBalance = generatorAccount == null ? 0 : generatorAccount.getEffectiveBalanceRUV();
             throw new BlockNotAcceptedException("Generation signature verification failed, effective balance " + generatorBalance, block);
         }
         if (!block.verifyBlockSignature()) {
@@ -1444,7 +1444,7 @@ final class BlockchainProcessorImpl implements BlockchainProcessor {
                 }
                 try {
                     transaction.validate();
-                } catch (NxtException.ValidationException e) {
+                } catch (RuvException.ValidationException e) {
                     throw new TransactionNotAcceptedException(e.getMessage(), transaction);
                 }
             }
@@ -1489,7 +1489,7 @@ final class BlockchainProcessorImpl implements BlockchainProcessor {
             block.apply();
             validPhasedTransactions.forEach(transaction -> transaction.getPhasing().countVotes(transaction));
             invalidPhasedTransactions.forEach(transaction -> transaction.getPhasing().reject(transaction));
-            int fromTimestamp = Nxt.getEpochTime() - Constants.MAX_PRUNABLE_LIFETIME;
+            int fromTimestamp = Ruv.getEpochTime() - Constants.MAX_PRUNABLE_LIFETIME;
             for (TransactionImpl transaction : block.getTransactions()) {
                 try {
                     transaction.apply();
@@ -1546,7 +1546,7 @@ final class BlockchainProcessorImpl implements BlockchainProcessor {
                     try {
                         transaction.validate();
                         transaction.getPhasing().tryCountVotes(transaction, duplicates);
-                    } catch (NxtException.ValidationException e) {
+                    } catch (RuvException.ValidationException e) {
                         Logger.logDebugMessage("At height " + block.getHeight() + " phased transaction " + transaction.getStringId()
                                 + " no longer passes validation: " + e.getMessage() + ", cannot finish early");
                     }
@@ -1680,7 +1680,7 @@ final class BlockchainProcessorImpl implements BlockchainProcessor {
                 }
                 try {
                     unconfirmedTransaction.getTransaction().validate();
-                } catch (NxtException.ValidationException e) {
+                } catch (RuvException.ValidationException e) {
                     continue;
                 }
                 if (unconfirmedTransaction.getTransaction().attachmentIsDuplicate(duplicates, true)) {
@@ -1710,7 +1710,7 @@ final class BlockchainProcessorImpl implements BlockchainProcessor {
                 try {
                     phasedTransaction.validate();
                     phasedTransaction.attachmentIsDuplicate(duplicates, false); // pre-populate duplicates map
-                } catch (NxtException.ValidationException ignore) {
+                } catch (RuvException.ValidationException ignore) {
                 }
             }
         }
@@ -1744,7 +1744,7 @@ final class BlockchainProcessorImpl implements BlockchainProcessor {
             pushBlock(block);
             blockListeners.notify(block, Event.BLOCK_GENERATED);
             Logger.logDebugMessage("Account " + Long.toUnsignedString(block.getGeneratorId()) + " generated block " + block.getStringId()
-                    + " at height " + block.getHeight() + " timestamp " + block.getTimestamp() + " fee " + ((float)block.getTotalFeeNQT())/Constants.ONE_NXT);
+                    + " at height " + block.getHeight() + " timestamp " + block.getTimestamp() + " fee " + ((float)block.getTotalFeeNQT())/Constants.ONE_RUV);
         } catch (TransactionNotAcceptedException e) {
             Logger.logDebugMessage("Generate block failed: " + e.getMessage());
             TransactionProcessorImpl.getInstance().processWaitingTransactions();
@@ -1882,11 +1882,11 @@ final class BlockchainProcessorImpl implements BlockchainProcessor {
                             try {
                                 dbId = rs.getLong("db_id");
                                 currentBlock = BlockDb.loadBlock(con, rs, true);
-                                int curTime = Nxt.getEpochTime();
+                                int curTime = Ruv.getEpochTime();
                                 if (currentBlock.getHeight() > 0) {
                                     currentBlock.loadTransactions();
                                     if (currentBlock.getId() != currentBlockId || currentBlock.getHeight() > blockchain.getHeight() + 1) {
-                                        throw new NxtException.NotValidException("Database blocks in the wrong order!");
+                                        throw new RuvException.NotValidException("Database blocks in the wrong order!");
                                     }
                                     Map<TransactionType, Map<String, Integer>> duplicates = new HashMap<>();
                                     List<TransactionImpl> validPhasedTransactions = new ArrayList<>();
@@ -1898,17 +1898,17 @@ final class BlockchainProcessorImpl implements BlockchainProcessor {
                                         byte[] blockBytes = currentBlock.bytes();
                                         JSONObject blockJSON = (JSONObject) JSONValue.parse(currentBlock.getJSONObject().toJSONString());
                                         if (!Arrays.equals(blockBytes, BlockImpl.parseBlock(blockJSON).bytes())) {
-                                            throw new NxtException.NotValidException("Block JSON cannot be parsed back to the same block");
+                                            throw new RuvException.NotValidException("Block JSON cannot be parsed back to the same block");
                                         }
                                         for (TransactionImpl transaction : currentBlock.getTransactions()) {
                                             byte[] transactionBytes = transaction.bytes();
                                             if (!Arrays.equals(transactionBytes, TransactionImpl.newTransactionBuilder(transactionBytes).build().bytes())) {
-                                                throw new NxtException.NotValidException("Transaction bytes cannot be parsed back to the same transaction: "
+                                                throw new RuvException.NotValidException("Transaction bytes cannot be parsed back to the same transaction: "
                                                         + transaction.getJSONObject().toJSONString());
                                             }
                                             JSONObject transactionJSON = (JSONObject) JSONValue.parse(transaction.getJSONObject().toJSONString());
                                             if (!Arrays.equals(transactionBytes, TransactionImpl.newTransactionBuilder(transactionJSON).build().bytes())) {
-                                                throw new NxtException.NotValidException("Transaction JSON cannot be parsed back to the same transaction: "
+                                                throw new RuvException.NotValidException("Transaction JSON cannot be parsed back to the same transaction: "
                                                         + transaction.getJSONObject().toJSONString());
                                             }
                                         }
@@ -1923,7 +1923,7 @@ final class BlockchainProcessorImpl implements BlockchainProcessor {
                                 }
                                 hasMore = true;
                                 currentBlockId = currentBlock.getNextBlockId();
-                            } catch (NxtException | RuntimeException e) {
+                            } catch (RuvException | RuntimeException e) {
                                 Db.db.rollbackTransaction();
                                 Logger.logDebugMessage(e.toString(), e);
                                 Logger.logDebugMessage("Applying block " + Long.toUnsignedString(currentBlockId) + " at height "

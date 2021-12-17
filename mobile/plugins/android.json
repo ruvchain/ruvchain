@@ -8,41 +8,41 @@
   },
   "installed_plugins": {
     "cordova-plugin-android-permissions": {
-      "PACKAGE_NAME": "org.nxt.mobile.wallet"
+      "PACKAGE_NAME": "org.ruv.mobile.wallet"
     },
     "cordova-plugin-console": {
-      "PACKAGE_NAME": "org.nxt.mobile.wallet"
+      "PACKAGE_NAME": "org.ruv.mobile.wallet"
     },
     "cordova-plugin-device": {
-      "PACKAGE_NAME": "org.nxt.mobile.wallet"
+      "PACKAGE_NAME": "org.ruv.mobile.wallet"
     },
     "cordova-plugin-file": {
-      "PACKAGE_NAME": "org.nxt.mobile.wallet"
+      "PACKAGE_NAME": "org.ruv.mobile.wallet"
     },
     "cordova-plugin-inappbrowser": {
-      "PACKAGE_NAME": "org.nxt.mobile.wallet"
+      "PACKAGE_NAME": "org.ruv.mobile.wallet"
     },
     "cordova-plugin-splashscreen": {
-      "PACKAGE_NAME": "org.nxt.mobile.wallet"
+      "PACKAGE_NAME": "org.ruv.mobile.wallet"
     },
     "cordova-plugin-statusbar": {
-      "PACKAGE_NAME": "org.nxt.mobile.wallet"
+      "PACKAGE_NAME": "org.ruv.mobile.wallet"
     },
     "cordova-plugin-whitelist": {
-      "PACKAGE_NAME": "org.nxt.mobile.wallet"
+      "PACKAGE_NAME": "org.ruv.mobile.wallet"
     },
     "cordova.plugins.diagnostic": {
-      "PACKAGE_NAME": "org.nxt.mobile.wallet"
+      "PACKAGE_NAME": "org.ruv.mobile.wallet"
     },
     "ionic-plugin-keyboard": {
-      "PACKAGE_NAME": "org.nxt.mobile.wallet"
+      "PACKAGE_NAME": "org.ruv.mobile.wallet"
     },
     "phonegap-plugin-barcodescanner": {
-      "PACKAGE_NAME": "org.nxt.mobile.wallet"
+      "PACKAGE_NAME": "org.ruv.mobile.wallet"
     },
     "cordova-android-support-gradle-release": {
       "ANDROID_SUPPORT_VERSION": "27.+",
-      "PACKAGE_NAME": "org.nxt.mobile.wallet"
+      "PACKAGE_NAME": "org.ruv.mobile.wallet"
     }
   },
   "dependent_plugins": {}

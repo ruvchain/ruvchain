@@ -1,12 +1,12 @@
 /******************************************************************************
- * Copyright © 2013-2016 The Nxt Core Developers.                             *
+ * Copyright © 2013-2016 The Ruv Core Developers.                             *
  * Copyright © 2016-2019 Jelurida IP B.V.                                     *
  *                                                                            *
  * See the LICENSE.txt file at the top-level directory of this distribution   *
  * for licensing information.                                                 *
  *                                                                            *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,*
- * no part of the Nxt software, including this file, may be copied, modified, *
+ * no part of the Ruv software, including this file, may be copied, modified, *
  * propagated, or distributed except according to the terms contained in the  *
  * LICENSE.txt file.                                                          *
  *                                                                            *
@@ -561,10 +561,10 @@ var NRS = (function (NRS, $, undefined) {
             $("#sell_asset_button").data("asset", assetId);
             $("#buy_asset_button").data("asset", assetId);
             $("#view_asset_distribution_link").data("asset", assetId);
-            $("#sell_asset_for_nxt").html($.t("sell_asset_for_nxt", {
+            $("#sell_asset_for_ruv").html($.t("sell_asset_for_ruv", {
                 "assetName": NRS.escapeRespStr(asset.name), "symbol": NRS.constants.COIN_SYMBOL
             }));
-            $("#buy_asset_with_nxt").html($.t("buy_asset_with_nxt", {
+            $("#buy_asset_with_ruv").html($.t("buy_asset_with_ruv", {
                 "assetName": NRS.escapeRespStr(asset.name), "symbol": NRS.constants.COIN_SYMBOL
             }));
             $("#sell_asset_price, #buy_asset_price").val("");
@@ -634,10 +634,10 @@ var NRS = (function (NRS, $, undefined) {
         }
 
         if (NRS.accountInfo.unconfirmedBalanceNQT == "0") {
-            $("#your_nxt_balance").html("0");
+            $("#your_ruv_balance").html("0");
             $("#buy_automatic_price").addClass("zero").removeClass("nonzero");
         } else {
-            $("#your_nxt_balance").html(NRS.formatAmount(NRS.accountInfo.unconfirmedBalanceNQT));
+            $("#your_ruv_balance").html(NRS.formatAmount(NRS.accountInfo.unconfirmedBalanceNQT));
             $("#buy_automatic_price").addClass("nonzero").removeClass("zero");
         }
 
@@ -942,7 +942,7 @@ var NRS = (function (NRS, $, undefined) {
 
             $("#" + type + "_asset_price").val(NRS.calculateOrderPricePerWholeQNT(priceNQT, currentAsset.decimals));
             $("#" + type + "_asset_quantity").val(NRS.convertToQNTf(quantityQNT, currentAsset.decimals));
-            $("#" + type + "_asset_total").val(NRS.convertToNXT(totalNQT));
+            $("#" + type + "_asset_total").val(NRS.convertToRUV(totalNQT));
         } catch (err) {
             return;
         }
@@ -989,7 +989,7 @@ var NRS = (function (NRS, $, undefined) {
             if (price.cmp(new Big("0")) <= 0) {
                 //get minimum price if no offers exist, based on asset decimals..
                 price = new Big("" + Math.pow(10, currentAsset.decimals));
-                assetPrice.val(NRS.convertToNXT(price.toString()));
+                assetPrice.val(NRS.convertToRUV(price.toString()));
             }
 
             var quantity;
@@ -1008,7 +1008,7 @@ var NRS = (function (NRS, $, undefined) {
 
             $("#" + type + "_asset_quantity").val(quantity.toString());
             var assetTotal = $("#" + type + "_asset_total");
-            assetTotal.val(NRS.convertToNXT(total.toString()));
+            assetTotal.val(NRS.convertToRUV(total.toString()));
             assetTotal.css({
                 "background": "",
                 "color": ""
@@ -1059,7 +1059,7 @@ var NRS = (function (NRS, $, undefined) {
             var quantity = String($("#" + orderType + "_asset_quantity").val());
             var quantityQNT = new BigInteger(NRS.convertToQNT(quantity, currentAsset.decimals));
             var priceNQT = new BigInteger(NRS.calculatePricePerWholeQNT(NRS.convertToNQT(String($("#" + orderType + "_asset_price").val())), currentAsset.decimals));
-            var totalNXT = NRS.formatAmount(NRS.calculateOrderTotalNQT(quantityQNT, priceNQT, currentAsset.decimals), false, true);
+            var totalRUV = NRS.formatAmount(NRS.calculateOrderTotalNQT(quantityQNT, priceNQT, currentAsset.decimals), false, true);
         } catch (err) {
             $.growl($.t("error_invalid_input"), {
                 "type": "danger"
@@ -1086,7 +1086,7 @@ var NRS = (function (NRS, $, undefined) {
             });
             tooltipTitle = $.t("buy_order_description_help", {
                 "amount": NRS.formatAmount(priceNQTPerWholeQNT, false, true),
-                "total": totalNXT,
+                "total": totalRUV,
                 "symbol": NRS.constants.COIN_SYMBOL
             });
         } else {
@@ -1098,13 +1098,13 @@ var NRS = (function (NRS, $, undefined) {
             });
             tooltipTitle = $.t("sell_order_description_help", {
                 "amount": NRS.formatAmount(priceNQTPerWholeQNT, false, true),
-                "total": totalNXT,
+                "total": totalRUV,
                 "symbol": NRS.constants.COIN_SYMBOL
             });
         }
 
         $("#asset_order_description").html(description);
-        $("#asset_order_total").html(totalNXT + " " + NRS.constants.COIN_SYMBOL);
+        $("#asset_order_total").html(totalRUV + " " + NRS.constants.COIN_SYMBOL);
 
         var assetOrderTotalTooltip = $("#asset_order_total_tooltip");
         if (quantity != "1") {

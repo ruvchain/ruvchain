@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,12 +14,12 @@
  *
  */
 
-package nxt.addons;
+package ruv.addons;
 
-import nxt.Nxt;
-import nxt.http.APIServlet;
-import nxt.http.APITag;
-import nxt.util.Logger;
+import ruv.Ruv;
+import ruv.http.APIServlet;
+import ruv.http.APITag;
+import ruv.util.Logger;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,7 +31,7 @@ public final class AddOns {
     private static final List<AddOn> addOns;
     static {
         List<AddOn> addOnsList = new ArrayList<>();
-        Nxt.getStringListProperty("nxt.addOns").forEach(addOn -> {
+        Ruv.getStringListProperty("ruv.addOns").forEach(addOn -> {
             try {
                 addOnsList.add((AddOn)Class.forName(addOn).newInstance());
             } catch (ReflectiveOperationException e) {
@@ -39,8 +39,8 @@ public final class AddOns {
             }
         });
         addOns = Collections.unmodifiableList(addOnsList);
-        if (!addOns.isEmpty() && !Nxt.getBooleanProperty("nxt.disableSecurityPolicy")) {
-            System.setProperty("java.security.policy", Nxt.isDesktopApplicationEnabled() ? "nxtdesktop.policy" : "nxt.policy");
+        if (!addOns.isEmpty() && !Ruv.getBooleanProperty("ruv.disableSecurityPolicy")) {
+            System.setProperty("java.security.policy", Ruv.isDesktopApplicationEnabled() ? "ruvdesktop.policy" : "ruv.policy");
             Logger.logMessage("Setting security manager with policy " + System.getProperty("java.security.policy"));
             System.setSecurityManager(new SecurityManager() {
                 @Override

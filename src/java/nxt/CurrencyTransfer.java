@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,15 +14,15 @@
  *
  */
 
-package nxt;
+package ruv;
 
-import nxt.db.DbClause;
-import nxt.db.DbIterator;
-import nxt.db.DbKey;
-import nxt.db.DbUtils;
-import nxt.db.EntityDbTable;
-import nxt.util.Listener;
-import nxt.util.Listeners;
+import ruv.db.DbClause;
+import ruv.db.DbIterator;
+import ruv.db.DbKey;
+import ruv.db.DbUtils;
+import ruv.db.EntityDbTable;
+import ruv.util.Listener;
+import ruv.util.Listeners;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -146,12 +146,12 @@ public final class CurrencyTransfer {
     private CurrencyTransfer(Transaction transaction, Attachment.MonetarySystemCurrencyTransfer attachment) {
         this.id = transaction.getId();
         this.dbKey = currencyTransferDbKeyFactory.newKey(this.id);
-        this.height = Nxt.getBlockchain().getHeight();
+        this.height = Ruv.getBlockchain().getHeight();
         this.currencyId = attachment.getCurrencyId();
         this.senderId = transaction.getSenderId();
         this.recipientId = transaction.getRecipientId();
         this.units = attachment.getUnits();
-        this.timestamp = Nxt.getBlockchain().getLastBlockTimestamp();
+        this.timestamp = Ruv.getBlockchain().getLastBlockTimestamp();
     }
 
     private CurrencyTransfer(ResultSet rs, DbKey dbKey) throws SQLException {

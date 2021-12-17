@@ -1,8 +1,8 @@
-package nxt.tools;
+package ruv.tools;
 
-import nxt.Account;
-import nxt.BlockchainTest;
-import nxt.util.Convert;
+import ruv.Account;
+import ruv.BlockchainTest;
+import ruv.util.Convert;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -28,7 +28,7 @@ public class PassphraseRecoveryTest {
         }
         PassphraseRecovery.Scanner scanner = new PassphraseRecovery.Scanner(publicKeys, positions, wildcard, PassphraseRecovery.getDefaultDictionary());
         PassphraseRecovery.Solution solution = scanner.scan();
-        Assert.assertEquals("NXT-XK4R-7VJU-6EQG-7R335", solution.getRsAccount());
+        Assert.assertEquals("RUV-XK4R-7VJU-6EQG-7R335", solution.getRsAccount());
     }
 
     @Test
@@ -38,14 +38,14 @@ public class PassphraseRecoveryTest {
         for (Integer position : positions) {
             wildcard[position] = '*';
         }
-        String rsAccount = "NXT-XK4R-7VJU-6EQG-7R335";
+        String rsAccount = "RUV-XK4R-7VJU-6EQG-7R335";
         long id = Convert.parseAccountId(rsAccount);
         byte[] publicKey = Account.getPublicKey(id);
         Map<Long, byte[]> publicKeys = new HashMap<>();
         publicKeys.put(id, publicKey);
         PassphraseRecovery.Scanner scanner = new PassphraseRecovery.Scanner(publicKeys, positions, wildcard, PassphraseRecovery.getDefaultDictionary());
         PassphraseRecovery.Solution solution = scanner.scan();
-        Assert.assertEquals("NXT-XK4R-7VJU-6EQG-7R335", solution.getRsAccount());
+        Assert.assertEquals("RUV-XK4R-7VJU-6EQG-7R335", solution.getRsAccount());
     }
 
     @Test
@@ -54,7 +54,7 @@ public class PassphraseRecoveryTest {
         wildcard[18] = '*';
         PassphraseRecovery.Scanner scanner = new PassphraseRecovery.Scanner(publicKeys, new int[0], wildcard, PassphraseRecovery.getDefaultDictionary());
         PassphraseRecovery.Solution solution = scanner.scan();
-        Assert.assertEquals("NXT-XK4R-7VJU-6EQG-7R335", solution.getRsAccount());
+        Assert.assertEquals("RUV-XK4R-7VJU-6EQG-7R335", solution.getRsAccount());
     }
 
 }

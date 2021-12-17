@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,13 +14,13 @@
  *
  */
 
-package nxt;
+package ruv;
 
-import nxt.db.DbIterator;
-import nxt.db.DbUtils;
-import nxt.util.Convert;
-import nxt.util.Filter;
-import nxt.util.ReadWriteUpdateLock;
+import ruv.db.DbIterator;
+import ruv.db.DbUtils;
+import ruv.util.Convert;
+import ruv.util.Filter;
+import ruv.util.ReadWriteUpdateLock;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -483,8 +483,8 @@ final class BlockchainImpl implements Blockchain {
                 pstmt.setInt(++i, height);
             }
             int prunableExpiration = Math.max(0, Constants.INCLUDE_EXPIRED_PRUNABLE && includeExpiredPrunable ?
-                                        Nxt.getEpochTime() - Constants.MAX_PRUNABLE_LIFETIME :
-                                        Nxt.getEpochTime() - Constants.MIN_PRUNABLE_LIFETIME);
+                                        Ruv.getEpochTime() - Constants.MAX_PRUNABLE_LIFETIME :
+                                        Ruv.getEpochTime() - Constants.MIN_PRUNABLE_LIFETIME);
             if (withMessage) {
                 pstmt.setInt(++i, prunableExpiration);
             }
@@ -551,7 +551,7 @@ final class BlockchainImpl implements Blockchain {
                         if (!phasedTransaction.attachmentIsDuplicate(duplicates, false) && filter.ok(phasedTransaction)) {
                             result.add(phasedTransaction);
                         }
-                    } catch (NxtException.ValidationException ignore) {
+                    } catch (RuvException.ValidationException ignore) {
                     }
                 }
             }

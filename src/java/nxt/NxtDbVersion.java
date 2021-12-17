@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,11 +14,11 @@
  *
  */
 
-package nxt;
+package ruv;
 
-import nxt.db.DbVersion;
+import ruv.db.DbVersion;
 
-class NxtDbVersion extends DbVersion {
+class RuvDbVersion extends DbVersion {
 
     protected void update(int nextUpdate) {
         switch (nextUpdate) {
@@ -543,7 +543,7 @@ class NxtDbVersion extends DbVersion {
             case 198:
                 apply("CREATE INDEX IF NOT EXISTS tagged_data_extend_height_id_idx ON tagged_data_extend(height, id)");
             case 199:
-                nxt.db.FullTextTrigger.init();
+                ruv.db.FullTextTrigger.init();
                 apply(null);
             case 200:
                 apply("CREATE UNIQUE INDEX IF NOT EXISTS asset_id_height_idx ON asset (id, height DESC)");

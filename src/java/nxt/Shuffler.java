@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,12 +14,12 @@
  *
  */
 
-package nxt;
+package ruv;
 
-import nxt.crypto.Crypto;
-import nxt.db.DbIterator;
-import nxt.util.Convert;
-import nxt.util.Logger;
+import ruv.crypto.Crypto;
+import ruv.db.DbIterator;
+import ruv.util.Convert;
+import ruv.util.Logger;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,7 +31,7 @@ import java.util.Set;
 
 public final class Shuffler {
 
-    private static final int MAX_SHUFFLERS = Nxt.getIntProperty("nxt.maxNumberOfShufflers");
+    private static final int MAX_SHUFFLERS = Ruv.getIntProperty("ruv.maxNumberOfShufflers");
     private static final Map<String, Map<Long, Shuffler>> shufflingsMap = new HashMap<>();
     private static final Map<Integer, Set<String>> expirations = new HashMap<>();
 
@@ -255,7 +255,7 @@ public final class Shuffler {
                     TransactionProcessorImpl.getInstance().broadcast(shuffler.failedTransaction);
                     shuffler.failedTransaction = null;
                     shuffler.failureCause = null;
-                } catch (NxtException.ValidationException ignore) {
+                } catch (RuvException.ValidationException ignore) {
                 }
             }
         })), BlockchainProcessor.Event.AFTER_BLOCK_ACCEPT);
@@ -269,7 +269,7 @@ public final class Shuffler {
     }
 
     private static void scheduleExpiration(Shuffling shuffling) {
-        int expirationHeight = Nxt.getBlockchain().getHeight() + 720;
+        int expirationHeight = Ruv.getBlockchain().getHeight() + 720;
         Set<String> shufflingIds = expirations.computeIfAbsent(expirationHeight, k -> new HashSet<>());
         shufflingIds.add(Convert.toHexString(shuffling.getFullHash()));
     }
@@ -287,7 +287,7 @@ public final class Shuffler {
     private final byte[] recipientPublicKey;
     private final byte[] shufflingFullHash;
     private volatile Transaction failedTransaction;
-    private volatile NxtException.NotCurrentlyValidException failureCause;
+    private volatile RuvException.NotCurrentlyValidException failureCause;
 
     private Shuffler(String secretPhrase, byte[] recipientPublicKey, byte[] shufflingFullHash) {
         this.secretPhrase = secretPhrase;
@@ -312,7 +312,7 @@ public final class Shuffler {
         return failedTransaction;
     }
 
-    public NxtException.NotCurrentlyValidException getFailureCause() {
+    public RuvException.NotCurrentlyValidException getFailureCause() {
         return failureCause;
     }
 
@@ -437,26 +437,26 @@ public final class Shuffler {
             }
         }
         try {
-            Transaction.Builder builder = Nxt.newTransactionBuilder(Crypto.getPublicKey(secretPhrase), 0, 0,
+            Transaction.Builder builder = Ruv.newTransactionBuilder(Crypto.getPublicKey(secretPhrase), 0, 0,
                     (short) 1440, attachment);
-            builder.timestamp(Nxt.getBlockchain().getLastBlockTimestamp());
+            builder.timestamp(Ruv.getBlockchain().getLastBlockTimestamp());
             Transaction transaction = builder.build(secretPhrase);
             failedTransaction = null;
             failureCause = null;
             Account participantAccount = Account.getAccount(this.accountId);
             if (participantAccount == null || transaction.getFeeNQT() > participantAccount.getUnconfirmedBalanceNQT()) {
                 failedTransaction = transaction;
-                failureCause = new NxtException.NotCurrentlyValidException("Insufficient balance");
+                failureCause = new RuvException.NotCurrentlyValidException("Insufficient balance");
                 Logger.logDebugMessage("Error submitting shuffler transaction", failureCause);
             }
             try {
                 TransactionProcessorImpl.getInstance().broadcast(transaction);
-            } catch (NxtException.NotCurrentlyValidException e) {
+            } catch (RuvException.NotCurrentlyValidException e) {
                 failedTransaction = transaction;
                 failureCause = e;
                 Logger.logDebugMessage("Error submitting shuffler transaction", e);
             }
-        } catch (NxtException.ValidationException e) {
+        } catch (RuvException.ValidationException e) {
             Logger.logErrorMessage("Fatal error submitting shuffler transaction", e);
         }
     }
@@ -477,7 +477,7 @@ public final class Shuffler {
         return false;
     }
 
-    public static class ShufflerException extends NxtException {
+    public static class ShufflerException extends RuvException {
 
         private ShufflerException(String message) {
             super(message);

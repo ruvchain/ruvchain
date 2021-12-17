@@ -17,7 +17,7 @@
        under the License.
  */
 
-package org.nxt.mobile.wallet;
+package org.ruv.mobile.wallet;
 
 import android.os.Bundle;
 import android.webkit.WebView;

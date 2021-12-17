@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,14 +14,14 @@
  *
  */
 
-package nxt.http;
+package ruv.http;
 
-import nxt.Constants;
-import nxt.Nxt;
-import nxt.util.Convert;
-import nxt.util.Logger;
-import nxt.util.ThreadPool;
-import nxt.util.UPnP;
+import ruv.Constants;
+import ruv.Ruv;
+import ruv.util.Convert;
+import ruv.util.Logger;
+import ruv.util.ThreadPool;
+import ruv.util.UPnP;
 import org.eclipse.jetty.security.ConstraintMapping;
 import org.eclipse.jetty.security.ConstraintSecurityHandler;
 import org.eclipse.jetty.security.SecurityHandler;
@@ -72,10 +72,10 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-import static nxt.http.JSONResponses.MISSING_ADMIN_PASSWORD;
-import static nxt.http.JSONResponses.INCORRECT_ADMIN_PASSWORD;
-import static nxt.http.JSONResponses.LOCKED_ADMIN_PASSWORD;
-import static nxt.http.JSONResponses.NO_PASSWORD_IN_CONFIG;
+import static ruv.http.JSONResponses.MISSING_ADMIN_PASSWORD;
+import static ruv.http.JSONResponses.INCORRECT_ADMIN_PASSWORD;
+import static ruv.http.JSONResponses.LOCKED_ADMIN_PASSWORD;
+import static ruv.http.JSONResponses.NO_PASSWORD_IN_CONFIG;
 
 public final class API {
 
@@ -93,28 +93,28 @@ public final class API {
     private static final Set<String> allowedBotHosts;
     private static final List<NetworkAddress> allowedBotNets;
     private static final Map<String, PasswordCount> incorrectPasswords = new HashMap<>();
-    public static final String adminPassword = Nxt.getStringProperty("nxt.adminPassword", "", true);
+    public static final String adminPassword = Ruv.getStringProperty("ruv.adminPassword", "", true);
     static final boolean disableAdminPassword;
-    static final int maxRecords = Nxt.getIntProperty("nxt.maxAPIRecords");
-    static final boolean enableAPIUPnP = Nxt.getBooleanProperty("nxt.enableAPIUPnP");
-    public static final int apiServerIdleTimeout = Nxt.getIntProperty("nxt.apiServerIdleTimeout");
-    public static final boolean apiServerCORS = Nxt.getBooleanProperty("nxt.apiServerCORS");
-    private static final String forwardedForHeader = Nxt.getStringProperty("nxt.forwardedForHeader");
+    static final int maxRecords = Ruv.getIntProperty("ruv.maxAPIRecords");
+    static final boolean enableAPIUPnP = Ruv.getBooleanProperty("ruv.enableAPIUPnP");
+    public static final int apiServerIdleTimeout = Ruv.getIntProperty("ruv.apiServerIdleTimeout");
+    public static final boolean apiServerCORS = Ruv.getBooleanProperty("ruv.apiServerCORS");
+    private static final String forwardedForHeader = Ruv.getStringProperty("ruv.forwardedForHeader");
 
     private static final Server apiServer;
     private static URI welcomePageUri;
     private static URI serverRootUri;
 
     static {
-        List<String> disabled = new ArrayList<>(Nxt.getStringListProperty("nxt.disabledAPIs"));
+        List<String> disabled = new ArrayList<>(Ruv.getStringListProperty("ruv.disabledAPIs"));
         Collections.sort(disabled);
         disabledAPIs = Collections.unmodifiableList(disabled);
-        disabled = Nxt.getStringListProperty("nxt.disabledAPITags");
+        disabled = Ruv.getStringListProperty("ruv.disabledAPITags");
         Collections.sort(disabled);
         List<APITag> apiTags = new ArrayList<>(disabled.size());
         disabled.forEach(tagName -> apiTags.add(APITag.fromDisplayName(tagName)));
         disabledAPITags = Collections.unmodifiableList(apiTags);
-        List<String> allowedBotHostsList = Nxt.getStringListProperty("nxt.allowedBotHosts");
+        List<String> allowedBotHostsList = Ruv.getStringListProperty("ruv.allowedBotHosts");
         if (! allowedBotHostsList.contains("*")) {
             Set<String> hosts = new HashSet<>();
             List<NetworkAddress> nets = new ArrayList<>();
@@ -137,16 +137,16 @@ public final class API {
             allowedBotNets = null;
         }
 
-        boolean enableAPIServer = Nxt.getBooleanProperty("nxt.enableAPIServer");
+        boolean enableAPIServer = Ruv.getBooleanProperty("ruv.enableAPIServer");
         if (enableAPIServer) {
-            final int port = Constants.isTestnet ? TESTNET_API_PORT : Nxt.getIntProperty("nxt.apiServerPort");
-            final int sslPort = Constants.isTestnet ? TESTNET_API_SSLPORT : Nxt.getIntProperty("nxt.apiServerSSLPort");
-            final String host = Nxt.getStringProperty("nxt.apiServerHost");
-            disableAdminPassword = Nxt.getBooleanProperty("nxt.disableAdminPassword") || ("127.0.0.1".equals(host) && adminPassword.isEmpty());
+            final int port = Constants.isTestnet ? TESTNET_API_PORT : Ruv.getIntProperty("ruv.apiServerPort");
+            final int sslPort = Constants.isTestnet ? TESTNET_API_SSLPORT : Ruv.getIntProperty("ruv.apiServerSSLPort");
+            final String host = Ruv.getStringProperty("ruv.apiServerHost");
+            disableAdminPassword = Ruv.getBooleanProperty("ruv.disableAdminPassword") || ("127.0.0.1".equals(host) && adminPassword.isEmpty());
 
             apiServer = new Server();
             ServerConnector connector;
-            boolean enableSSL = Nxt.getBooleanProperty("nxt.apiSSL");
+            boolean enableSSL = Ruv.getBooleanProperty("ruv.apiSSL");
             //
             // Create the HTTP connector
             //
@@ -175,16 +175,16 @@ public final class API {
                 https_config.setSecurePort(sslPort);
                 https_config.addCustomizer(new SecureRequestCustomizer());
                 sslContextFactory = new SslContextFactory();
-                String keyStorePath = Paths.get(Nxt.getUserHomeDir()).resolve(Paths.get(Nxt.getStringProperty("nxt.keyStorePath"))).toString();
+                String keyStorePath = Paths.get(Ruv.getUserHomeDir()).resolve(Paths.get(Ruv.getStringProperty("ruv.keyStorePath"))).toString();
                 Logger.logInfoMessage("Using keystore: " + keyStorePath);
                 sslContextFactory.setKeyStorePath(keyStorePath);
-                sslContextFactory.setKeyStorePassword(Nxt.getStringProperty("nxt.keyStorePassword", null, true));
+                sslContextFactory.setKeyStorePassword(Ruv.getStringProperty("ruv.keyStorePassword", null, true));
                 sslContextFactory.addExcludeCipherSuites("SSL_RSA_WITH_DES_CBC_SHA", "SSL_DHE_RSA_WITH_DES_CBC_SHA",
                         "SSL_DHE_DSS_WITH_DES_CBC_SHA", "SSL_RSA_EXPORT_WITH_RC4_40_MD5", "SSL_RSA_EXPORT_WITH_DES40_CBC_SHA",
                         "SSL_DHE_RSA_EXPORT_WITH_DES40_CBC_SHA", "SSL_DHE_DSS_EXPORT_WITH_DES40_CBC_SHA");
                 sslContextFactory.addExcludeProtocols("SSLv3");
-                sslContextFactory.setKeyStoreType(Nxt.getStringProperty("nxt.keyStoreType"));
-                List<String> ciphers = Nxt.getStringListProperty("nxt.apiSSLCiphers");
+                sslContextFactory.setKeyStoreType(Ruv.getStringProperty("ruv.keyStoreType"));
+                List<String> ciphers = Ruv.getStringListProperty("ruv.apiSSLCiphers");
                 if (!ciphers.isEmpty()) {
                     sslContextFactory.setIncludeCipherSuites(ciphers.toArray(new String[ciphers.size()]));
                 }
@@ -213,7 +213,7 @@ public final class API {
             HandlerList apiHandlers = new HandlerList();
 
             ServletContextHandler apiHandler = new ServletContextHandler();
-            String apiResourceBase = Nxt.getStringProperty("nxt.apiResourceBase");
+            String apiResourceBase = Ruv.getStringProperty("ruv.apiResourceBase");
             if (apiResourceBase != null) {
                 ServletHolder defaultServletHolder = new ServletHolder(new DefaultServlet());
                 defaultServletHolder.setInitParameter("dirAllowed", "false");
@@ -223,10 +223,10 @@ public final class API {
                 defaultServletHolder.setInitParameter("gzip", "true");
                 defaultServletHolder.setInitParameter("etags", "true");
                 apiHandler.addServlet(defaultServletHolder, "/*");
-                apiHandler.setWelcomeFiles(new String[]{Nxt.getStringProperty("nxt.apiWelcomeFile")});
+                apiHandler.setWelcomeFiles(new String[]{Ruv.getStringProperty("ruv.apiWelcomeFile")});
             }
 
-            String javadocResourceBase = Nxt.getStringProperty("nxt.javadocResourceBase");
+            String javadocResourceBase = Ruv.getStringProperty("ruv.javadocResourceBase");
             if (javadocResourceBase != null) {
                 ContextHandler contextHandler = new ContextHandler("/doc");
                 ResourceHandler docFileHandler = new ResourceHandler();
@@ -237,22 +237,22 @@ public final class API {
                 apiHandlers.addHandler(contextHandler);
             }
 
-            ServletHolder servletHolder = apiHandler.addServlet(APIServlet.class, "/nxt");
+            ServletHolder servletHolder = apiHandler.addServlet(APIServlet.class, "/ruv");
             servletHolder.getRegistration().setMultipartConfig(new MultipartConfigElement(
-                    null, Math.max(Nxt.getIntProperty("nxt.maxUploadFileSize"), Constants.MAX_TAGGED_DATA_DATA_LENGTH), -1L, 0));
+                    null, Math.max(Ruv.getIntProperty("ruv.maxUploadFileSize"), Constants.MAX_TAGGED_DATA_DATA_LENGTH), -1L, 0));
 
-            servletHolder = apiHandler.addServlet(APIProxyServlet.class, "/nxt-proxy");
+            servletHolder = apiHandler.addServlet(APIProxyServlet.class, "/ruv-proxy");
             servletHolder.setInitParameters(Collections.singletonMap("idleTimeout",
                     "" + Math.max(apiServerIdleTimeout - APIProxyServlet.PROXY_IDLE_TIMEOUT_DELTA, 0)));
             servletHolder.getRegistration().setMultipartConfig(new MultipartConfigElement(
-                    null, Math.max(Nxt.getIntProperty("nxt.maxUploadFileSize"), Constants.MAX_TAGGED_DATA_DATA_LENGTH), -1L, 0));
+                    null, Math.max(Ruv.getIntProperty("ruv.maxUploadFileSize"), Constants.MAX_TAGGED_DATA_DATA_LENGTH), -1L, 0));
 
             GzipHandler gzipHandler = new GzipHandler();
-            if (!Nxt.getBooleanProperty("nxt.enableAPIServerGZIPFilter", isOpenAPI)) {
-                gzipHandler.setExcludedPaths("/nxt", "/nxt-proxy");
+            if (!Ruv.getBooleanProperty("ruv.enableAPIServerGZIPFilter", isOpenAPI)) {
+                gzipHandler.setExcludedPaths("/ruv", "/ruv-proxy");
             }
             gzipHandler.setIncludedMethods("GET", "POST");
-            gzipHandler.setMinGzipSize(nxt.peer.Peers.MIN_COMPRESS_SIZE);
+            gzipHandler.setMinGzipSize(ruv.peer.Peers.MIN_COMPRESS_SIZE);
             apiHandler.setGzipHandler(gzipHandler);
 
             apiHandler.addServlet(APITestServlet.class, "/test");
@@ -266,7 +266,7 @@ public final class API {
                 filterHolder.setAsyncSupported(true);
             }
 
-            if (Nxt.getBooleanProperty("nxt.apiFrameOptionsSameOrigin")) {
+            if (Ruv.getBooleanProperty("ruv.apiFrameOptionsSameOrigin")) {
                 FilterHolder filterHolder = apiHandler.addFilter(XFrameOptionsFilter.class, "/*", null);
                 filterHolder.setAsyncSupported(true);
             }
@@ -368,7 +368,7 @@ public final class API {
     }
 
     private static void checkOrLockPassword(HttpServletRequest req) throws ParameterException {
-        int now = Nxt.getEpochTime();
+        int now = Ruv.getEpochTime();
         String remoteHost = null;
         if (forwardedForHeader != null) {
             remoteHost = req.getHeader(forwardedForHeader);

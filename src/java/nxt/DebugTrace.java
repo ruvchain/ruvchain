@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,11 +14,11 @@
  *
  */
 
-package nxt;
+package ruv;
 
-import nxt.db.DbIterator;
-import nxt.util.Convert;
-import nxt.util.Logger;
+import ruv.db.DbIterator;
+import ruv.util.Convert;
+import ruv.util.Logger;
 
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
@@ -36,13 +36,13 @@ import java.util.Set;
 
 public final class DebugTrace {
 
-    static final String QUOTE = Nxt.getStringProperty("nxt.debugTraceQuote", "\"");
-    static final String SEPARATOR = Nxt.getStringProperty("nxt.debugTraceSeparator", "\t");
-    static final boolean LOG_UNCONFIRMED = Nxt.getBooleanProperty("nxt.debugLogUnconfirmed");
+    static final String QUOTE = Ruv.getStringProperty("ruv.debugTraceQuote", "\"");
+    static final String SEPARATOR = Ruv.getStringProperty("ruv.debugTraceSeparator", "\t");
+    static final boolean LOG_UNCONFIRMED = Ruv.getBooleanProperty("ruv.debugLogUnconfirmed");
 
     static void init() {
-        List<String> accountIdStrings = Nxt.getStringListProperty("nxt.debugTraceAccounts");
-        String logName = Nxt.getStringProperty("nxt.debugTraceLog");
+        List<String> accountIdStrings = Ruv.getStringListProperty("ruv.debugTraceAccounts");
+        String logName = Ruv.getStringProperty("ruv.debugTraceLog");
         if (accountIdStrings.isEmpty() || logName == null) {
             return;
         }
@@ -55,7 +55,7 @@ public final class DebugTrace {
             accountIds.add(Convert.parseAccountId(accountId));
         }
         final DebugTrace debugTrace = addDebugTrace(accountIds, logName);
-        Nxt.getBlockchainProcessor().addListener(block -> debugTrace.resetLog(), BlockchainProcessor.Event.RESCAN_BEGIN);
+        Ruv.getBlockchainProcessor().addListener(block -> debugTrace.resetLog(), BlockchainProcessor.Event.RESCAN_BEGIN);
         Logger.logDebugMessage("Debug tracing of " + (accountIdStrings.contains("*") ? "ALL"
                 : String.valueOf(accountIds.size())) + " accounts enabled");
     }
@@ -82,9 +82,9 @@ public final class DebugTrace {
         }
         Account.addLeaseListener(accountLease -> debugTrace.trace(accountLease, true), Account.Event.LEASE_STARTED);
         Account.addLeaseListener(accountLease -> debugTrace.trace(accountLease, false), Account.Event.LEASE_ENDED);
-        Nxt.getBlockchainProcessor().addListener(debugTrace::traceBeforeAccept, BlockchainProcessor.Event.BEFORE_BLOCK_ACCEPT);
-        Nxt.getBlockchainProcessor().addListener(debugTrace::trace, BlockchainProcessor.Event.BEFORE_BLOCK_APPLY);
-        Nxt.getTransactionProcessor().addListener(transactions -> debugTrace.traceRelease(transactions.get(0)), TransactionProcessor.Event.RELEASE_PHASED_TRANSACTION);
+        Ruv.getBlockchainProcessor().addListener(debugTrace::traceBeforeAccept, BlockchainProcessor.Event.BEFORE_BLOCK_ACCEPT);
+        Ruv.getBlockchainProcessor().addListener(debugTrace::trace, BlockchainProcessor.Event.BEFORE_BLOCK_APPLY);
+        Ruv.getTransactionProcessor().addListener(transactions -> debugTrace.traceRelease(transactions.get(0)), TransactionProcessor.Event.RELEASE_PHASED_TRANSACTION);
         Shuffling.addListener(debugTrace::traceShufflingDistribute, Shuffling.Event.SHUFFLING_DONE);
         Shuffling.addListener(debugTrace::traceShufflingCancel, Shuffling.Event.SHUFFLING_CANCELLED);
         return debugTrace;
@@ -264,7 +264,7 @@ public final class DebugTrace {
             map.put("event", "shuffling blame");
             log(map);
             long fee = Constants.SHUFFLING_DEPOSIT_NQT / 4;
-            int height = Nxt.getBlockchain().getHeight();
+            int height = Ruv.getBlockchain().getHeight();
             for (int i = 0; i < 3; i++) {
                 long generatorId = BlockDb.findBlockAtHeight(height - i - 1).getGeneratorId();
                 if (include(generatorId)) {
@@ -275,7 +275,7 @@ public final class DebugTrace {
                 }
             }
             fee = Constants.SHUFFLING_DEPOSIT_NQT - 3 * fee;
-            long generatorId = Nxt.getBlockchain().getLastBlock().getGeneratorId();
+            long generatorId = Ruv.getBlockchain().getLastBlock().getGeneratorId();
             if (include(generatorId)) {
                 Map<String,String> generatorMap = getValues(generatorId, false);
                 generatorMap.put("generation fee", String.valueOf(fee));
@@ -290,8 +290,8 @@ public final class DebugTrace {
         map.put("account", Long.toUnsignedString(account.getId()));
         map.put("lessor guaranteed balance", String.valueOf(account.getGuaranteedBalanceNQT()));
         map.put("lessee", Long.toUnsignedString(lesseeId));
-        map.put("timestamp", String.valueOf(Nxt.getBlockchain().getLastBlock().getTimestamp()));
-        map.put("height", String.valueOf(Nxt.getBlockchain().getHeight()));
+        map.put("timestamp", String.valueOf(Ruv.getBlockchain().getLastBlock().getTimestamp()));
+        map.put("height", String.valueOf(Ruv.getBlockchain().getHeight()));
         map.put("event", "lessor guaranteed balance");
         return map;
     }
@@ -401,8 +401,8 @@ public final class DebugTrace {
         Account account = Account.getAccount(accountId);
         map.put("balance", String.valueOf(account != null ? account.getBalanceNQT() : 0));
         map.put("unconfirmed balance", String.valueOf(account != null ? account.getUnconfirmedBalanceNQT() : 0));
-        map.put("timestamp", String.valueOf(Nxt.getBlockchain().getLastBlock().getTimestamp()));
-        map.put("height", String.valueOf(Nxt.getBlockchain().getHeight()));
+        map.put("timestamp", String.valueOf(Ruv.getBlockchain().getLastBlock().getTimestamp()));
+        map.put("height", String.valueOf(Ruv.getBlockchain().getHeight()));
         map.put("event", unconfirmed ? "unconfirmed balance" : "balance");
         return map;
     }
@@ -435,7 +435,7 @@ public final class DebugTrace {
         String amount = String.valueOf(isRecipient ? shuffling.getAmount() : -shuffling.getAmount());
         String deposit = String.valueOf(isRecipient ? Constants.SHUFFLING_DEPOSIT_NQT : -Constants.SHUFFLING_DEPOSIT_NQT);
         switch (shuffling.getHoldingType()) {
-            case NXT:
+            case RUV:
                 map.put("transaction amount", amount);
                 break;
             case ASSET:
@@ -507,7 +507,7 @@ public final class DebugTrace {
                 long previousGeneratorId = BlockDb.findBlockAtHeight(block.getHeight() - i - 1).getGeneratorId();
                 if (include(previousGeneratorId)) {
                     Map<String,String> map = getValues(previousGeneratorId, false);
-                    map.put("effective balance", String.valueOf(Account.getAccount(previousGeneratorId).getEffectiveBalanceNXT()));
+                    map.put("effective balance", String.valueOf(Account.getAccount(previousGeneratorId).getEffectiveBalanceRUV()));
                     map.put("generation fee", String.valueOf(backFees[i]));
                     map.put("block", block.getStringId());
                     map.put("event", "block");
@@ -518,7 +518,7 @@ public final class DebugTrace {
             }
         }
         Map<String,String> map = getValues(accountId, false);
-        map.put("effective balance", String.valueOf(Account.getAccount(accountId).getEffectiveBalanceNXT()));
+        map.put("effective balance", String.valueOf(Account.getAccount(accountId).getEffectiveBalanceRUV()));
         map.put("generation fee", String.valueOf(fee - totalBackFees));
         map.put("block", block.getStringId());
         map.put("event", "block");
@@ -536,8 +536,8 @@ public final class DebugTrace {
         } else {
             map.put("asset balance", String.valueOf(accountAsset.getQuantityQNT()));
         }
-        map.put("timestamp", String.valueOf(Nxt.getBlockchain().getLastBlock().getTimestamp()));
-        map.put("height", String.valueOf(Nxt.getBlockchain().getHeight()));
+        map.put("timestamp", String.valueOf(Ruv.getBlockchain().getLastBlock().getTimestamp()));
+        map.put("height", String.valueOf(Ruv.getBlockchain().getHeight()));
         map.put("event", "asset balance");
         return map;
     }
@@ -551,8 +551,8 @@ public final class DebugTrace {
         } else {
             map.put("currency balance", String.valueOf(accountCurrency.getUnits()));
         }
-        map.put("timestamp", String.valueOf(Nxt.getBlockchain().getLastBlock().getTimestamp()));
-        map.put("height", String.valueOf(Nxt.getBlockchain().getHeight()));
+        map.put("timestamp", String.valueOf(Ruv.getBlockchain().getLastBlock().getTimestamp()));
+        map.put("height", String.valueOf(Ruv.getBlockchain().getHeight()));
         map.put("event", "currency balance");
         return map;
     }
@@ -561,8 +561,8 @@ public final class DebugTrace {
         Map<String,String> map = new HashMap<>();
         map.put("account", Long.toUnsignedString(accountId));
         map.put("event", start ? "lease begin" : "lease end");
-        map.put("timestamp", String.valueOf(Nxt.getBlockchain().getLastBlock().getTimestamp()));
-        map.put("height", String.valueOf(Nxt.getBlockchain().getHeight()));
+        map.put("timestamp", String.valueOf(Ruv.getBlockchain().getLastBlock().getTimestamp()));
+        map.put("height", String.valueOf(Ruv.getBlockchain().getHeight()));
         map.put("lessee", Long.toUnsignedString(accountLease.getCurrentLesseeId()));
         return map;
     }
@@ -662,8 +662,8 @@ public final class DebugTrace {
         } else if (attachment == Attachment.ARBITRARY_MESSAGE) {
             map = new HashMap<>();
             map.put("account", Long.toUnsignedString(accountId));
-            map.put("timestamp", String.valueOf(Nxt.getBlockchain().getLastBlock().getTimestamp()));
-            map.put("height", String.valueOf(Nxt.getBlockchain().getHeight()));
+            map.put("timestamp", String.valueOf(Ruv.getBlockchain().getLastBlock().getTimestamp()));
+            map.put("height", String.valueOf(Ruv.getBlockchain().getHeight()));
             map.put("event", attachment == Attachment.ARBITRARY_MESSAGE ? "message" : "encrypted message");
             if (isRecipient) {
                 map.put("sender", Long.toUnsignedString(transaction.getSenderId()));

@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,29 +14,29 @@
  *
  */
 
-package nxt;
+package ruv;
 
 import java.io.IOException;
 
-public abstract class NxtException extends Exception {
+public abstract class RuvException extends Exception {
 
-    protected NxtException() {
+    protected RuvException() {
         super();
     }
 
-    protected NxtException(String message) {
+    protected RuvException(String message) {
         super(message);
     }
 
-    protected NxtException(String message, Throwable cause) {
+    protected RuvException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    protected NxtException(Throwable cause) {
+    protected RuvException(Throwable cause) {
         super(cause);
     }
 
-    public static abstract class ValidationException extends NxtException {
+    public static abstract class ValidationException extends RuvException {
 
         private ValidationException(String message) {
             super(message);
@@ -140,13 +140,13 @@ public abstract class NxtException extends Exception {
 
     }
 
-    public static final class NxtIOException extends IOException {
+    public static final class RuvIOException extends IOException {
 
-        public NxtIOException(String message) {
+        public RuvIOException(String message) {
             super(message);
         }
 
-        public NxtIOException(String message, Throwable cause) {
+        public RuvIOException(String message, Throwable cause) {
             super(message, cause);
         }
 

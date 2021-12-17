@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,12 +14,12 @@
  *
  */
 
-package nxt;
+package ruv;
 
-import nxt.db.DbClause;
-import nxt.db.DbIterator;
-import nxt.db.DbKey;
-import nxt.db.EntityDbTable;
+import ruv.db.DbClause;
+import ruv.db.DbIterator;
+import ruv.db.DbKey;
+import ruv.db.EntityDbTable;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -114,7 +114,7 @@ public final class ExchangeRequest {
         this.units = attachment.getUnits();
         this.rate = attachment.getRateNQT();
         this.isBuy = isBuy;
-        Block block = Nxt.getBlockchain().getLastBlock();
+        Block block = Ruv.getBlockchain().getLastBlock();
         this.height = block.getHeight();
         this.timestamp = block.getTimestamp();
     }

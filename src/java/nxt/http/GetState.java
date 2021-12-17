@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,31 +14,31 @@
  *
  */
 
-package nxt.http;
+package ruv.http;
 
-import nxt.Account;
-import nxt.AccountRestrictions;
-import nxt.Alias;
-import nxt.Asset;
-import nxt.AssetTransfer;
-import nxt.Constants;
-import nxt.Currency;
-import nxt.CurrencyBuyOffer;
-import nxt.CurrencyTransfer;
-import nxt.DigitalGoodsStore;
-import nxt.Exchange;
-import nxt.ExchangeRequest;
-import nxt.Generator;
-import nxt.Nxt;
-import nxt.Order;
-import nxt.Poll;
-import nxt.PrunableMessage;
-import nxt.Shuffling;
-import nxt.TaggedData;
-import nxt.Trade;
-import nxt.Vote;
-import nxt.peer.Peers;
-import nxt.util.UPnP;
+import ruv.Account;
+import ruv.AccountRestrictions;
+import ruv.Alias;
+import ruv.Asset;
+import ruv.AssetTransfer;
+import ruv.Constants;
+import ruv.Currency;
+import ruv.CurrencyBuyOffer;
+import ruv.CurrencyTransfer;
+import ruv.DigitalGoodsStore;
+import ruv.Exchange;
+import ruv.ExchangeRequest;
+import ruv.Generator;
+import ruv.Ruv;
+import ruv.Order;
+import ruv.Poll;
+import ruv.PrunableMessage;
+import ruv.Shuffling;
+import ruv.TaggedData;
+import ruv.Trade;
+import ruv.Vote;
+import ruv.peer.Peers;
+import ruv.util.UPnP;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
 
@@ -59,7 +59,7 @@ public final class GetState extends APIServlet.APIRequestHandler {
         JSONObject response = GetBlockchainStatus.instance.processRequest(req);
 
         if ("true".equalsIgnoreCase(req.getParameter("includeCounts")) && API.checkPassword(req)) {
-            response.put("numberOfTransactions", Nxt.getBlockchain().getTransactionCount());
+            response.put("numberOfTransactions", Ruv.getBlockchain().getTransactionCount());
             response.put("numberOfAccounts", Account.getCount());
             response.put("numberOfAssets", Asset.getCount());
             int askCount = Order.Ask.getCount();

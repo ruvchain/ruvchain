@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,7 +14,7 @@
  *
  */
 
-package nxt;
+package ruv;
 
 public final class VoteWeighting {
 
@@ -206,50 +206,50 @@ public final class VoteWeighting {
         return minBalanceModel;
     }
 
-    public void validate() throws NxtException.ValidationException {
+    public void validate() throws RuvException.ValidationException {
         if (votingModel == null) {
-            throw new NxtException.NotValidException("Invalid voting model");
+            throw new RuvException.NotValidException("Invalid voting model");
         }
         if (minBalanceModel == null) {
-            throw new NxtException.NotValidException("Invalid min balance model");
+            throw new RuvException.NotValidException("Invalid min balance model");
         }
         if ((votingModel == VotingModel.ASSET || votingModel == VotingModel.CURRENCY) && holdingId == 0) {
-            throw new NxtException.NotValidException("No holdingId provided");
+            throw new RuvException.NotValidException("No holdingId provided");
         }
         if (votingModel == VotingModel.CURRENCY && Currency.getCurrency(holdingId) == null) {
-            throw new NxtException.NotCurrentlyValidException("Currency " + Long.toUnsignedString(holdingId) + " not found");
+            throw new RuvException.NotCurrentlyValidException("Currency " + Long.toUnsignedString(holdingId) + " not found");
         }
         if (votingModel == VotingModel.ASSET && Asset.getAsset(holdingId) == null) {
-            throw new NxtException.NotCurrentlyValidException("Asset " + Long.toUnsignedString(holdingId) + " not found");
+            throw new RuvException.NotCurrentlyValidException("Asset " + Long.toUnsignedString(holdingId) + " not found");
         }
         if (minBalance < 0) {
-            throw new NxtException.NotValidException("Invalid minBalance " + minBalance);
+            throw new RuvException.NotValidException("Invalid minBalance " + minBalance);
         }
         if (minBalance > 0) {
             if (minBalanceModel == MinBalanceModel.NONE) {
-                throw new NxtException.NotValidException("Invalid min balance model " + minBalanceModel);
+                throw new RuvException.NotValidException("Invalid min balance model " + minBalanceModel);
             }
             if (votingModel.getMinBalanceModel() != MinBalanceModel.NONE && votingModel.getMinBalanceModel() != minBalanceModel) {
-                throw new NxtException.NotValidException("Invalid min balance model: " + minBalanceModel + " for voting model " + votingModel);
+                throw new RuvException.NotValidException("Invalid min balance model: " + minBalanceModel + " for voting model " + votingModel);
             }
             if ((minBalanceModel == MinBalanceModel.ASSET || minBalanceModel == MinBalanceModel.CURRENCY) && holdingId == 0) {
-                throw new NxtException.NotValidException("No holdingId provided");
+                throw new RuvException.NotValidException("No holdingId provided");
             }
             if (minBalanceModel == MinBalanceModel.ASSET && Asset.getAsset(holdingId) == null) {
-                throw new NxtException.NotCurrentlyValidException("Invalid min balance asset: " + Long.toUnsignedString(holdingId));
+                throw new RuvException.NotCurrentlyValidException("Invalid min balance asset: " + Long.toUnsignedString(holdingId));
             }
             if (minBalanceModel == MinBalanceModel.CURRENCY && Currency.getCurrency(holdingId) == null) {
-                throw new NxtException.NotCurrentlyValidException("Invalid min balance currency: " + Long.toUnsignedString(holdingId));
+                throw new RuvException.NotCurrentlyValidException("Invalid min balance currency: " + Long.toUnsignedString(holdingId));
             }
         }
         if (minBalance == 0 && votingModel == VotingModel.ACCOUNT && holdingId != 0) {
-            throw new NxtException.NotValidException("HoldingId cannot be used in by account voting with no min balance");
+            throw new RuvException.NotValidException("HoldingId cannot be used in by account voting with no min balance");
         }
         if ((votingModel == VotingModel.NQT || minBalanceModel == MinBalanceModel.NQT) && holdingId != 0) {
-            throw new NxtException.NotValidException("HoldingId cannot be used in by balance voting or with min balance in NQT");
+            throw new RuvException.NotValidException("HoldingId cannot be used in by balance voting or with min balance in NQT");
         }
         if ((!votingModel.acceptsVotes() || votingModel == VotingModel.HASH) && (holdingId != 0 || minBalance != 0 || minBalanceModel != MinBalanceModel.NONE)) {
-            throw new NxtException.NotValidException("With VotingModel " + votingModel + " no holdingId, minBalance, or minBalanceModel should be specified");
+            throw new RuvException.NotValidException("With VotingModel " + votingModel + " no holdingId, minBalance, or minBalanceModel should be specified");
         }
     }
 

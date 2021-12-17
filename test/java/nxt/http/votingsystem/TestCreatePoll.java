@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,14 +14,14 @@
  *
  */
 
-package nxt.http.votingsystem;
+package ruv.http.votingsystem;
 
-import nxt.BlockchainTest;
-import nxt.Constants;
-import nxt.Nxt;
-import nxt.VoteWeighting;
-import nxt.http.APICall;
-import nxt.util.Logger;
+import ruv.BlockchainTest;
+import ruv.Constants;
+import ruv.Ruv;
+import ruv.VoteWeighting;
+import ruv.http.APICall;
+import ruv.util.Logger;
 import org.json.simple.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
@@ -68,7 +68,7 @@ public class TestCreatePoll extends BlockchainTest {
 
     @Test
     public void createInvalidPoll() {
-        APICall apiCall = new CreatePollBuilder().minBalance(-Constants.ONE_NXT).build();
+        APICall apiCall = new CreatePollBuilder().minBalance(-Constants.ONE_RUV).build();
         issueCreatePoll(apiCall, true);
         generateBlock();
 
@@ -82,16 +82,16 @@ public class TestCreatePoll extends BlockchainTest {
         public CreatePollBuilder() {
             super("createPoll");
             secretPhrase(ALICE.getSecretPhrase());
-            feeNQT(10 * Constants.ONE_NXT);
+            feeNQT(10 * Constants.ONE_RUV);
             param("name", "Test1");
             param("description", "The most cool Beatles guy?");
-            param("finishHeight", Nxt.getBlockchain().getHeight() + 100);
+            param("finishHeight", Ruv.getBlockchain().getHeight() + 100);
             param("votingModel", VoteWeighting.VotingModel.ACCOUNT.getCode());
             param("minNumberOfOptions", 1);
             param("maxNumberOfOptions", 2);
             param("minRangeValue", 0);
             param("maxRangeValue", 1);
-            param("minBalance", 10 * Constants.ONE_NXT);
+            param("minBalance", 10 * Constants.ONE_RUV);
             param("minBalanceModel", VoteWeighting.MinBalanceModel.NQT.getCode());
             param("option00", "Ringo");
             param("option01", "Paul");

@@ -13,18 +13,18 @@
 ## Tools and Tips ##
 ### Usable URLs ###
 
-  - **API** - http://localhost:7876/test
-  - **DB Interface** - http://localhost:7876/dbshell
-  - **Java Class Browser** - http://localhost:7876/doc
+  - **API** - http://localhost:5251/test
+  - **DB Interface** - http://localhost:5251/dbshell
+  - **Java Class Browser** - http://localhost:5251/doc
 
 ### Database ###
   
   - H2 embedded database
-  - main database: `nxt_db/`
-  - test database: `nxt_test_db/`
+  - main database: `ruv_db/`
+  - test database: `ruv_test_db/`
   - the database directories do not contain user specific data and can be safely deleted
   - but no need to delete them on upgrade, the DbVersion code takes care of schema updates
-  - use the nxt.db framework when accessing the database from your code
+  - use the ruv.db framework when accessing the database from your code
 
 ----
 ## Coding Process ##
@@ -57,7 +57,7 @@
 ### Testing ###
 
   - [to be filled by Lior, kushti]
-  - all API calls can be tested manually from the auto-generated http://localhost:7876/test page
+  - all API calls can be tested manually from the auto-generated http://localhost:5251/test page
   - many tests need blocks to be generated, see the examples how to fake the forging process
   - write your tests against the http API or the public java API, which are relatively stable
   
@@ -97,7 +97,7 @@
 
 Translation of the client UI to other languages is done by the community within a crowdsourced process on the platform **Crowdin**:
 
-- https://crowdin.com/project/nxt-ui-translation
+- https://crowdin.com/project/ruv-ui-translation
 
 If you feel comfortable translating you are very welcome to join and help with translations.
 
@@ -149,7 +149,7 @@ For providing new translation strings on the platform for the community to trans
 
 ### Mobile App ###
 
-The NXT wallet UI run as a mobile app.
+The RUV wallet UI run as a mobile app.
 
 To build the Android APK application follow these steps (Tested on Windows 7 64 bit):
 1. Install node.js (tested with Node 4.4.7 and npm 2.15.8), Apache Cordova (tested with Cordova 6.3.1) - see https://cordova.apache.org/
@@ -157,7 +157,7 @@ To build the Android APK application follow these steps (Tested on Windows 7 64 
 3. Make sure the commands: node, npm and cordova are available from the command prompt
 4. On Windows make sure the adb.exe is in your search path (c:\Users\<Username>\AppData\Local\Android\sdk\platform-tools), probably also required on Linux
 5. Special care should be taken in order to work without root privileges on Linux and Mac (the current procedure assumes Windows administrator permissions), we recommend that you work with root privileges initially.
-6. Under the <NXTRoot>\mobile\app folder execute the command:
+6. Under the <RUVRoot>\mobile\app folder execute the command:
 createapp.bat
 See that the process completes without errors and that a default Cordova application is deployed to your connected mobile device or the Android emulator
 

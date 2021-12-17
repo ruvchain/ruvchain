@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,13 +14,13 @@
  *
  */
 
-package nxt;
+package ruv;
 
-import nxt.crypto.Crypto;
-import nxt.crypto.EncryptedData;
-import nxt.util.Convert;
-import nxt.util.bbh.LengthRwPrimitiveType;
-import nxt.util.bbh.StringRw;
+import ruv.crypto.Crypto;
+import ruv.crypto.EncryptedData;
+import ruv.util.Convert;
+import ruv.util.bbh.LengthRwPrimitiveType;
+import ruv.util.bbh.StringRw;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -31,8 +31,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static nxt.util.bbh.LengthRwPrimitiveType.BYTE;
-import static nxt.util.bbh.LengthRwPrimitiveType.SHORT;
+import static ruv.util.bbh.LengthRwPrimitiveType.BYTE;
+import static ruv.util.bbh.LengthRwPrimitiveType.SHORT;
 
 public interface Attachment extends Appendix {
 
@@ -60,7 +60,7 @@ public interface Attachment extends Appendix {
         }
 
         @Override
-        final void validate(Transaction transaction) throws NxtException.ValidationException {
+        final void validate(Transaction transaction) throws RuvException.ValidationException {
             getTransactionType().validateAttachment(transaction);
         }
 
@@ -95,7 +95,7 @@ public interface Attachment extends Appendix {
         }
 
         final int getFinishValidationHeight(Transaction transaction) {
-            return isPhased(transaction) ? transaction.getPhasing().getFinishHeight() - 1 : Nxt.getBlockchain().getHeight();
+            return isPhased(transaction) ? transaction.getPhasing().getFinishHeight() - 1 : Ruv.getBlockchain().getHeight();
         }
 
     }
@@ -152,7 +152,7 @@ public interface Attachment extends Appendix {
         private final String aliasName;
         private final String aliasURI;
 
-        MessagingAliasAssignment(ByteBuffer buffer) throws NxtException.NotValidException {
+        MessagingAliasAssignment(ByteBuffer buffer) throws RuvException.NotValidException {
             super(buffer);
             aliasName = ALIAS_NAME_RW.readFromBuffer(buffer).trim();
             aliasURI = ALIAS_URI_RW.readFromBuffer(buffer).trim();
@@ -209,7 +209,7 @@ public interface Attachment extends Appendix {
         private final String aliasName;
         private final long priceNQT;
 
-        MessagingAliasSell(ByteBuffer buffer) throws NxtException.NotValidException {
+        MessagingAliasSell(ByteBuffer buffer) throws RuvException.NotValidException {
             super(buffer);
             this.aliasName = MessagingAliasAssignment.ALIAS_NAME_RW.readFromBuffer(buffer);
             this.priceNQT = buffer.getLong();
@@ -263,7 +263,7 @@ public interface Attachment extends Appendix {
 
         private final String aliasName;
 
-        MessagingAliasBuy(ByteBuffer buffer) throws NxtException.NotValidException {
+        MessagingAliasBuy(ByteBuffer buffer) throws RuvException.NotValidException {
             super(buffer);
             this.aliasName = MessagingAliasAssignment.ALIAS_NAME_RW.readFromBuffer(buffer);
         }
@@ -308,7 +308,7 @@ public interface Attachment extends Appendix {
 
         private final String aliasName;
 
-        MessagingAliasDelete(final ByteBuffer buffer) throws NxtException.NotValidException {
+        MessagingAliasDelete(final ByteBuffer buffer) throws RuvException.NotValidException {
             super(buffer);
             this.aliasName = MessagingAliasAssignment.ALIAS_NAME_RW.readFromBuffer(buffer);
         }
@@ -416,7 +416,7 @@ public interface Attachment extends Appendix {
         private final byte maxRangeValue;
         private final VoteWeighting voteWeighting;
 
-        MessagingPollCreation(ByteBuffer buffer) throws NxtException.NotValidException {
+        MessagingPollCreation(ByteBuffer buffer) throws RuvException.NotValidException {
             super(buffer);
             this.pollName = Convert.readString(buffer, buffer.getShort(), Constants.MAX_POLL_NAME_LENGTH);
             this.pollDescription = Convert.readString(buffer, buffer.getShort(), Constants.MAX_POLL_DESCRIPTION_LENGTH);
@@ -425,7 +425,7 @@ public interface Attachment extends Appendix {
 
             int numberOfOptions = buffer.get();
             if (numberOfOptions > Constants.MAX_POLL_OPTION_COUNT) {
-                throw new NxtException.NotValidException("Invalid number of poll options: " + numberOfOptions);
+                throw new RuvException.NotValidException("Invalid number of poll options: " + numberOfOptions);
             }
 
             this.pollOptions = new String[numberOfOptions];
@@ -600,12 +600,12 @@ public interface Attachment extends Appendix {
         private final long pollId;
         private final byte[] pollVote;
 
-        public MessagingVoteCasting(ByteBuffer buffer) throws NxtException.NotValidException {
+        public MessagingVoteCasting(ByteBuffer buffer) throws RuvException.NotValidException {
             super(buffer);
             pollId = buffer.getLong();
             int numberOfOptions = buffer.get();
             if (numberOfOptions > Constants.MAX_POLL_OPTION_COUNT) {
-                throw new NxtException.NotValidException("More than " + Constants.MAX_POLL_OPTION_COUNT + " options in a vote");
+                throw new RuvException.NotValidException("More than " + Constants.MAX_POLL_OPTION_COUNT + " options in a vote");
             }
             pollVote = new byte[numberOfOptions];
             buffer.get(pollVote);
@@ -669,7 +669,7 @@ public interface Attachment extends Appendix {
         private final List<byte[]> transactionFullHashes;
         private final byte[] revealedSecret;
 
-        MessagingPhasingVoteCasting(ByteBuffer buffer) throws NxtException.NotValidException {
+        MessagingPhasingVoteCasting(ByteBuffer buffer) throws RuvException.NotValidException {
             super(buffer);
             byte length = buffer.get();
             transactionFullHashes = new ArrayList<>(length);
@@ -680,7 +680,7 @@ public interface Attachment extends Appendix {
             }
             int secretLength = buffer.getInt();
             if (secretLength > Constants.MAX_PHASING_REVEALED_SECRET_LENGTH) {
-                throw new NxtException.NotValidException("Invalid revealed secret length " + secretLength);
+                throw new RuvException.NotValidException("Invalid revealed secret length " + secretLength);
             }
             if (secretLength > 0) {
                 revealedSecret = new byte[secretLength];
@@ -748,7 +748,7 @@ public interface Attachment extends Appendix {
         private final String name;
         private final String description;
 
-        MessagingAccountInfo(ByteBuffer buffer) throws NxtException.NotValidException {
+        MessagingAccountInfo(ByteBuffer buffer) throws RuvException.NotValidException {
             super(buffer);
             this.name = NAME_RW.readFromBuffer(buffer);
             this.description = DESCRIPTION_RW.readFromBuffer(buffer);
@@ -808,7 +808,7 @@ public interface Attachment extends Appendix {
         private final String property;
         private final String value;
 
-        MessagingAccountProperty(ByteBuffer buffer) throws NxtException.NotValidException {
+        MessagingAccountProperty(ByteBuffer buffer) throws RuvException.NotValidException {
             super(buffer);
             this.property = PROPERTY_NAME_RW.readFromBuffer(buffer).trim();
             this.value = PROPERTY_VALUE_RW.readFromBuffer(buffer).trim();
@@ -914,7 +914,7 @@ public interface Attachment extends Appendix {
         private final long quantityQNT;
         private final byte decimals;
 
-        ColoredCoinsAssetIssuance(ByteBuffer buffer) throws NxtException.NotValidException {
+        ColoredCoinsAssetIssuance(ByteBuffer buffer) throws RuvException.NotValidException {
             super(buffer);
             this.name = NAME_RW.readFromBuffer(buffer);
             this.description = DESCRIPTION_RW.readFromBuffer(buffer);
@@ -989,7 +989,7 @@ public interface Attachment extends Appendix {
         private final long assetId;
         private final long quantityQNT;
 
-        ColoredCoinsAssetTransfer(ByteBuffer buffer) throws NxtException.NotValidException {
+        ColoredCoinsAssetTransfer(ByteBuffer buffer) throws RuvException.NotValidException {
             super(buffer);
             this.assetId = buffer.getLong();
             this.quantityQNT = buffer.getLong();
@@ -1344,7 +1344,7 @@ public interface Attachment extends Appendix {
         private final int quantity;
         private final long priceNQT;
 
-        DigitalGoodsListing(ByteBuffer buffer) throws NxtException.NotValidException {
+        DigitalGoodsListing(ByteBuffer buffer) throws RuvException.NotValidException {
             super(buffer);
             this.name = Convert.readString(buffer, buffer.getShort(), Constants.MAX_DGS_LISTING_NAME_LENGTH);
             this.description = Convert.readString(buffer, buffer.getShort(), Constants.MAX_DGS_LISTING_DESCRIPTION_LENGTH);
@@ -1632,7 +1632,7 @@ public interface Attachment extends Appendix {
         private final long discountNQT;
         private final boolean goodsIsText;
 
-        DigitalGoodsDelivery(ByteBuffer buffer) throws NxtException.NotValidException {
+        DigitalGoodsDelivery(ByteBuffer buffer) throws RuvException.NotValidException {
             super(buffer);
             this.purchaseId = buffer.getLong();
             int length = buffer.getInt();
@@ -1745,7 +1745,7 @@ public interface Attachment extends Appendix {
         @Override
         void putMyBytes(ByteBuffer buffer) {
             if (getGoods() == null) {
-                throw new NxtException.NotYetEncryptedException("Goods not yet encrypted");
+                throw new RuvException.NotYetEncryptedException("Goods not yet encrypted");
             }
             super.putMyBytes(buffer);
         }
@@ -1940,7 +1940,7 @@ public interface Attachment extends Appendix {
         private final byte algorithm;
         private final byte decimals;
 
-        MonetarySystemCurrencyIssuance(ByteBuffer buffer) throws NxtException.NotValidException {
+        MonetarySystemCurrencyIssuance(ByteBuffer buffer) throws RuvException.NotValidException {
             super(buffer);
             this.name = NAME_RW.readFromBuffer(buffer);
             this.code = CODE_RW.readFromBuffer(buffer);
@@ -2926,11 +2926,11 @@ public interface Attachment extends Appendix {
 
         private final byte[][] recipientPublicKeys;
 
-        ShufflingRecipients(ByteBuffer buffer) throws NxtException.NotValidException {
+        ShufflingRecipients(ByteBuffer buffer) throws RuvException.NotValidException {
             super(buffer);
             int count = buffer.get();
             if (count > Constants.MAX_NUMBER_OF_SHUFFLING_PARTICIPANTS || count < 0) {
-                throw new NxtException.NotValidException("Invalid data count " + count);
+                throw new RuvException.NotValidException("Invalid data count " + count);
             }
             this.recipientPublicKeys = new byte[count][];
             for (int i = 0; i < count; i++) {
@@ -3018,24 +3018,24 @@ public interface Attachment extends Appendix {
         private final byte[][] keySeeds;
         private final long cancellingAccountId;
 
-        ShufflingCancellation(ByteBuffer buffer) throws NxtException.NotValidException {
+        ShufflingCancellation(ByteBuffer buffer) throws RuvException.NotValidException {
             super(buffer);
             int count = buffer.get();
             if (count > Constants.MAX_NUMBER_OF_SHUFFLING_PARTICIPANTS || count <= 0) {
-                throw new NxtException.NotValidException("Invalid data count " + count);
+                throw new RuvException.NotValidException("Invalid data count " + count);
             }
             this.blameData = new byte[count][];
             for (int i = 0; i < count; i++) {
                 int size = buffer.getInt();
                 if (size > Constants.MAX_PAYLOAD_LENGTH) {
-                    throw new NxtException.NotValidException("Invalid data size " + size);
+                    throw new RuvException.NotValidException("Invalid data size " + size);
                 }
                 this.blameData[i] = new byte[size];
                 buffer.get(this.blameData[i]);
             }
             count = buffer.get();
             if (count > Constants.MAX_NUMBER_OF_SHUFFLING_PARTICIPANTS || count <= 0) {
-                throw new NxtException.NotValidException("Invalid keySeeds count " + count);
+                throw new RuvException.NotValidException("Invalid keySeeds count " + count);
             }
             this.keySeeds = new byte[count][];
             for (int i = 0; i < count; i++) {
@@ -3350,11 +3350,11 @@ public interface Attachment extends Appendix {
         }
 
         public TaggedDataUpload(String name, String description, String tags, String type, String channel, boolean isText,
-                                String filename, byte[] data) throws NxtException.NotValidException {
+                                String filename, byte[] data) throws RuvException.NotValidException {
             super(name, description, tags, type, channel, isText, filename, data);
             this.hash = null;
             if (isText && !Arrays.equals(data, Convert.toBytes(Convert.toString(data)))) {
-                throw new NxtException.NotValidException("Data is not UTF-8 text");
+                throw new RuvException.NotValidException("Data is not UTF-8 text");
             }
         }
 

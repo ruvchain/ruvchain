@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,10 +14,10 @@
  *
  */
 
-package nxt.http;
+package ruv.http;
 
-import nxt.Constants;
-import nxt.util.Convert;
+import ruv.Constants;
+import ruv.util.Convert;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -44,7 +44,7 @@ public class APITestServlet extends HttpServlet {
             "    <meta charset='UTF-8'/>\n" +
             "    <meta http-equiv='X-UA-Compatible' content='IE=edge'>\n" +
             "    <meta name='viewport' content='width=device-width, initial-scale=1'>\n" +
-            "    <title>Nxt http API</title>\n" +
+            "    <title>Ruv http API</title>\n" +
             "    <link href='css/bootstrap.min.css' rel='stylesheet' type='text/css' />\n" +
             "    <link href='css/font-awesome.min.css' rel='stylesheet' type='text/css' />\n" +
             "    <link href='css/highlight.style.css' rel='stylesheet' type='text/css' />\n" +
@@ -58,7 +58,7 @@ public class APITestServlet extends HttpServlet {
             "<div class='navbar navbar-default' role='navigation'>\n" +
             "   <div class='container' style='min-width: 90%;'>\n" +
             "       <div class='navbar-header'>\n" +
-            "           <a class='navbar-brand' href='/test'>Nxt http API</a>\n" +
+            "           <a class='navbar-brand' href='/test'>Ruv http API</a>\n" +
             "       </div>\n" +
             "       <div class='navbar-collapse collapse'>\n" +
             "           <ul class='nav navbar-nav navbar-right'>\n" +
@@ -68,7 +68,7 @@ public class APITestServlet extends HttpServlet {
             "                    readonly style='margin-top:8px;'></li>\n" +
             "               <li><input type='text' class='form-control' id='search' " +
             "                    placeholder='Search' style='margin-top:8px;'></li>\n" +
-            "               <li><a href='https://nxtwiki.org/wiki/The_Nxt_API' target='_blank' style='margin-left:20px;'>Wiki Docs</a></li>\n" +
+            "               <li><a href='https://ruvwiki.org/wiki/The_Ruv_API' target='_blank' style='margin-left:20px;'>Wiki Docs</a></li>\n" +
             "           </ul>\n" +
             "       </div>\n" +
             "   </div>\n" +
@@ -249,7 +249,7 @@ public class APITestServlet extends HttpServlet {
         }
         buf.append("<a style='font-weight:normal;font-size:14px;color:#777;' href='/doc/");
         buf.append(className.replace('.', '/').replace('$', '.')).append(".html' target='_blank'>javadoc</a>&nbsp;&nbsp;\n");
-        buf.append("<a style='font-weight:normal;font-size:14px;color:#777;' href='https://nxtwiki.org/wiki/The_Nxt_API#");
+        buf.append("<a style='font-weight:normal;font-size:14px;color:#777;' href='https://ruvwiki.org/wiki/The_Ruv_API#");
         appendWikiLink(className.substring(className.lastIndexOf('.') + 1), buf);
         buf.append("' target='_blank'>wiki</a>&nbsp;&nbsp;\n");
         buf.append("&nbsp;&nbsp;&nbsp;\n<input type='checkbox' class='api-call-sel-ALL' ");
@@ -264,7 +264,7 @@ public class APITestServlet extends HttpServlet {
         buf.append("'>\n");
         buf.append("<div class='panel-body'>\n");
         String path = req.getServletPath();
-        String formAction = "/test-proxy".equals(path) ? "/nxt-proxy" : "/nxt";
+        String formAction = "/test-proxy".equals(path) ? "/ruv-proxy" : "/ruv";
         buf.append("<form action='").append(formAction).append("' method='POST' ");
         if (fileParameter != null) {
             buf.append("enctype='multipart/form-data' ");

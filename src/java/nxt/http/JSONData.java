@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,55 +14,55 @@
  *
  */
 
-package nxt.http;
+package ruv.http;
 
-import nxt.Account;
-import nxt.AccountLedger;
-import nxt.AccountLedger.LedgerEntry;
-import nxt.AccountRestrictions;
-import nxt.Alias;
-import nxt.Appendix;
-import nxt.Asset;
-import nxt.AssetDelete;
-import nxt.AssetDividend;
-import nxt.AssetTransfer;
-import nxt.Attachment;
-import nxt.Block;
-import nxt.Constants;
-import nxt.Currency;
-import nxt.CurrencyExchangeOffer;
-import nxt.CurrencyFounder;
-import nxt.CurrencyTransfer;
-import nxt.CurrencyType;
-import nxt.DigitalGoodsStore;
-import nxt.Exchange;
-import nxt.ExchangeRequest;
-import nxt.FundingMonitor;
-import nxt.Generator;
-import nxt.HoldingType;
-import nxt.MonetarySystem;
-import nxt.Nxt;
-import nxt.Order;
-import nxt.PhasingPoll;
-import nxt.PhasingVote;
-import nxt.Poll;
-import nxt.PrunableMessage;
-import nxt.Shuffler;
-import nxt.Shuffling;
-import nxt.ShufflingParticipant;
-import nxt.TaggedData;
-import nxt.Token;
-import nxt.Trade;
-import nxt.Transaction;
-import nxt.Vote;
-import nxt.VoteWeighting;
-import nxt.crypto.Crypto;
-import nxt.crypto.EncryptedData;
-import nxt.db.DbIterator;
-import nxt.peer.Hallmark;
-import nxt.peer.Peer;
-import nxt.util.Convert;
-import nxt.util.Filter;
+import ruv.Account;
+import ruv.AccountLedger;
+import ruv.AccountLedger.LedgerEntry;
+import ruv.AccountRestrictions;
+import ruv.Alias;
+import ruv.Appendix;
+import ruv.Asset;
+import ruv.AssetDelete;
+import ruv.AssetDividend;
+import ruv.AssetTransfer;
+import ruv.Attachment;
+import ruv.Block;
+import ruv.Constants;
+import ruv.Currency;
+import ruv.CurrencyExchangeOffer;
+import ruv.CurrencyFounder;
+import ruv.CurrencyTransfer;
+import ruv.CurrencyType;
+import ruv.DigitalGoodsStore;
+import ruv.Exchange;
+import ruv.ExchangeRequest;
+import ruv.FundingMonitor;
+import ruv.Generator;
+import ruv.HoldingType;
+import ruv.MonetarySystem;
+import ruv.Ruv;
+import ruv.Order;
+import ruv.PhasingPoll;
+import ruv.PhasingVote;
+import ruv.Poll;
+import ruv.PrunableMessage;
+import ruv.Shuffler;
+import ruv.Shuffling;
+import ruv.ShufflingParticipant;
+import ruv.TaggedData;
+import ruv.Token;
+import ruv.Trade;
+import ruv.Transaction;
+import ruv.Vote;
+import ruv.VoteWeighting;
+import ruv.crypto.Crypto;
+import ruv.crypto.EncryptedData;
+import ruv.db.DbIterator;
+import ruv.peer.Hallmark;
+import ruv.peer.Peer;
+import ruv.util.Convert;
+import ruv.util.Filter;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -90,7 +90,7 @@ public final class JSONData {
     }
 
     static JSONObject accountBalance(Account account, boolean includeEffectiveBalance) {
-        return accountBalance(account, includeEffectiveBalance, Nxt.getBlockchain().getHeight());
+        return accountBalance(account, includeEffectiveBalance, Ruv.getBlockchain().getHeight());
     }
 
     static JSONObject accountBalance(Account account, boolean includeEffectiveBalance, int height) {
@@ -100,7 +100,7 @@ public final class JSONData {
             json.put("unconfirmedBalanceNQT", "0");
             json.put("forgedBalanceNQT", "0");
             if (includeEffectiveBalance) {
-                json.put("effectiveBalanceNXT", "0");
+                json.put("effectiveBalanceRUV", "0");
                 json.put("guaranteedBalanceNQT", "0");
             }
         } else {
@@ -108,7 +108,7 @@ public final class JSONData {
             json.put("unconfirmedBalanceNQT", String.valueOf(account.getUnconfirmedBalanceNQT()));
             json.put("forgedBalanceNQT", String.valueOf(account.getForgedBalanceNQT()));
             if (includeEffectiveBalance) {
-                json.put("effectiveBalanceNXT", account.getEffectiveBalanceNXT(height));
+                json.put("effectiveBalanceRUV", account.getEffectiveBalanceRUV(height));
                 json.put("guaranteedBalanceNQT", String.valueOf(account.getGuaranteedBalanceNQT(Constants.GUARANTEED_BALANCE_CONFIRMATIONS, height)));
             }
         }
@@ -123,7 +123,7 @@ public final class JSONData {
             json.put("currentHeightFrom", String.valueOf(accountLease.getCurrentLeasingHeightFrom()));
             json.put("currentHeightTo", String.valueOf(accountLease.getCurrentLeasingHeightTo()));
             if (includeEffectiveBalance) {
-                json.put("effectiveBalanceNXT", String.valueOf(account.getGuaranteedBalanceNQT() / Constants.ONE_NXT));
+                json.put("effectiveBalanceRUV", String.valueOf(account.getGuaranteedBalanceNQT() / Constants.ONE_RUV));
             }
         }
         if (accountLease.getNextLesseeId() != 0) {
@@ -365,7 +365,7 @@ public final class JSONData {
         if (recipientPublicKeys.size() > 0) {
             json.put("recipientPublicKeys", recipientPublicKeys);
         }
-        if (includeHoldingInfo && shuffling.getHoldingType() != HoldingType.NXT) {
+        if (includeHoldingInfo && shuffling.getHoldingType() != HoldingType.RUV) {
             JSONObject holdingJson = new JSONObject();
             if (shuffling.getHoldingType() == HoldingType.ASSET) {
                 putAssetInfo(holdingJson, shuffling.getHoldingId());
@@ -442,7 +442,7 @@ public final class JSONData {
                 for (PhasingPoll.PhasingPollResult phasingPollResult : phasingPollResults) {
                     long phasedTransactionId = phasingPollResult.getId();
                     if (includeTransactions) {
-                        phasedTransactions.add(transaction(Nxt.getBlockchain().getTransaction(phasedTransactionId)));
+                        phasedTransactions.add(transaction(Ruv.getBlockchain().getTransaction(phasedTransactionId)));
                     } else {
                         phasedTransactions.add(Long.toUnsignedString(phasedTransactionId));
                     }
@@ -582,7 +582,7 @@ public final class JSONData {
             if (currency != null) {
                 json.put("decimals", currency.getDecimals());
             } else {
-                Transaction currencyIssuance = Nxt.getBlockchain().getTransaction(voteWeighting.getHoldingId());
+                Transaction currencyIssuance = Ruv.getBlockchain().getTransaction(voteWeighting.getHoldingId());
                 Attachment.MonetarySystemCurrencyIssuance currencyIssuanceAttachment = (Attachment.MonetarySystemCurrencyIssuance) currencyIssuance.getAttachment();
                 json.put("decimals", currencyIssuanceAttachment.getDecimals());
             }
@@ -1002,7 +1002,7 @@ public final class JSONData {
     static JSONObject transaction(Transaction transaction, Filter<Appendix> filter) {
         JSONObject json = unconfirmedTransaction(transaction, filter);
         json.put("block", Long.toUnsignedString(transaction.getBlockId()));
-        json.put("confirmations", Nxt.getBlockchain().getHeight() - transaction.getHeight());
+        json.put("confirmations", Ruv.getBlockchain().getHeight() - transaction.getHeight());
         json.put("blockTimestamp", transaction.getBlockTimestamp());
         json.put("transactionIndex", transaction.getIndex());
         return json;
@@ -1172,11 +1172,11 @@ public final class JSONData {
     }
 
     private static void putExpectedTransaction(JSONObject json, Transaction transaction) {
-        json.put("height", Nxt.getBlockchain().getHeight() + 1);
+        json.put("height", Ruv.getBlockchain().getHeight() + 1);
         json.put("phased", transaction.getPhasing() != null);
         if (transaction.getBlockId() != 0) { // those values may be wrong for unconfirmed transactions
             json.put("transactionHeight", transaction.getHeight());
-            json.put("confirmations", Nxt.getBlockchain().getHeight() - transaction.getHeight());
+            json.put("confirmations", Ruv.getBlockchain().getHeight() - transaction.getHeight());
         }
     }
 
@@ -1214,7 +1214,7 @@ public final class JSONData {
             }
         }
         if (includeTransactions && entry.getEvent().isTransaction()) {
-            Transaction transaction = Nxt.getBlockchain().getTransaction(entry.getEventId());
+            Transaction transaction = Ruv.getBlockchain().getTransaction(entry.getEventId());
             json.put("transaction", JSONData.transaction(transaction));
         }
     }

@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,10 +14,10 @@
  *
  */
 
-package nxt;
+package ruv;
 
-import nxt.db.DbUtils;
-import nxt.util.Convert;
+import ruv.db.DbUtils;
+import ruv.util.Convert;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -56,7 +56,7 @@ final class TransactionDb {
             }
         } catch (SQLException e) {
             throw new RuntimeException(e.toString(), e);
-        } catch (NxtException.ValidationException e) {
+        } catch (RuvException.ValidationException e) {
             throw new RuntimeException("Transaction already in database, id = " + transactionId + ", does not pass validation!", e);
         }
     }
@@ -87,7 +87,7 @@ final class TransactionDb {
             }
         } catch (SQLException e) {
             throw new RuntimeException(e.toString(), e);
-        } catch (NxtException.ValidationException e) {
+        } catch (RuvException.ValidationException e) {
             throw new RuntimeException("Transaction already in database, full_hash = " + Convert.toHexString(fullHash)
                     + ", does not pass validation!", e);
         }
@@ -163,7 +163,7 @@ final class TransactionDb {
         }
     }
 
-    static TransactionImpl loadTransaction(Connection con, ResultSet rs) throws NxtException.NotValidException {
+    static TransactionImpl loadTransaction(Connection con, ResultSet rs) throws RuvException.NotValidException {
         try {
 
             byte type = rs.getByte("type");
@@ -271,7 +271,7 @@ final class TransactionDb {
             }
         } catch (SQLException e) {
             throw new RuntimeException(e.toString(), e);
-        } catch (NxtException.ValidationException e) {
+        } catch (RuvException.ValidationException e) {
             throw new RuntimeException("Transaction already in database for block_id = " + Long.toUnsignedString(blockId)
                     + " does not pass validation!", e);
         }

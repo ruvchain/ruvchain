@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="iso-8859-1"  ?>
 <installation version="5.0">
     <properties>
-        <property file="conf/nxt-default.properties" prefix="runtime"/>
+        <property file="conf/ruv-default.properties" prefix="runtime"/>
     </properties>
     <info>
         <appname>RuvChain</appname>
-        <appversion>@{runtime.nxt.version}</appversion>
+        <appversion>@{runtime.ruv.version}</appversion>
         <url>https://ruvcha.in</url>
         <run-privileged condition="izpack.windowsinstall"/>
     </info>
@@ -121,15 +121,15 @@
             <file src="OPERATORS-GUIDE.md" targetdir="${INSTALL_PATH}" override="true"/>
             <file src="README.md" targetdir="${INSTALL_PATH}" override="true"/>
             <file src="USERS-GUIDE.md" targetdir="${INSTALL_PATH}" override="true"/>
-            <file src="nxt.policy" targetdir="${INSTALL_PATH}" override="true"/>
-            <file src="nxtdesktop.policy" targetdir="${INSTALL_PATH}" override="true"/>
-            <file src="conf/nxt-default.properties" targetdir="${INSTALL_PATH}/conf" override="true"/>
+            <file src="ruv.policy" targetdir="${INSTALL_PATH}" override="true"/>
+            <file src="ruvdesktop.policy" targetdir="${INSTALL_PATH}" override="true"/>
+            <file src="conf/ruv-default.properties" targetdir="${INSTALL_PATH}/conf" override="true"/>
             <file src="conf/logging-default.properties" targetdir="${INSTALL_PATH}/conf" override="true"/>
             <fileset dir="lib" targetdir="${INSTALL_PATH}/lib" override="true" excludes=".gitignore"/>
             <fileset dir="changelogs" targetdir="${INSTALL_PATH}/changelogs" override="true" excludes=".gitignore"/>
             <fileset dir="classes" targetdir="${INSTALL_PATH}/classes" override="true" excludes=".gitignore"/>
             <fileset dir="html" targetdir="${INSTALL_PATH}/html" override="true" excludes=".gitignore"/>
-            <fileset dir="src" targetdir="${INSTALL_PATH}/src" override="true" excludes=".gitignore nxt-private.iml"/>
+            <fileset dir="src" targetdir="${INSTALL_PATH}/src" override="true" excludes=".gitignore ruv-private.iml"/>
             <fileset dir="contrib" targetdir="${INSTALL_PATH}/contrib" override="true" excludes=".gitignore"/>
             <fileset dir="logs" targetdir="${INSTALL_PATH}/logs" override="true" excludes=".gitignore"/>
             <fileset dir="addons" targetdir="${INSTALL_PATH}/addons" override="true" excludes=".gitignore"/>
@@ -154,8 +154,8 @@
             <file src="mint.bat" targetdir="${INSTALL_PATH}" override="true"/>
             <file src="compact.bat" targetdir="${INSTALL_PATH}" override="true"/>
             <parsable targetfile="${INSTALL_PATH}/run.bat"/>
-            <singlefile src="resource/nxt.properties" target="${INSTALL_PATH}/resource/nxt.properties" override="true"/>
-            <singlefile src="resource/nxtservice.properties" target="${INSTALL_PATH}/resource/nxtservice.properties" override="true"/>
+            <singlefile src="resource/ruv.properties" target="${INSTALL_PATH}/resource/ruv.properties" override="true"/>
+            <singlefile src="resource/ruvservice.properties" target="${INSTALL_PATH}/resource/ruvservice.properties" override="true"/>
         </pack>
 
         <pack name="server.unix" os="unix" required="yes">
@@ -195,7 +195,7 @@
             <description>Mac Specific Resources</description>
             <fileset dir="resource/mac/Contents" targetdir="${INSTALL_PATH}/Contents" override="true"/>
 			<parsable targetfile="${INSTALL_PATH}/Contents/MacOS/RUV"/>
-			<executable targetfile="${INSTALL_PATH}/Contents/MacOS/nxt"/>
+			<executable targetfile="${INSTALL_PATH}/Contents/MacOS/ruv"/>
 		</pack>
 
         <pack name="jre.mac" os="mac_osx" required="yes" uninstall="false">

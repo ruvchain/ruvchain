@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,11 +14,11 @@
  *
  */
 
-package nxt.http;
+package ruv.http;
 
-import nxt.NxtException;
-import nxt.Transaction;
-import nxt.util.Convert;
+import ruv.RuvException;
+import ruv.Transaction;
+import ruv.util.Convert;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
 
@@ -58,7 +58,7 @@ public final class SignTransaction extends APIServlet.APIRequestHandler {
             response.put("transaction", transaction.getStringId());
             response.put("transactionBytes", Convert.toHexString(transaction.getBytes()));
             JSONData.putPrunableAttachment(response, transaction);
-        } catch (NxtException.ValidationException|RuntimeException e) {
+        } catch (RuvException.ValidationException|RuntimeException e) {
             JSONData.putException(response, e, "Incorrect unsigned transaction json or bytes");
         }
         return response;

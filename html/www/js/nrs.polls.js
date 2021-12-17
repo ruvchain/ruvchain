@@ -1,12 +1,12 @@
 /******************************************************************************
- * Copyright © 2013-2016 The Nxt Core Developers.                             *
+ * Copyright © 2013-2016 The Ruv Core Developers.                             *
  * Copyright © 2016-2019 Jelurida IP B.V.                                     *
  *                                                                            *
  * See the LICENSE.txt file at the top-level directory of this distribution   *
  * for licensing information.                                                 *
  *                                                                            *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,*
- * no part of the Nxt software, including this file, may be copied, modified, *
+ * no part of the Ruv software, including this file, may be copied, modified, *
  * propagated, or distributed except according to the terms contained in the  *
  * LICENSE.txt file.                                                          *
  *                                                                            *
@@ -322,7 +322,7 @@ var NRS = (function(NRS, $, undefined) {
 		}
 		if ((pollType == 0 && mbType == 1) || pollType == 1) {
 			$('#min_voting_balance_label_unit').html(NRS.constants.COIN_SYMBOL);
-			$('#create_poll_min_balance').attr('name', 'minBalanceNXT');
+			$('#create_poll_min_balance').attr('name', 'minBalanceRUV');
 		}
 		if ((pollType == 0 && mbType == 2) || pollType == 2) {
 			$('#min_voting_balance_label_unit').html($.t('asset'));

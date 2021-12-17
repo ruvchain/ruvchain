@@ -1,12 +1,12 @@
 /******************************************************************************
- * Copyright © 2013-2016 The Nxt Core Developers.                             *
+ * Copyright © 2013-2016 The Ruv Core Developers.                             *
  * Copyright © 2016-2019 Jelurida IP B.V.                                     *
  *                                                                            *
  * See the LICENSE.txt file at the top-level directory of this distribution   *
  * for licensing information.                                                 *
  *                                                                            *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,*
- * no part of the Nxt software, including this file, may be copied, modified, *
+ * no part of the Ruv software, including this file, may be copied, modified, *
  * propagated, or distributed except according to the terms contained in the  *
  * LICENSE.txt file.                                                          *
  *                                                                            *
@@ -18,17 +18,17 @@
  * @depends {nrs.js}
  */
 var NRS = (function(NRS, $) {
-	var DOWNLOAD_REPOSITORY_URL = "https://bitbucket.org/Jelurida/nxt/downloads/";
+	var DOWNLOAD_REPOSITORY_URL = "https://bitbucket.org/Jelurida/ruv/downloads/";
 	var index = 0;
 	var bundles = [
-		{alias: "nrsVersion", status: "release", prefix: "nxt-client-", ext: "zip"},
-		{alias: "nrsBetaVersion", status: "beta", prefix: "nxt-client-", ext: "zip"},
-		{alias: "nrsVersionWin", status: "release", prefix: "nxt-client-", ext: "exe"},
-		{alias: "nrsBetaVersionWin", status: "beta", prefix: "nxt-client-", ext: "exe"},
-		{alias: "nrsVersionMac", status: "release", prefix: "nxt-installer-", ext: "dmg"},
-		{alias: "nrsBetaVersionMac", status: "beta", prefix: "nxt-installer-", ext: "dmg"},
-		{alias: "nrsVersionLinux", status: "release", prefix: "nxt-client-", ext: "sh"},
-		{alias: "nrsBetaVersionLinux", status: "beta", prefix: "nxt-client-", ext: "sh"}
+		{alias: "nrsVersion", status: "release", prefix: "ruv-client-", ext: "zip"},
+		{alias: "nrsBetaVersion", status: "beta", prefix: "ruv-client-", ext: "zip"},
+		{alias: "nrsVersionWin", status: "release", prefix: "ruv-client-", ext: "exe"},
+		{alias: "nrsBetaVersionWin", status: "beta", prefix: "ruv-client-", ext: "exe"},
+		{alias: "nrsVersionMac", status: "release", prefix: "ruv-installer-", ext: "dmg"},
+		{alias: "nrsBetaVersionMac", status: "beta", prefix: "ruv-installer-", ext: "dmg"},
+		{alias: "nrsVersionLinux", status: "release", prefix: "ruv-client-", ext: "sh"},
+		{alias: "nrsBetaVersionLinux", status: "beta", prefix: "ruv-client-", ext: "sh"}
 	];
 	NRS.isOutdated = false;
 

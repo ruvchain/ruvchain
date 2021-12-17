@@ -14,7 +14,7 @@ FILES="${FILES} ${APPLICATION}.jar ${APPLICATION}service.jar"
 FILES="${FILES} 3RD-PARTY-LICENSES.txt AUTHORS.txt LICENSE.txt JPL-NRS.pdf"
 FILES="${FILES} DEVELOPERS-GUIDE.md OPERATORS-GUIDE.md README.md README.txt USERS-GUIDE.md"
 FILES="${FILES} mint.bat mint.sh run.bat run.sh run-tor.sh run-desktop.sh start.sh stop.sh compact.sh compact.bat sign.sh sign.bat passphraseRecovery.sh passphraseRecovery.bat"
-FILES="${FILES} nxt.policy nxtdesktop.policy Wallet.url"
+FILES="${FILES} ruv.policy ruvdesktop.policy Wallet.url"
 FILES="${FILES} compile.sh javadoc.sh jar.sh package.sh"
 FILES="${FILES} win-compile.sh win-javadoc.sh win-package.sh"
 
@@ -42,6 +42,6 @@ do
 	gzip -9c "$f" > "$f".gz
 done
 echo zip
-zip -q -X -r ${PACKAGE} ${APPLICATION} -x \*/.idea/\* \*/.gitignore \*/.git/\* \*/\*.log \*.iml ${APPLICATION}/conf/nxt.properties ${APPLICATION}/conf/logging.properties ${APPLICATION}/conf/localstorage/\*
+zip -q -X -r ${PACKAGE} ${APPLICATION} -x \*/.idea/\* \*/.gitignore \*/.git/\* \*/\*.log \*.iml ${APPLICATION}/conf/ruv.properties ${APPLICATION}/conf/logging.properties ${APPLICATION}/conf/localstorage/\*
 rm -rf ${APPLICATION}
 echo done

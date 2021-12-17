@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,14 +14,14 @@
  *
  */
 
-package nxt.http;
+package ruv.http;
 
-import nxt.Nxt;
-import nxt.NxtException;
-import nxt.Poll;
-import nxt.Vote;
-import nxt.VoteWeighting;
-import nxt.util.JSON;
+import ruv.Ruv;
+import ruv.RuvException;
+import ruv.Poll;
+import ruv.Vote;
+import ruv.VoteWeighting;
+import ruv.util.JSON;
 import org.json.simple.JSONStreamAware;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,7 +34,7 @@ public class GetPollVote extends APIServlet.APIRequestHandler  {
     }
 
     @Override
-    protected JSONStreamAware processRequest(HttpServletRequest req) throws NxtException {
+    protected JSONStreamAware processRequest(HttpServletRequest req) throws RuvException {
         Poll poll = ParameterParser.getPoll(req);
         long accountId = ParameterParser.getAccountId(req, true);
         boolean includeWeights = "true".equalsIgnoreCase(req.getParameter("includeWeights"));
@@ -42,8 +42,8 @@ public class GetPollVote extends APIServlet.APIRequestHandler  {
         if (vote != null) {
             int countHeight;
             JSONData.VoteWeighter weighter = null;
-            if (includeWeights && (countHeight = Math.min(poll.getFinishHeight(), Nxt.getBlockchain().getHeight()))
-                    >= Nxt.getBlockchainProcessor().getMinRollbackHeight()) {
+            if (includeWeights && (countHeight = Math.min(poll.getFinishHeight(), Ruv.getBlockchain().getHeight()))
+                    >= Ruv.getBlockchainProcessor().getMinRollbackHeight()) {
                 VoteWeighting voteWeighting = poll.getVoteWeighting();
                 VoteWeighting.VotingModel votingModel = voteWeighting.getVotingModel();
                 weighter = voterId -> votingModel.calcWeight(voteWeighting, voterId, countHeight);

@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,19 +14,19 @@
  *
  */
 
-package nxt.http;
+package ruv.http;
 
-import nxt.Block;
-import nxt.Nxt;
-import nxt.util.Convert;
+import ruv.Block;
+import ruv.Ruv;
+import ruv.util.Convert;
 import org.json.simple.JSONStreamAware;
 
 import javax.servlet.http.HttpServletRequest;
 
-import static nxt.http.JSONResponses.INCORRECT_BLOCK;
-import static nxt.http.JSONResponses.INCORRECT_HEIGHT;
-import static nxt.http.JSONResponses.INCORRECT_TIMESTAMP;
-import static nxt.http.JSONResponses.UNKNOWN_BLOCK;
+import static ruv.http.JSONResponses.INCORRECT_BLOCK;
+import static ruv.http.JSONResponses.INCORRECT_HEIGHT;
+import static ruv.http.JSONResponses.INCORRECT_TIMESTAMP;
+import static ruv.http.JSONResponses.UNKNOWN_BLOCK;
 
 public final class GetBlock extends APIServlet.APIRequestHandler {
 
@@ -45,17 +45,17 @@ public final class GetBlock extends APIServlet.APIRequestHandler {
         String timestampValue = Convert.emptyToNull(req.getParameter("timestamp"));
         if (blockValue != null) {
             try {
-                blockData = Nxt.getBlockchain().getBlock(Convert.parseUnsignedLong(blockValue));
+                blockData = Ruv.getBlockchain().getBlock(Convert.parseUnsignedLong(blockValue));
             } catch (RuntimeException e) {
                 return INCORRECT_BLOCK;
             }
         } else if (heightValue != null) {
             try {
                 int height = Integer.parseInt(heightValue);
-                if (height < 0 || height > Nxt.getBlockchain().getHeight()) {
+                if (height < 0 || height > Ruv.getBlockchain().getHeight()) {
                     return INCORRECT_HEIGHT;
                 }
-                blockData = Nxt.getBlockchain().getBlockAtHeight(height);
+                blockData = Ruv.getBlockchain().getBlockAtHeight(height);
             } catch (RuntimeException e) {
                 return INCORRECT_HEIGHT;
             }
@@ -65,12 +65,12 @@ public final class GetBlock extends APIServlet.APIRequestHandler {
                 if (timestamp < 0) {
                     return INCORRECT_TIMESTAMP;
                 }
-                blockData = Nxt.getBlockchain().getLastBlock(timestamp);
+                blockData = Ruv.getBlockchain().getLastBlock(timestamp);
             } catch (RuntimeException e) {
                 return INCORRECT_TIMESTAMP;
             }
         } else {
-            blockData = Nxt.getBlockchain().getLastBlock();
+            blockData = Ruv.getBlockchain().getLastBlock();
         }
 
         if (blockData == null) {

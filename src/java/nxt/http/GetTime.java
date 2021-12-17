@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,9 +14,9 @@
  *
  */
 
-package nxt.http;
+package ruv.http;
 
-import nxt.Nxt;
+import ruv.Ruv;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
 
@@ -34,7 +34,7 @@ public final class GetTime extends APIServlet.APIRequestHandler {
     protected JSONStreamAware processRequest(HttpServletRequest req) {
 
         JSONObject response = new JSONObject();
-        response.put("time", Nxt.getEpochTime());
+        response.put("time", Ruv.getEpochTime());
 
         return response;
     }

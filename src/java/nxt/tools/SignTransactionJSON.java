@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,13 +14,13 @@
  *
  */
 
-package nxt.tools;
+package ruv.tools;
 
-import nxt.Nxt;
-import nxt.Transaction;
-import nxt.crypto.Crypto;
-import nxt.util.Convert;
-import nxt.util.Logger;
+import ruv.Ruv;
+import ruv.Transaction;
+import ruv.crypto.Crypto;
+import ruv.util.Convert;
+import ruv.util.Logger;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
@@ -72,7 +72,7 @@ public final class SignTransactionJSON {
                 } else {
                     secretPhrase = new String(console.readPassword("Secret phrase for account " + senderRS + ": "));
                 }
-                Transaction.Builder builder = Nxt.newTransactionBuilder(json);
+                Transaction.Builder builder = Ruv.newTransactionBuilder(json);
                 Transaction transaction = builder.build(secretPhrase);
                 writer.write(transaction.getJSONObject().toJSONString());
                 writer.newLine();

@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,11 +14,11 @@
  *
  */
 
-package nxt.http;
+package ruv.http;
 
-import nxt.AccountLedger;
-import nxt.AccountLedger.LedgerEntry;
-import nxt.NxtException;
+import ruv.AccountLedger;
+import ruv.AccountLedger.LedgerEntry;
+import ruv.RuvException;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
 
@@ -27,8 +27,8 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * <p>
  * The GetAccountLedgerEntry API will return an entry from the account ledger.  The
- * account ledger tracks all account changes as determined by the nxt.ledgerAccounts,
- * nxt.ledgerLogUnconfirmed and nxt.ledgerTrimKeep properties.
+ * account ledger tracks all account changes as determined by the ruv.ledgerAccounts,
+ * ruv.ledgerLogUnconfirmed and ruv.ledgerTrimKeep properties.
  * </p>
  * <table>
  *   <caption><b>Request parameters</b></caption>
@@ -147,8 +147,8 @@ import javax.servlet.http.HttpServletRequest;
  *       <td>Change in the currency balance.  The currency identifier is the 'holding'.</td>
  *     </tr>
  *     <tr>
- *       <td>NXT_BALANCE</td>
- *       <td>Change in the NXT balance for the account.  There is no 'holding'.</td>
+ *       <td>RUV_BALANCE</td>
+ *       <td>Change in the RUV balance for the account.  There is no 'holding'.</td>
  *     </tr>
  *     <tr>
  *       <td>UNCONFIRMED_ASSET_BALANCE</td>
@@ -159,8 +159,8 @@ import javax.servlet.http.HttpServletRequest;
  *       <td>Change in the unconfirmed currency balance.  The currency identifier is the 'holding'.</td>
  *     </tr>
  *     <tr>
- *       <td>UNCONFIRMED_NXT_BALANCE</td>
- *       <td>Change in the unconfirmed NXT balance for the account.  There is no 'holding'.</td>
+ *       <td>UNCONFIRMED_RUV_BALANCE</td>
+ *       <td>Change in the unconfirmed RUV balance for the account.  There is no 'holding'.</td>
  *     </tr>
  *   </tbody>
  * </table>
@@ -182,10 +182,10 @@ public class GetAccountLedgerEntry extends APIServlet.APIRequestHandler {
      *
      * @param   req                 API request
      * @return                      API response
-     * @throws  NxtException        Invalid request
+     * @throws  RuvException        Invalid request
      */
     @Override
-    protected JSONStreamAware processRequest(HttpServletRequest req) throws NxtException {
+    protected JSONStreamAware processRequest(HttpServletRequest req) throws RuvException {
         //
         // Process the request parameters
         //

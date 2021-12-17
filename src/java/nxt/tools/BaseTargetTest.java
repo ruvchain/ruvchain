@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,11 +14,11 @@
  *
  */
 
-package nxt.tools;
+package ruv.tools;
 
-import nxt.Constants;
-import nxt.util.Convert;
-import nxt.util.Logger;
+import ruv.Constants;
+import ruv.util.Convert;
+import ruv.util.Logger;
 
 import java.math.BigInteger;
 import java.sql.Connection;
@@ -31,7 +31,7 @@ import java.util.List;
 public final class BaseTargetTest {
 
     private static final long MIN_BASE_TARGET = Constants.INITIAL_BASE_TARGET * 9 / 10;
-    private static final long MAX_BASE_TARGET = Constants.INITIAL_BASE_TARGET * (Constants.isTestnet ? Constants.MAX_BALANCE_NXT : 50);
+    private static final long MAX_BASE_TARGET = Constants.INITIAL_BASE_TARGET * (Constants.isTestnet ? Constants.MAX_BALANCE_RUV : 50);
 
     private static final int MIN_BLOCKTIME_LIMIT = Constants.BLOCK_TIME - 7;
     private static final int MAX_BLOCKTIME_LIMIT = Constants.BLOCK_TIME + 7;
@@ -102,9 +102,9 @@ public final class BaseTargetTest {
 
             int count = 0;
 
-            String dbLocation = Constants.isTestnet ? "nxt_test_db" : "nxt_db";
+            String dbLocation = Constants.isTestnet ? "ruv_test_db" : "ruv_db";
 
-            try (Connection con = DriverManager.getConnection("jdbc:h2:./" + dbLocation + "/nxt;DB_CLOSE_ON_EXIT=FALSE;MVCC=TRUE", "sa", "sa");
+            try (Connection con = DriverManager.getConnection("jdbc:h2:./" + dbLocation + "/ruv;DB_CLOSE_ON_EXIT=FALSE;MVCC=TRUE", "sa", "sa");
                  PreparedStatement selectBlocks = con.prepareStatement("SELECT * FROM block WHERE height > " + height + " ORDER BY db_id ASC");
                  ResultSet rs = selectBlocks.executeQuery()) {
 

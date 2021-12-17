@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,12 +14,12 @@
  *
  */
 
-package nxt.peer;
+package ruv.peer;
 
-import nxt.Blockchain;
-import nxt.Constants;
-import nxt.Nxt;
-import nxt.Transaction;
+import ruv.Blockchain;
+import ruv.Constants;
+import ruv.Ruv;
+import ruv.Transaction;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
@@ -41,7 +41,7 @@ final class GetTransactions extends PeerServlet.PeerRequestHandler {
         JSONObject response = new JSONObject();
         JSONArray transactionArray = new JSONArray();
         JSONArray transactionIds = (JSONArray)request.get("transactionIds");
-        Blockchain blockchain = Nxt.getBlockchain();
+        Blockchain blockchain = Ruv.getBlockchain();
         //
         // Return the transactions to the caller
         //

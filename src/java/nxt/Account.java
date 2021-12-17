@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,24 +14,24 @@
  *
  */
 
-package nxt;
+package ruv;
 
-import nxt.AccountLedger.LedgerEntry;
-import nxt.AccountLedger.LedgerEvent;
-import nxt.AccountLedger.LedgerHolding;
-import nxt.crypto.Crypto;
-import nxt.crypto.EncryptedData;
-import nxt.db.DbClause;
-import nxt.db.DbIterator;
-import nxt.db.DbKey;
-import nxt.db.DbUtils;
-import nxt.db.DerivedDbTable;
-import nxt.db.VersionedEntityDbTable;
-import nxt.db.VersionedPersistentDbTable;
-import nxt.util.Convert;
-import nxt.util.Listener;
-import nxt.util.Listeners;
-import nxt.util.Logger;
+import ruv.AccountLedger.LedgerEntry;
+import ruv.AccountLedger.LedgerEvent;
+import ruv.AccountLedger.LedgerHolding;
+import ruv.crypto.Crypto;
+import ruv.crypto.EncryptedData;
+import ruv.db.DbClause;
+import ruv.db.DbIterator;
+import ruv.db.DbKey;
+import ruv.db.DbUtils;
+import ruv.db.DerivedDbTable;
+import ruv.db.VersionedEntityDbTable;
+import ruv.db.VersionedPersistentDbTable;
+import ruv.util.Convert;
+import ruv.util.Listener;
+import ruv.util.Listeners;
+import ruv.util.Logger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -91,7 +91,7 @@ public final class Account {
                 pstmt.setLong(++i, this.assetId);
                 pstmt.setLong(++i, this.quantityQNT);
                 pstmt.setLong(++i, this.unconfirmedQuantityQNT);
-                pstmt.setInt(++i, Nxt.getBlockchain().getHeight());
+                pstmt.setInt(++i, Ruv.getBlockchain().getHeight());
                 pstmt.executeUpdate();
             }
         }
@@ -163,7 +163,7 @@ public final class Account {
                 pstmt.setLong(++i, this.currencyId);
                 pstmt.setLong(++i, this.units);
                 pstmt.setLong(++i, this.unconfirmedUnits);
-                pstmt.setInt(++i, Nxt.getBlockchain().getHeight());
+                pstmt.setInt(++i, Ruv.getBlockchain().getHeight());
                 pstmt.executeUpdate();
             }
         }
@@ -245,7 +245,7 @@ public final class Account {
                 DbUtils.setIntZeroToNull(pstmt, ++i, this.nextLeasingHeightFrom);
                 DbUtils.setIntZeroToNull(pstmt, ++i, this.nextLeasingHeightTo);
                 DbUtils.setLongZeroToNull(pstmt, ++i, this.nextLesseeId);
-                pstmt.setInt(++i, Nxt.getBlockchain().getHeight());
+                pstmt.setInt(++i, Ruv.getBlockchain().getHeight());
                 pstmt.executeUpdate();
             }
         }
@@ -309,7 +309,7 @@ public final class Account {
                 pstmt.setLong(++i, this.accountId);
                 DbUtils.setString(pstmt, ++i, this.name);
                 DbUtils.setString(pstmt, ++i, this.description);
-                pstmt.setInt(++i, Nxt.getBlockchain().getHeight());
+                pstmt.setInt(++i, Ruv.getBlockchain().getHeight());
                 pstmt.executeUpdate();
             }
         }
@@ -374,7 +374,7 @@ public final class Account {
                 DbUtils.setLongZeroToNull(pstmt, ++i, this.setterId != this.recipientId ? this.setterId : 0);
                 DbUtils.setString(pstmt, ++i, this.property);
                 DbUtils.setString(pstmt, ++i, this.value);
-                pstmt.setInt(++i, Nxt.getBlockchain().getHeight());
+                pstmt.setInt(++i, Ruv.getBlockchain().getHeight());
                 pstmt.executeUpdate();
             }
         }
@@ -412,7 +412,7 @@ public final class Account {
             this.accountId = accountId;
             this.dbKey = publicKeyDbKeyFactory.newKey(accountId);
             this.publicKey = publicKey;
-            this.height = Nxt.getBlockchain().getHeight();
+            this.height = Ruv.getBlockchain().getHeight();
         }
 
         private PublicKey(ResultSet rs, DbKey dbKey) throws SQLException {
@@ -423,7 +423,7 @@ public final class Account {
         }
 
         private void save(Connection con) throws SQLException {
-            height = Nxt.getBlockchain().getHeight();
+            height = Ruv.getBlockchain().getHeight();
             try (PreparedStatement pstmt = con.prepareStatement("MERGE INTO public_key (account_id, public_key, height, latest) "
                     + "KEY (account_id, height) VALUES (?, ?, ?, TRUE)")) {
                 int i = 0;
@@ -495,8 +495,8 @@ public final class Account {
                 super.checkAvailable(height);
                 return;
             }
-            if (height > Nxt.getBlockchain().getHeight()) {
-                throw new IllegalArgumentException("Height " + height + " exceeds blockchain height " + Nxt.getBlockchain().getHeight());
+            if (height > Ruv.getBlockchain().getHeight()) {
+                throw new IllegalArgumentException("Height " + height + " exceeds blockchain height " + Ruv.getBlockchain().getHeight());
             }
         }
 
@@ -615,11 +615,11 @@ public final class Account {
 
         @Override
         public void checkAvailable(int height) {
-            if (height + Constants.MAX_DIVIDEND_PAYMENT_ROLLBACK < Nxt.getBlockchainProcessor().getMinRollbackHeight()) {
+            if (height + Constants.MAX_DIVIDEND_PAYMENT_ROLLBACK < Ruv.getBlockchainProcessor().getMinRollbackHeight()) {
                 throw new IllegalArgumentException("Historical data as of height " + height +" not available.");
             }
-            if (height > Nxt.getBlockchain().getHeight()) {
-                throw new IllegalArgumentException("Height " + height + " exceeds blockchain height " + Nxt.getBlockchain().getHeight());
+            if (height > Ruv.getBlockchain().getHeight()) {
+                throw new IllegalArgumentException("Height " + height + " exceeds blockchain height " + Ruv.getBlockchain().getHeight());
             }
         }
 
@@ -701,7 +701,7 @@ public final class Account {
 
     };
 
-    private static final ConcurrentMap<DbKey, byte[]> publicKeyCache = Nxt.getBooleanProperty("nxt.enablePublicKeyCache") ?
+    private static final ConcurrentMap<DbKey, byte[]> publicKeyCache = Ruv.getBooleanProperty("ruv.enablePublicKeyCache") ?
             new ConcurrentHashMap<>() : null;
 
     private static final Listeners<Account,Event> listeners = new Listeners<>();
@@ -1028,7 +1028,7 @@ public final class Account {
 
     static {
 
-        Nxt.getBlockchainProcessor().addListener(block -> {
+        Ruv.getBlockchainProcessor().addListener(block -> {
             int height = block.getHeight();
             List<AccountLease> changingLeases = new ArrayList<>();
             try (DbIterator<AccountLease> leases = getLeaseChangingAccounts(height)) {
@@ -1069,7 +1069,7 @@ public final class Account {
 
         if (publicKeyCache != null) {
 
-            Nxt.getBlockchainProcessor().addListener(block -> {
+            Ruv.getBlockchainProcessor().addListener(block -> {
                 publicKeyCache.remove(accountDbKeyFactory.newKey(block.getGeneratorId()));
                 block.getTransactions().forEach(transaction -> {
                     publicKeyCache.remove(accountDbKeyFactory.newKey(transaction.getSenderId()));
@@ -1085,7 +1085,7 @@ public final class Account {
                 });
             }, BlockchainProcessor.Event.BLOCK_POPPED);
 
-            Nxt.getBlockchainProcessor().addListener(block -> publicKeyCache.clear(), BlockchainProcessor.Event.RESCAN_BEGIN);
+            Ruv.getBlockchainProcessor().addListener(block -> publicKeyCache.clear(), BlockchainProcessor.Event.RESCAN_BEGIN);
 
         }
 
@@ -1138,7 +1138,7 @@ public final class Account {
             pstmt.setLong(++i, this.forgedBalanceNQT);
             DbUtils.setLongZeroToNull(pstmt, ++i, this.activeLesseeId);
             pstmt.setBoolean(++i, controls.contains(ControlType.PHASING_ONLY));
-            pstmt.setInt(++i, Nxt.getBlockchain().getHeight());
+            pstmt.setInt(++i, Ruv.getBlockchain().getHeight());
             pstmt.executeUpdate();
         }
     }
@@ -1219,14 +1219,14 @@ public final class Account {
         return forgedBalanceNQT;
     }
 
-    public long getEffectiveBalanceNXT() {
-        return getEffectiveBalanceNXT(Nxt.getBlockchain().getHeight());
+    public long getEffectiveBalanceRUV() {
+        return getEffectiveBalanceRUV(Ruv.getBlockchain().getHeight());
     }
 
-    public long getEffectiveBalanceNXT(int height) {
+    public long getEffectiveBalanceRUV(int height) {
         if (height <= 1440) {
             Account genesisAccount = getAccount(id, 0);
-            return genesisAccount == null ? 0 : genesisAccount.getBalanceNQT() / Constants.ONE_NXT;
+            return genesisAccount == null ? 0 : genesisAccount.getBalanceNQT() / Constants.ONE_RUV;
         }
         if (this.publicKey == null) {
             this.publicKey = publicKeyTable.get(accountDbKeyFactory.newKey(this));
@@ -1234,15 +1234,15 @@ public final class Account {
         if (this.publicKey == null || this.publicKey.publicKey == null || height - this.publicKey.height <= 1440) {
             return 0; // cfb: Accounts with the public key revealed less than 1440 blocks ago are not allowed to generate blocks
         }
-        Nxt.getBlockchain().readLock();
+        Ruv.getBlockchain().readLock();
         try {
             long effectiveBalanceNQT = getLessorsGuaranteedBalanceNQT(height);
             if (activeLesseeId == 0) {
                 effectiveBalanceNQT += getGuaranteedBalanceNQT(Constants.GUARANTEED_BALANCE_CONFIRMATIONS, height);
             }
-	        return effectiveBalanceNQT < Constants.MIN_FORGING_BALANCE_NQT ? 0 : effectiveBalanceNQT / Constants.ONE_NXT;
+	        return effectiveBalanceNQT < Constants.MIN_FORGING_BALANCE_NQT ? 0 : effectiveBalanceNQT / Constants.ONE_RUV;
         } finally {
-            Nxt.getBlockchain().readUnlock();
+            Ruv.getBlockchain().readUnlock();
         }
     }
 
@@ -1262,7 +1262,7 @@ public final class Account {
             lessorIds[i] = lessors.get(i).getId();
             balances[i] = lessors.get(i).getBalanceNQT();
         }
-        int blockchainHeight = Nxt.getBlockchain().getHeight();
+        int blockchainHeight = Ruv.getBlockchain().getHeight();
         try (Connection con = Db.db.getConnection();
              PreparedStatement pstmt = con.prepareStatement("SELECT account_id, SUM (additions) AS additions "
                      + "FROM account_guaranteed_balance, TABLE (id BIGINT=?) T WHERE account_id = T.id AND height > ? "
@@ -1304,15 +1304,15 @@ public final class Account {
     }
 
     public long getGuaranteedBalanceNQT() {
-        return getGuaranteedBalanceNQT(Constants.GUARANTEED_BALANCE_CONFIRMATIONS, Nxt.getBlockchain().getHeight());
+        return getGuaranteedBalanceNQT(Constants.GUARANTEED_BALANCE_CONFIRMATIONS, Ruv.getBlockchain().getHeight());
     }
 
     public long getGuaranteedBalanceNQT(final int numberOfConfirmations, final int currentHeight) {
-        Nxt.getBlockchain().readLock();
+        Ruv.getBlockchain().readLock();
         try {
             int height = currentHeight - numberOfConfirmations;
-            if (height + Constants.GUARANTEED_BALANCE_CONFIRMATIONS < Nxt.getBlockchainProcessor().getMinRollbackHeight()
-                    || height > Nxt.getBlockchain().getHeight()) {
+            if (height + Constants.GUARANTEED_BALANCE_CONFIRMATIONS < Ruv.getBlockchainProcessor().getMinRollbackHeight()
+                    || height > Ruv.getBlockchain().getHeight()) {
                 throw new IllegalArgumentException("Height " + height + " not available for guaranteed balance calculation");
             }
             try (Connection con = Db.db.getConnection();
@@ -1331,7 +1331,7 @@ public final class Account {
                 throw new RuntimeException(e.toString(), e);
             }
         } finally {
-            Nxt.getBlockchain().readUnlock();
+            Ruv.getBlockchain().readUnlock();
         }
     }
 
@@ -1412,7 +1412,7 @@ public final class Account {
     }
 
     void leaseEffectiveBalance(long lesseeId, int period) {
-        int height = Nxt.getBlockchain().getHeight();
+        int height = Ruv.getBlockchain().getHeight();
         AccountLease accountLease = accountLeaseTable.get(accountDbKeyFactory.newKey(this));
         if (accountLease == null) {
             accountLease = new AccountLease(id,
@@ -1489,7 +1489,7 @@ public final class Account {
         }
         if (publicKey.publicKey == null) {
             publicKey.publicKey = key;
-            publicKey.height = Nxt.getBlockchain().getHeight();
+            publicKey.height = Ruv.getBlockchain().getHeight();
             return true;
         }
         return Arrays.equals(publicKey.publicKey, key);
@@ -1505,7 +1505,7 @@ public final class Account {
             publicKeyTable.insert(publicKey);
         } else if (! Arrays.equals(publicKey.publicKey, key)) {
             throw new IllegalStateException("Public key mismatch");
-        } else if (publicKey.height >= Nxt.getBlockchain().getHeight() - 1) {
+        } else if (publicKey.height >= Ruv.getBlockchain().getHeight() - 1) {
             PublicKey dbPublicKey = publicKeyTable.get(dbKey, false);
             if (dbPublicKey == null || dbPublicKey.publicKey == null) {
                 publicKeyTable.insert(publicKey);
@@ -1692,11 +1692,11 @@ public final class Account {
         if (AccountLedger.mustLogEntry(this.id, false)) {
             if (feeNQT != 0) {
                 AccountLedger.logEntry(new LedgerEntry(LedgerEvent.TRANSACTION_FEE, eventId, this.id,
-                        LedgerHolding.NXT_BALANCE, null, feeNQT, this.balanceNQT - amountNQT));
+                        LedgerHolding.RUV_BALANCE, null, feeNQT, this.balanceNQT - amountNQT));
             }
             if (amountNQT != 0) {
                 AccountLedger.logEntry(new LedgerEntry(event, eventId, this.id,
-                        LedgerHolding.NXT_BALANCE, null, amountNQT, this.balanceNQT));
+                        LedgerHolding.RUV_BALANCE, null, amountNQT, this.balanceNQT));
             }
         }
     }
@@ -1720,11 +1720,11 @@ public final class Account {
         if (AccountLedger.mustLogEntry(this.id, true)) {
             if (feeNQT != 0) {
                 AccountLedger.logEntry(new LedgerEntry(LedgerEvent.TRANSACTION_FEE, eventId, this.id,
-                        LedgerHolding.UNCONFIRMED_NXT_BALANCE, null, feeNQT, this.unconfirmedBalanceNQT - amountNQT));
+                        LedgerHolding.UNCONFIRMED_RUV_BALANCE, null, feeNQT, this.unconfirmedBalanceNQT - amountNQT));
             }
             if (amountNQT != 0) {
                 AccountLedger.logEntry(new LedgerEntry(event, eventId, this.id,
-                        LedgerHolding.UNCONFIRMED_NXT_BALANCE, null, amountNQT, this.unconfirmedBalanceNQT));
+                        LedgerHolding.UNCONFIRMED_RUV_BALANCE, null, amountNQT, this.unconfirmedBalanceNQT));
             }
         }
     }
@@ -1751,21 +1751,21 @@ public final class Account {
         if (AccountLedger.mustLogEntry(this.id, true)) {
             if (feeNQT != 0) {
                 AccountLedger.logEntry(new LedgerEntry(LedgerEvent.TRANSACTION_FEE, eventId, this.id,
-                        LedgerHolding.UNCONFIRMED_NXT_BALANCE, null, feeNQT, this.unconfirmedBalanceNQT - amountNQT));
+                        LedgerHolding.UNCONFIRMED_RUV_BALANCE, null, feeNQT, this.unconfirmedBalanceNQT - amountNQT));
             }
             if (amountNQT != 0) {
                 AccountLedger.logEntry(new LedgerEntry(event, eventId, this.id,
-                        LedgerHolding.UNCONFIRMED_NXT_BALANCE, null, amountNQT, this.unconfirmedBalanceNQT));
+                        LedgerHolding.UNCONFIRMED_RUV_BALANCE, null, amountNQT, this.unconfirmedBalanceNQT));
             }
         }
         if (AccountLedger.mustLogEntry(this.id, false)) {
             if (feeNQT != 0) {
                 AccountLedger.logEntry(new LedgerEntry(LedgerEvent.TRANSACTION_FEE, eventId, this.id,
-                        LedgerHolding.NXT_BALANCE, null, feeNQT, this.balanceNQT - amountNQT));
+                        LedgerHolding.RUV_BALANCE, null, feeNQT, this.balanceNQT - amountNQT));
             }
             if (amountNQT != 0) {
                 AccountLedger.logEntry(new LedgerEntry(event, eventId, this.id,
-                        LedgerHolding.NXT_BALANCE, null, amountNQT, this.balanceNQT));
+                        LedgerHolding.RUV_BALANCE, null, amountNQT, this.balanceNQT));
             }
         }
     }
@@ -1797,7 +1797,7 @@ public final class Account {
         if (amountNQT <= 0) {
             return;
         }
-        int blockchainHeight = Nxt.getBlockchain().getHeight();
+        int blockchainHeight = Ruv.getBlockchain().getHeight();
         try (Connection con = Db.db.getConnection();
              PreparedStatement pstmtSelect = con.prepareStatement("SELECT additions FROM account_guaranteed_balance "
                      + "WHERE account_id = ? and height = ?");

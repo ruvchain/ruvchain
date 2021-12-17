@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,22 +14,22 @@
  *
  */
 
-package nxt.http;
+package ruv.http;
 
-import nxt.AccountLedger;
-import nxt.AccountLedger.LedgerEntry;
-import nxt.Block;
-import nxt.BlockchainProcessor;
-import nxt.Db;
-import nxt.Nxt;
-import nxt.Transaction;
-import nxt.TransactionProcessor;
-import nxt.db.TransactionalDb;
-import nxt.peer.Peer;
-import nxt.peer.Peers;
-import nxt.util.Convert;
-import nxt.util.Listener;
-import nxt.util.Logger;
+import ruv.AccountLedger;
+import ruv.AccountLedger.LedgerEntry;
+import ruv.Block;
+import ruv.BlockchainProcessor;
+import ruv.Db;
+import ruv.Ruv;
+import ruv.Transaction;
+import ruv.TransactionProcessor;
+import ruv.db.TransactionalDb;
+import ruv.peer.Peer;
+import ruv.peer.Peers;
+import ruv.util.Convert;
+import ruv.util.Listener;
+import ruv.util.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -58,23 +58,23 @@ import java.util.concurrent.locks.ReentrantLock;
  * are then returned to the application.
  *
  * Event registrations are discarded if an EventWait API request
- * has not been received within nxt.apiEventTimeout seconds.
+ * has not been received within ruv.apiEventTimeout seconds.
  *
- * The maximum number of event users is specified by nxt.apiMaxEventUsers.
+ * The maximum number of event users is specified by ruv.apiMaxEventUsers.
  */
 class EventListener implements Runnable, AsyncListener, TransactionalDb.TransactionCallback {
 
     /** Maximum event users */
-    static final int maxEventUsers = Nxt.getIntProperty("nxt.apiMaxEventUsers");
+    static final int maxEventUsers = Ruv.getIntProperty("ruv.apiMaxEventUsers");
 
     /** Event registration timeout (seconds) */
-    static final int eventTimeout = Math.max(Nxt.getIntProperty("nxt.apiEventTimeout"), 15);
+    static final int eventTimeout = Math.max(Ruv.getIntProperty("ruv.apiEventTimeout"), 15);
 
     /** Blockchain processor */
-    static final BlockchainProcessor blockchainProcessor = Nxt.getBlockchainProcessor();
+    static final BlockchainProcessor blockchainProcessor = Ruv.getBlockchainProcessor();
 
     /** Transaction processor */
-    static final TransactionProcessor transactionProcessor = Nxt.getTransactionProcessor();
+    static final TransactionProcessor transactionProcessor = Ruv.getTransactionProcessor();
 
     /** Active event users */
     static final Map<String, EventListener> eventListeners = new ConcurrentHashMap<>();
@@ -154,8 +154,8 @@ class EventListener implements Runnable, AsyncListener, TransactionalDb.Transact
     /** Event thread dispatched */
     private boolean dispatched;
 
-    /** Nxt event listeners */
-    private final List<NxtEventListener> nxtEventListeners = new ArrayList<>();
+    /** Ruv event listeners */
+    private final List<RuvEventListener> ruvEventListeners = new ArrayList<>();
 
     /** Pending events */
     private final List<PendingEvent> pendingEvents = new ArrayList<>();
@@ -178,9 +178,9 @@ class EventListener implements Runnable, AsyncListener, TransactionalDb.Transact
     /**
      * Activate the event listener
      *
-     * Nxt event listeners will be added for the specified events
+     * Ruv event listeners will be added for the specified events
      *
-     * @param   eventRegistrations      List of Nxt event registrations
+     * @param   eventRegistrations      List of Ruv event registrations
      * @throws  EventListenerException  Unable to activate event listeners
      */
     void activateListener(List<EventRegistration> eventRegistrations) throws EventListenerException {
@@ -204,8 +204,8 @@ class EventListener implements Runnable, AsyncListener, TransactionalDb.Transact
     /**
      * Add events to the event list
      *
-     * @param   eventRegistrations      Nxt event registrations
-     * @throws  EventListenerException  Invalid Nxt event
+     * @param   eventRegistrations      Ruv event registrations
+     * @throws  EventListenerException  Invalid Ruv event
      */
     void addEvents(List<EventRegistration> eventRegistrations) throws EventListenerException {
         lock.lock();
@@ -218,9 +218,9 @@ class EventListener implements Runnable, AsyncListener, TransactionalDb.Transact
             //
             for (EventRegistration event : eventRegistrations) {
                 boolean addListener = true;
-                Iterator<NxtEventListener> it = nxtEventListeners.iterator();
+                Iterator<RuvEventListener> it = ruvEventListeners.iterator();
                 while (it.hasNext()) {
-                    NxtEventListener listener = it.next();
+                    RuvEventListener listener = it.next();
                     if (listener.getEvent() == event.getEvent()) {
                         long accountId = listener.getAccountId();
                         if (accountId == event.getAccountId() || accountId == 0) {
@@ -234,9 +234,9 @@ class EventListener implements Runnable, AsyncListener, TransactionalDb.Transact
                     }
                 }
                 if (addListener) {
-                    NxtEventListener listener = new NxtEventListener(event);
+                    RuvEventListener listener = new RuvEventListener(event);
                     listener.addListener();
-                    nxtEventListeners.add(listener);
+                    ruvEventListeners.add(listener);
                 }
             }
         } finally {
@@ -247,7 +247,7 @@ class EventListener implements Runnable, AsyncListener, TransactionalDb.Transact
     /**
      * Remove events from the event list
      *
-     * @param   eventRegistrations      Nxt event registrations
+     * @param   eventRegistrations      Ruv event registrations
      */
     void removeEvents(List<EventRegistration> eventRegistrations) {
         lock.lock();
@@ -260,9 +260,9 @@ class EventListener implements Runnable, AsyncListener, TransactionalDb.Transact
             // for the specified account is removed.
             //
             for (EventRegistration event : eventRegistrations) {
-                Iterator<NxtEventListener> it = nxtEventListeners.iterator();
+                Iterator<RuvEventListener> it = ruvEventListeners.iterator();
                 while (it.hasNext()) {
-                    NxtEventListener listener = it.next();
+                    RuvEventListener listener = it.next();
                     if (listener.getEvent() == event.getEvent() &&
                             (listener.getAccountId() == event.getAccountId() || event.getAccountId() == 0)) {
                         listener.removeListener();
@@ -273,7 +273,7 @@ class EventListener implements Runnable, AsyncListener, TransactionalDb.Transact
             //
             // Deactivate the listeners if there are no events remaining
             //
-            if (nxtEventListeners.isEmpty())
+            if (ruvEventListeners.isEmpty())
                 deactivateListener();
         } finally {
             lock.unlock();
@@ -303,7 +303,7 @@ class EventListener implements Runnable, AsyncListener, TransactionalDb.Transact
             //
             // Stop listening for events
             //
-            nxtEventListeners.forEach(NxtEventListener::removeListener);
+            ruvEventListeners.forEach(RuvEventListener::removeListener);
         } finally {
             lock.unlock();
         }
@@ -610,20 +610,20 @@ class EventListener implements Runnable, AsyncListener, TransactionalDb.Transact
     }
 
     /**
-     * Nxt event listener
+     * Ruv event listener
      */
-    private class NxtEventListener {
+    private class RuvEventListener {
 
         /** Event handler */
-        private final NxtEventHandler eventHandler;
+        private final RuvEventHandler eventHandler;
 
         /**
-         * Create the Nxt event listener
+         * Create the Ruv event listener
          *
          * @param   eventRegistration           Event registration
          * @throws  EventListenerException      Invalid event
          */
-        public NxtEventListener(EventRegistration eventRegistration) throws EventListenerException {
+        public RuvEventListener(EventRegistration eventRegistration) throws EventListenerException {
             Enum<? extends Enum> event = eventRegistration.getEvent();
             if (event instanceof Peers.Event) {
                 eventHandler = new PeerEventHandler(eventRegistration);
@@ -639,9 +639,9 @@ class EventListener implements Runnable, AsyncListener, TransactionalDb.Transact
         }
 
         /**
-         * Return the Nxt event
+         * Return the Ruv event
          *
-         * @return                  Nxt event
+         * @return                  Ruv event
          */
         public Enum<? extends Enum> getEvent() {
             return eventHandler.getEvent();
@@ -657,21 +657,21 @@ class EventListener implements Runnable, AsyncListener, TransactionalDb.Transact
         }
 
         /**
-         * Add the Nxt listener for this event
+         * Add the Ruv listener for this event
          */
         public void addListener() {
             eventHandler.addListener();
         }
 
         /**
-         * Remove the Nxt listener for this event
+         * Remove the Ruv listener for this event
          */
         public void removeListener() {
             eventHandler.removeListener();
         }
 
         /**
-         * Return the hash code for this Nxt event listener
+         * Return the hash code for this Ruv event listener
          *
          * @return                  Hash code
          */
@@ -681,21 +681,21 @@ class EventListener implements Runnable, AsyncListener, TransactionalDb.Transact
         }
 
         /**
-         * Check if two Nxt events listeners are equal
+         * Check if two Ruv events listeners are equal
          *
          * @param   obj             Comparison listener
          * @return                  TRUE if the listeners are equal
          */
         @Override
         public boolean equals(Object obj) {
-            return (obj != null && (obj instanceof NxtEventListener) &&
-                    eventHandler.equals(((NxtEventListener)obj).eventHandler));
+            return (obj != null && (obj instanceof RuvEventListener) &&
+                    eventHandler.equals(((RuvEventListener)obj).eventHandler));
         }
 
         /**
-         * Nxt listener event handler
+         * Ruv listener event handler
          */
-        private abstract class NxtEventHandler {
+        private abstract class RuvEventHandler {
 
             /** Owning event listener */
             protected final EventListener owner;
@@ -703,24 +703,24 @@ class EventListener implements Runnable, AsyncListener, TransactionalDb.Transact
             /** Account identifier */
             protected final long accountId;
 
-            /** Nxt listener event */
+            /** Ruv listener event */
             protected final Enum<? extends Enum> event;
 
             /**
-             * Create the Nxt event handler
+             * Create the Ruv event handler
              *
              * @param   eventRegistration   Event registration
              */
-            public NxtEventHandler(EventRegistration eventRegistration) {
+            public RuvEventHandler(EventRegistration eventRegistration) {
                 this.owner = EventListener.this;
                 this.accountId = eventRegistration.getAccountId();
                 this.event = eventRegistration.getEvent();
             }
 
             /**
-             * Return the Nxt event
+             * Return the Ruv event
              *
-             * @return                  Nxt event
+             * @return                  Ruv event
              */
             public Enum<? extends Enum> getEvent() {
                 return event;
@@ -736,12 +736,12 @@ class EventListener implements Runnable, AsyncListener, TransactionalDb.Transact
             }
 
             /**
-             * Add the Nxt listener for this event
+             * Add the Ruv listener for this event
              */
             public abstract void addListener();
 
             /**
-             * Remove the Nxt listener for this event
+             * Remove the Ruv listener for this event
              */
             public abstract void removeListener();
 
@@ -794,17 +794,17 @@ class EventListener implements Runnable, AsyncListener, TransactionalDb.Transact
              */
             @Override
             public boolean equals(Object obj) {
-                return (obj != null && (obj instanceof NxtEventHandler) &&
-                                        owner == ((NxtEventHandler)obj).owner &&
-                                        accountId == ((NxtEventHandler)obj).accountId &&
-                                        event == ((NxtEventHandler)obj).event);
+                return (obj != null && (obj instanceof RuvEventHandler) &&
+                                        owner == ((RuvEventHandler)obj).owner &&
+                                        accountId == ((RuvEventHandler)obj).accountId &&
+                                        event == ((RuvEventHandler)obj).event);
             }
         }
 
         /**
          * Peer event handler
          */
-        private class PeerEventHandler extends NxtEventHandler implements Listener<Peer> {
+        private class PeerEventHandler extends RuvEventHandler implements Listener<Peer> {
 
             /**
              * Create the peer event handler
@@ -816,7 +816,7 @@ class EventListener implements Runnable, AsyncListener, TransactionalDb.Transact
             }
 
             /**
-             * Add the Nxt listener for this event
+             * Add the Ruv listener for this event
              */
             @Override
             public void addListener() {
@@ -824,7 +824,7 @@ class EventListener implements Runnable, AsyncListener, TransactionalDb.Transact
             }
 
             /**
-             * Remove the Nxt listener for this event
+             * Remove the Ruv listener for this event
              */
             @Override
             public void removeListener() {
@@ -855,7 +855,7 @@ class EventListener implements Runnable, AsyncListener, TransactionalDb.Transact
         /**
          * Blockchain processor event handler
          */
-        private class BlockEventHandler extends NxtEventHandler implements Listener<Block> {
+        private class BlockEventHandler extends RuvEventHandler implements Listener<Block> {
 
             /**
              * Create the blockchain processor event handler
@@ -867,7 +867,7 @@ class EventListener implements Runnable, AsyncListener, TransactionalDb.Transact
             }
 
             /**
-             * Add the Nxt listener for this event
+             * Add the Ruv listener for this event
              */
             @Override
             public void addListener() {
@@ -875,7 +875,7 @@ class EventListener implements Runnable, AsyncListener, TransactionalDb.Transact
             }
 
             /**
-             * Remove the Nxt listener for this event
+             * Remove the Ruv listener for this event
              */
             @Override
             public void removeListener() {
@@ -896,7 +896,7 @@ class EventListener implements Runnable, AsyncListener, TransactionalDb.Transact
         /**
          * Transaction processor event handler
          */
-        private class TransactionEventHandler extends NxtEventHandler implements Listener<List<? extends Transaction>> {
+        private class TransactionEventHandler extends RuvEventHandler implements Listener<List<? extends Transaction>> {
 
             /**
              * Create the transaction processor event handler
@@ -908,7 +908,7 @@ class EventListener implements Runnable, AsyncListener, TransactionalDb.Transact
             }
 
             /**
-             * Add the Nxt listener for this event
+             * Add the Ruv listener for this event
              */
             @Override
             public void addListener() {
@@ -916,7 +916,7 @@ class EventListener implements Runnable, AsyncListener, TransactionalDb.Transact
             }
 
             /**
-             * Remove the Nxt listener for this event
+             * Remove the Ruv listener for this event
              */
             @Override
             public void removeListener() {
@@ -939,7 +939,7 @@ class EventListener implements Runnable, AsyncListener, TransactionalDb.Transact
         /**
          * Account ledger event handler
          */
-        private class LedgerEventHandler extends NxtEventHandler implements Listener<LedgerEntry> {
+        private class LedgerEventHandler extends RuvEventHandler implements Listener<LedgerEntry> {
 
             /**
              * Create the account ledger event handler
@@ -951,7 +951,7 @@ class EventListener implements Runnable, AsyncListener, TransactionalDb.Transact
             }
 
             /**
-             * Add the Nxt listener for this event
+             * Add the Ruv listener for this event
              */
             @Override
             public void addListener() {
@@ -959,7 +959,7 @@ class EventListener implements Runnable, AsyncListener, TransactionalDb.Transact
             }
 
             /**
-             * Remove the Nxt listener for this event
+             * Remove the Ruv listener for this event
              */
             @Override
             public void removeListener() {
@@ -986,7 +986,7 @@ class EventListener implements Runnable, AsyncListener, TransactionalDb.Transact
      */
     static class EventRegistration {
 
-        /** Nxt listener event */
+        /** Ruv listener event */
         private final Enum<? extends Enum> event;
 
         /** Account identifier */
@@ -995,7 +995,7 @@ class EventListener implements Runnable, AsyncListener, TransactionalDb.Transact
         /**
          * Create the event registration
          *
-         * @param   event           Nxt listener event
+         * @param   event           Ruv listener event
          * @param   accountId       Account identifier
          */
         EventRegistration(Enum<? extends Enum> event, long accountId) {
@@ -1004,9 +1004,9 @@ class EventListener implements Runnable, AsyncListener, TransactionalDb.Transact
         }
 
         /**
-         * Return the Nxt listener event
+         * Return the Ruv listener event
          *
-         * @return                  Nxt listener event
+         * @return                  Ruv listener event
          */
         public Enum<? extends Enum> getEvent() {
             return event;

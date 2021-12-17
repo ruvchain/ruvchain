@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,12 +14,12 @@
  *
  */
 
-package nxt.peer;
+package ruv.peer;
 
-import nxt.Block;
-import nxt.Nxt;
-import nxt.util.Convert;
-import nxt.util.JSON;
+import ruv.Block;
+import ruv.Ruv;
+import ruv.util.Convert;
+import ruv.util.JSON;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
@@ -55,13 +55,13 @@ final class GetNextBlocks extends PeerServlet.PeerRequestHandler {
             }
             List<Long> idList = new ArrayList<>();
             stringList.forEach(stringId -> idList.add(Convert.parseUnsignedLong(stringId)));
-            blocks = Nxt.getBlockchain().getBlocksAfter(blockId, idList);
+            blocks = Ruv.getBlockchain().getBlocksAfter(blockId, idList);
         } else {
             long limit = Convert.parseLong(request.get("limit"));
             if (limit > 36) {
                 return TOO_MANY_BLOCKS_REQUESTED;
             }
-            blocks = Nxt.getBlockchain().getBlocksAfter(blockId, limit > 0 ? (int)limit : 36);
+            blocks = Ruv.getBlockchain().getBlocksAfter(blockId, limit > 0 ? (int)limit : 36);
         }
         blocks.forEach(block -> nextBlocksArray.add(block.getJSONObject()));
         response.put("nextBlocks", nextBlocksArray);

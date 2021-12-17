@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,19 +14,19 @@
  *
  */
 
-package nxt.http;
+package ruv.http;
 
 
-import nxt.NxtException;
-import nxt.Poll;
-import nxt.VoteWeighting;
-import nxt.util.Convert;
+import ruv.RuvException;
+import ruv.Poll;
+import ruv.VoteWeighting;
+import ruv.util.Convert;
 import org.json.simple.JSONStreamAware;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
-import static nxt.http.JSONResponses.POLL_RESULTS_NOT_AVAILABLE;
+import static ruv.http.JSONResponses.POLL_RESULTS_NOT_AVAILABLE;
 
 public class GetPollResult extends APIServlet.APIRequestHandler {
 
@@ -37,7 +37,7 @@ public class GetPollResult extends APIServlet.APIRequestHandler {
     }
 
     @Override
-    protected JSONStreamAware processRequest(HttpServletRequest req) throws NxtException {
+    protected JSONStreamAware processRequest(HttpServletRequest req) throws RuvException {
         Poll poll = ParameterParser.getPoll(req);
         List<Poll.OptionResult> pollResults;
         VoteWeighting voteWeighting;

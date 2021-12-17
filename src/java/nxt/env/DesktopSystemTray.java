@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,17 +14,17 @@
  *
  */
 
-package nxt.env;
+package ruv.env;
 
-import nxt.Block;
-import nxt.Constants;
-import nxt.Db;
-import nxt.Generator;
-import nxt.Nxt;
-import nxt.http.API;
-import nxt.peer.Peers;
-import nxt.util.Convert;
-import nxt.util.Logger;
+import ruv.Block;
+import ruv.Constants;
+import ruv.Db;
+import ruv.Generator;
+import ruv.Ruv;
+import ruv.http.API;
+import ruv.peer.Peers;
+import ruv.util.Convert;
+import ruv.util.Logger;
 
 import javax.swing.*;
 import java.awt.*;
@@ -58,7 +58,7 @@ public class DesktopSystemTray {
         }
         System.setProperty("sun.net.http.allowRestrictedHeaders", "true");
         final PopupMenu popup = new PopupMenu();
-        imageIcon = new ImageIcon("html/www/img/nxt-icon-32x32.png", "tray icon");
+        imageIcon = new ImageIcon("html/www/img/ruv-icon-32x32.png", "tray icon");
         trayIcon = new TrayIcon(imageIcon.getImage());
         trayIcon.setImageAutoSize(true);
         tray = SystemTray.getSystemTray();
@@ -70,7 +70,7 @@ public class DesktopSystemTray {
         }
         MenuItem showDesktopApplication = new MenuItem("Show Desktop Application");
         MenuItem refreshDesktopApplication = new MenuItem("Refresh Wallet");
-        if (!Nxt.isDesktopApplicationEnabled()) {
+        if (!Ruv.isDesktopApplicationEnabled()) {
             showDesktopApplication.setEnabled(false);
             refreshDesktopApplication.setEnabled(false);
         }
@@ -109,17 +109,17 @@ public class DesktopSystemTray {
 
         showDesktopApplication.addActionListener(e -> {
             try {
-                Class.forName("nxtdesktop.DesktopApplication").getMethod("launch").invoke(null);
+                Class.forName("ruvdesktop.DesktopApplication").getMethod("launch").invoke(null);
             } catch (ReflectiveOperationException exception) {
-                Logger.logInfoMessage("nxtdesktop.DesktopApplication failed to launch", exception);
+                Logger.logInfoMessage("ruvdesktop.DesktopApplication failed to launch", exception);
             }
         });
 
         refreshDesktopApplication.addActionListener(e -> {
             try {
-                Class.forName("nxtdesktop.DesktopApplication").getMethod("refresh").invoke(null);
+                Class.forName("ruvdesktop.DesktopApplication").getMethod("refresh").invoke(null);
             } catch (ReflectiveOperationException exception) {
-                Logger.logInfoMessage("nxtdesktop.DesktopApplication failed to refresh", exception);
+                Logger.logInfoMessage("ruvdesktop.DesktopApplication failed to refresh", exception);
             }
         });
 
@@ -135,7 +135,7 @@ public class DesktopSystemTray {
 
         shutdown.addActionListener(e -> {
             if(JOptionPane.showConfirmDialog (null,
-                    "Sure you want to shutdown " + Nxt.APPLICATION + "?\n\nIf you do, this will stop forging, shufflers and account monitors.\n\n",
+                    "Sure you want to shutdown " + Ruv.APPLICATION + "?\n\nIf you do, this will stop forging, shufflers and account monitors.\n\n",
                     "Shutdown",
                     JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                 Logger.logInfoMessage("Shutdown requested by System Tray");
@@ -153,7 +153,7 @@ public class DesktopSystemTray {
     }
 
     private void displayStatus() {
-        Block lastBlock = Nxt.getBlockchain().getLastBlock();
+        Block lastBlock = Ruv.getBlockchain().getLastBlock();
         Collection<Generator> allGenerators = Generator.getAllGenerators();
 
         StringBuilder generators = new StringBuilder();
@@ -175,14 +175,14 @@ public class DesktopSystemTray {
         statusPanel.setLayout(new BoxLayout(statusPanel, BoxLayout.Y_AXIS));
 
         addLabelRow(statusPanel, "Installation");
-        addDataRow(statusPanel, "Application", Nxt.APPLICATION);
-        addDataRow(statusPanel, "Version", Nxt.VERSION);
+        addDataRow(statusPanel, "Application", Ruv.APPLICATION);
+        addDataRow(statusPanel, "Version", Ruv.VERSION);
         addDataRow(statusPanel, "Network", (Constants.isTestnet) ? "TestNet" : "MainNet");
         addDataRow(statusPanel, "Working offline", "" + Constants.isOffline);
         addDataRow(statusPanel, "Wallet", String.valueOf(API.getWelcomePageUri()));
         addDataRow(statusPanel, "Peer port", String.valueOf(Peers.getDefaultPeerPort()));
         addDataRow(statusPanel, "Program folder", String.valueOf(Paths.get(".").toAbsolutePath().getParent()));
-        addDataRow(statusPanel, "User folder", String.valueOf(Paths.get(Nxt.getUserHomeDir()).toAbsolutePath()));
+        addDataRow(statusPanel, "User folder", String.valueOf(Paths.get(Ruv.getUserHomeDir()).toAbsolutePath()));
         addDataRow(statusPanel, "Database URL", Db.db == null ? "unavailable" : Db.db.getUrl());
         addEmptyRow(statusPanel);
 
@@ -191,7 +191,7 @@ public class DesktopSystemTray {
             addDataRow(statusPanel, "Height", String.valueOf(lastBlock.getHeight()));
             addDataRow(statusPanel, "Timestamp", String.valueOf(lastBlock.getTimestamp()));
             addDataRow(statusPanel, "Time", String.valueOf(new Date(Convert.fromEpochTime(lastBlock.getTimestamp()))));
-            addDataRow(statusPanel, "Seconds passed", String.valueOf(Nxt.getEpochTime() - lastBlock.getTimestamp()));
+            addDataRow(statusPanel, "Seconds passed", String.valueOf(Ruv.getEpochTime() - lastBlock.getTimestamp()));
             addDataRow(statusPanel, "Forging", String.valueOf(allGenerators.size() > 0));
             if (allGenerators.size() > 0) {
                 addDataRow(statusPanel, "Forging accounts", generators.toString());
@@ -205,12 +205,12 @@ public class DesktopSystemTray {
         addDataRow(statusPanel, "Max memory", humanReadableByteCount(Runtime.getRuntime().maxMemory()));
         addDataRow(statusPanel, "Total memory", humanReadableByteCount(Runtime.getRuntime().totalMemory()));
         addDataRow(statusPanel, "Free memory", humanReadableByteCount(Runtime.getRuntime().freeMemory()));
-        addDataRow(statusPanel, "Process id", Nxt.getProcessId());
+        addDataRow(statusPanel, "Process id", Ruv.getProcessId());
         addEmptyRow(statusPanel);
         addDataRow(statusPanel, "Updated", dateFormat.format(new Date()));
         if (statusDialog == null || !statusDialog.isVisible()) {
             JOptionPane pane = new JOptionPane(statusPanel, JOptionPane.PLAIN_MESSAGE, JOptionPane.DEFAULT_OPTION, imageIcon);
-            statusDialog = pane.createDialog(wrapper, Nxt.APPLICATION + " Server Status");
+            statusDialog = pane.createDialog(wrapper, Ruv.APPLICATION + " Server Status");
             statusDialog.setVisible(true);
             statusDialog.dispose();
         } else {

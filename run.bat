@@ -57,7 +57,7 @@
 	)
 
 :startJava	
-	start "NXT NRS from %~dp0" "%javaDir%"\bin\java.exe -cp classes;lib\*;conf;addons\classes;addons\lib\* -Dnxt.runtime.mode=desktop nxt.Nxt
+	start "RUV NRS from %~dp0" "%javaDir%"\bin\java.exe -cp classes;lib\*;conf;addons\classes;addons\lib\* -Druv.runtime.mode=desktop ruv.Ruv
 
 :endProcess 
 	endlocal

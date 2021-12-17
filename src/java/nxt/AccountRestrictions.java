@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,18 +14,18 @@
  *
  */
 
-package nxt;
+package ruv;
 
-import nxt.Account.ControlType;
-import nxt.NxtException.AccountControlException;
-import nxt.VoteWeighting.VotingModel;
-import nxt.db.DbClause;
-import nxt.db.DbIterator;
-import nxt.db.DbKey;
-import nxt.db.DbUtils;
-import nxt.db.VersionedEntityDbTable;
-import nxt.util.Convert;
-import nxt.util.Logger;
+import ruv.Account.ControlType;
+import ruv.RuvException.AccountControlException;
+import ruv.VoteWeighting.VotingModel;
+import ruv.db.DbClause;
+import ruv.db.DbIterator;
+import ruv.db.DbKey;
+import ruv.db.DbUtils;
+import ruv.db.VersionedEntityDbTable;
+import ruv.util.Convert;
+import ruv.util.Logger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -134,14 +134,14 @@ public final class AccountRestrictions {
 
         private void checkTransaction(Transaction transaction) throws AccountControlException {
             if (maxFees > 0 && Math.addExact(transaction.getFeeNQT(), PhasingPoll.getSenderPhasedTransactionFees(transaction.getSenderId())) > maxFees) {
-                throw new AccountControlException(String.format("Maximum total fees limit of %f %s exceeded", ((double)maxFees)/Constants.ONE_NXT, Constants.COIN_SYMBOL));
+                throw new AccountControlException(String.format("Maximum total fees limit of %f %s exceeded", ((double)maxFees)/Constants.ONE_RUV, Constants.COIN_SYMBOL));
             }
             if (transaction.getType() == TransactionType.Messaging.PHASING_VOTE_CASTING) {
                 return;
             }
             try {
                 phasingParams.checkApprovable();
-            } catch (NxtException.NotCurrentlyValidException e) {
+            } catch (RuvException.NotCurrentlyValidException e) {
                 Logger.logDebugMessage("Account control no longer valid: " + e.getMessage());
                 return;
             }
@@ -153,7 +153,7 @@ public final class AccountRestrictions {
                 throw new AccountControlException("Phasing parameters mismatch phasing account control. Expected: " +
                         phasingParams.toString() + " . Actual: " + phasingAppendix.getParams().toString());
             }
-            int duration = phasingAppendix.getFinishHeight() - Nxt.getBlockchain().getHeight();
+            int duration = phasingAppendix.getFinishHeight() - Ruv.getBlockchain().getHeight();
             if ((maxDuration > 0 && duration > maxDuration) || (minDuration > 0 && duration < minDuration)) {
                 throw new AccountControlException("Invalid phasing duration " + duration);
             }
@@ -175,7 +175,7 @@ public final class AccountRestrictions {
                 pstmt.setLong(++i, this.maxFees);
                 pstmt.setShort(++i, this.minDuration);
                 pstmt.setShort(++i, this.maxDuration);
-                pstmt.setInt(++i, Nxt.getBlockchain().getHeight());
+                pstmt.setInt(++i, Ruv.getBlockchain().getHeight());
                 pstmt.executeUpdate();
             }
         }
@@ -205,10 +205,10 @@ public final class AccountRestrictions {
     static void init() {
     }
 
-    static void checkTransaction(Transaction transaction) throws NxtException.NotCurrentlyValidException {
+    static void checkTransaction(Transaction transaction) throws RuvException.NotCurrentlyValidException {
         Account senderAccount = Account.getAccount(transaction.getSenderId());
         if (senderAccount == null) {
-            throw new NxtException.NotCurrentlyValidException("Account " + Long.toUnsignedString(transaction.getSenderId()) + " does not exist yet");
+            throw new RuvException.NotCurrentlyValidException("Account " + Long.toUnsignedString(transaction.getSenderId()) + " does not exist yet");
         }
         if (senderAccount.getControls().contains(Account.ControlType.PHASING_ONLY)) {
             PhasingOnly phasingOnly = PhasingOnly.get(transaction.getSenderId());

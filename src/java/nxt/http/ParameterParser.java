@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,29 +14,29 @@
  *
  */
 
-package nxt.http;
+package ruv.http;
 
-import nxt.Account;
-import nxt.Alias;
-import nxt.Appendix;
-import nxt.Asset;
-import nxt.Attachment;
-import nxt.Constants;
-import nxt.Currency;
-import nxt.CurrencyBuyOffer;
-import nxt.CurrencySellOffer;
-import nxt.DigitalGoodsStore;
-import nxt.HoldingType;
-import nxt.Nxt;
-import nxt.NxtException;
-import nxt.Poll;
-import nxt.Shuffling;
-import nxt.Transaction;
-import nxt.crypto.Crypto;
-import nxt.crypto.EncryptedData;
-import nxt.util.Convert;
-import nxt.util.Logger;
-import nxt.util.Search;
+import ruv.Account;
+import ruv.Alias;
+import ruv.Appendix;
+import ruv.Asset;
+import ruv.Attachment;
+import ruv.Constants;
+import ruv.Currency;
+import ruv.CurrencyBuyOffer;
+import ruv.CurrencySellOffer;
+import ruv.DigitalGoodsStore;
+import ruv.HoldingType;
+import ruv.Ruv;
+import ruv.RuvException;
+import ruv.Poll;
+import ruv.Shuffling;
+import ruv.Transaction;
+import ruv.crypto.Crypto;
+import ruv.crypto.EncryptedData;
+import ruv.util.Convert;
+import ruv.util.Logger;
+import ruv.util.Search;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.json.simple.parser.ParseException;
@@ -52,7 +52,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.StringJoiner;
 
-import static nxt.http.JSONResponses.*;
+import static ruv.http.JSONResponses.*;
 
 public final class ParameterParser {
 
@@ -517,7 +517,7 @@ public final class ParameterParser {
     }
 
     public static int getNumberOfConfirmations(HttpServletRequest req) throws ParameterException {
-        return getInt(req, "numberOfConfirmations", 0, Nxt.getBlockchain().getHeight(), false);
+        return getInt(req, "numberOfConfirmations", 0, Ruv.getBlockchain().getHeight(), false);
     }
 
     public static int getHeight(HttpServletRequest req) throws ParameterException {
@@ -525,7 +525,7 @@ public final class ParameterParser {
         if (heightValue != null) {
             try {
                 int height = Integer.parseInt(heightValue);
-                if (height < 0 || height > Nxt.getBlockchain().getHeight()) {
+                if (height < 0 || height > Ruv.getBlockchain().getHeight()) {
                     throw new ParameterException(INCORRECT_HEIGHT);
                 }
                 return height;
@@ -541,8 +541,8 @@ public final class ParameterParser {
     }
 
     public static long getHoldingId(HttpServletRequest req, HoldingType holdingType) throws ParameterException {
-        long holdingId = ParameterParser.getUnsignedLong(req, "holding", holdingType != HoldingType.NXT);
-        if (holdingType == HoldingType.NXT && holdingId != 0) {
+        long holdingId = ParameterParser.getUnsignedLong(req, "holding", holdingType != HoldingType.RUV);
+        if (holdingType == HoldingType.RUV && holdingId != 0) {
             throw new ParameterException(JSONResponses.incorrect("holding", "holding id should not be specified if holdingType is " + Constants.COIN_SYMBOL));
         }
         return holdingId;
@@ -585,8 +585,8 @@ public final class ParameterParser {
         if (transactionJSON != null) {
             try {
                 JSONObject json = (JSONObject) JSONValue.parseWithException(transactionJSON);
-                return Nxt.newTransactionBuilder(json);
-            } catch (NxtException.ValidationException | RuntimeException | ParseException e) {
+                return Ruv.newTransactionBuilder(json);
+            } catch (RuvException.ValidationException | RuntimeException | ParseException e) {
                 Logger.logDebugMessage(e.getMessage(), e);
                 JSONObject response = new JSONObject();
                 JSONData.putException(response, e, "Incorrect transactionJSON");
@@ -596,8 +596,8 @@ public final class ParameterParser {
             try {
                 byte[] bytes = Convert.parseHexString(transactionBytes);
                 JSONObject prunableAttachments = prunableAttachmentJSON == null ? null : (JSONObject)JSONValue.parseWithException(prunableAttachmentJSON);
-                return Nxt.newTransactionBuilder(bytes, prunableAttachments);
-            } catch (NxtException.ValidationException|RuntimeException | ParseException e) {
+                return Ruv.newTransactionBuilder(bytes, prunableAttachments);
+            } catch (RuvException.ValidationException|RuntimeException | ParseException e) {
                 Logger.logDebugMessage(e.getMessage(), e);
                 JSONObject response = new JSONObject();
                 JSONData.putException(response, e, "Incorrect transactionBytes");
@@ -714,7 +714,7 @@ public final class ParameterParser {
         }
     }
 
-    public static Attachment.TaggedDataUpload getTaggedData(HttpServletRequest req) throws ParameterException, NxtException.NotValidException {
+    public static Attachment.TaggedDataUpload getTaggedData(HttpServletRequest req) throws ParameterException, RuvException.NotValidException {
         String name = Convert.emptyToNull(req.getParameter("name"));
         String description = Convert.nullToEmpty(req.getParameter("description"));
         String tags = Convert.nullToEmpty(req.getParameter("tags"));

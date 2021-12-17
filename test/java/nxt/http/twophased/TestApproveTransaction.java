@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,14 +14,14 @@
  *
  */
 
-package nxt.http.twophased;
+package ruv.http.twophased;
 
-import nxt.BlockchainTest;
-import nxt.Constants;
-import nxt.Nxt;
-import nxt.http.APICall;
-import nxt.http.twophased.TestCreateTwoPhased.TwoPhasedMoneyTransferBuilder;
-import nxt.util.Logger;
+import ruv.BlockchainTest;
+import ruv.Constants;
+import ruv.Ruv;
+import ruv.http.APICall;
+import ruv.http.twophased.TestCreateTwoPhased.TwoPhasedMoneyTransferBuilder;
+import ruv.util.Logger;
 import org.json.simple.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
@@ -33,7 +33,7 @@ public class TestApproveTransaction extends BlockchainTest {
         int duration = 10;
 
         APICall apiCall = new TwoPhasedMoneyTransferBuilder()
-                .finishHeight(Nxt.getBlockchain().getHeight() + duration)
+                .finishHeight(Ruv.getBlockchain().getHeight() + duration)
                 .build();
 
         JSONObject transactionJSON = TestCreateTwoPhased.issueCreateTwoPhased(apiCall, false);
@@ -42,7 +42,7 @@ public class TestApproveTransaction extends BlockchainTest {
         apiCall = new APICall.Builder("approveTransaction")
                 .param("secretPhrase", CHUCK.getSecretPhrase())
                 .param("transactionFullHash", (String) transactionJSON.get("fullHash"))
-                .param("feeNQT", Constants.ONE_NXT)
+                .param("feeNQT", Constants.ONE_RUV)
                 .build();
 
         JSONObject response = apiCall.invoke();
@@ -50,9 +50,9 @@ public class TestApproveTransaction extends BlockchainTest {
         Assert.assertNotNull(response.get("transaction"));
 
         generateBlocks(duration);
-        Assert.assertEquals(-50 * Constants.ONE_NXT - 2 * Constants.ONE_NXT, ALICE.getBalanceDiff());
-        Assert.assertEquals(50 * Constants.ONE_NXT, BOB.getBalanceDiff());
-        Assert.assertEquals(-Constants.ONE_NXT, CHUCK.getBalanceDiff());
+        Assert.assertEquals(-50 * Constants.ONE_RUV - 2 * Constants.ONE_RUV, ALICE.getBalanceDiff());
+        Assert.assertEquals(50 * Constants.ONE_RUV, BOB.getBalanceDiff());
+        Assert.assertEquals(-Constants.ONE_RUV, CHUCK.getBalanceDiff());
     }
 
     @Test
@@ -60,7 +60,7 @@ public class TestApproveTransaction extends BlockchainTest {
         int duration = 10;
 
         APICall apiCall = new TwoPhasedMoneyTransferBuilder()
-                .finishHeight(Nxt.getBlockchain().getHeight() + duration)
+                .finishHeight(Ruv.getBlockchain().getHeight() + duration)
                 .build();
 
         JSONObject transactionJSON = TestCreateTwoPhased.issueCreateTwoPhased(apiCall, false);
@@ -68,20 +68,20 @@ public class TestApproveTransaction extends BlockchainTest {
         apiCall = new APICall.Builder("approveTransaction")
                 .param("secretPhrase", DAVE.getSecretPhrase())
                 .param("transactionFullHash", (String) transactionJSON.get("fullHash"))
-                .param("feeNQT", Constants.ONE_NXT)
+                .param("feeNQT", Constants.ONE_RUV)
                 .build();
         JSONObject response = apiCall.invoke();
         Assert.assertNotNull(response.get("error"));
         generateBlock();
 
-        Assert.assertEquals("ALICE balance: ", -2 * Constants.ONE_NXT, ALICE.getBalanceDiff());
+        Assert.assertEquals("ALICE balance: ", -2 * Constants.ONE_RUV, ALICE.getBalanceDiff());
         Assert.assertEquals("BOB balance: ", 0, BOB.getBalanceDiff());
         Assert.assertEquals("CHUCK balance: ", 0, CHUCK.getBalanceDiff());
         Assert.assertEquals("DAVE balance: ", 0, DAVE.getBalanceDiff());
 
         generateBlocks(duration);
 
-        Assert.assertEquals("ALICE balance: ", -2 * Constants.ONE_NXT, ALICE.getBalanceDiff());
+        Assert.assertEquals("ALICE balance: ", -2 * Constants.ONE_RUV, ALICE.getBalanceDiff());
         Assert.assertEquals("BOB balance: ", 0, BOB.getBalanceDiff());
         Assert.assertEquals("CHUCK balance: ", 0, CHUCK.getBalanceDiff());
         Assert.assertEquals("DAVE balance: ", 0, DAVE.getBalanceDiff());
@@ -89,11 +89,11 @@ public class TestApproveTransaction extends BlockchainTest {
 
     @Test
     public void sendMoneyPhasedNoVoting() {
-        long fee = 2*Constants.ONE_NXT;
+        long fee = 2*Constants.ONE_RUV;
         JSONObject response = new APICall.Builder("sendMoney").
                 param("secretPhrase", ALICE.getSecretPhrase()).
                 param("recipient", BOB.getStrId()).
-                param("amountNQT", 100 * Constants.ONE_NXT).
+                param("amountNQT", 100 * Constants.ONE_RUV).
                 param("feeNQT", fee).
                 param("phased", "true").
                 param("phasingFinishHeight", baseHeight + 2).
@@ -108,7 +108,7 @@ public class TestApproveTransaction extends BlockchainTest {
         Assert.assertEquals(fee, FORGY.getUnconfirmedBalanceDiff());
         // Sender
         Assert.assertEquals(-fee, ALICE.getBalanceDiff());
-        Assert.assertEquals(-100 * Constants.ONE_NXT - fee, ALICE.getUnconfirmedBalanceDiff());
+        Assert.assertEquals(-100 * Constants.ONE_RUV - fee, ALICE.getUnconfirmedBalanceDiff());
         // Recipient
         Assert.assertEquals(0, BOB.getBalanceDiff());
         Assert.assertEquals(0, BOB.getUnconfirmedBalanceDiff());
@@ -116,11 +116,11 @@ public class TestApproveTransaction extends BlockchainTest {
         generateBlock();
         // Transaction is applied
         // Sender
-        Assert.assertEquals(-100 * Constants.ONE_NXT - fee, ALICE.getBalanceDiff());
-        Assert.assertEquals(-100 * Constants.ONE_NXT - fee, ALICE.getUnconfirmedBalanceDiff());
+        Assert.assertEquals(-100 * Constants.ONE_RUV - fee, ALICE.getBalanceDiff());
+        Assert.assertEquals(-100 * Constants.ONE_RUV - fee, ALICE.getUnconfirmedBalanceDiff());
         // Recipient
-        Assert.assertEquals(100 * Constants.ONE_NXT, BOB.getBalanceDiff());
-        Assert.assertEquals(100 * Constants.ONE_NXT, BOB.getUnconfirmedBalanceDiff());
+        Assert.assertEquals(100 * Constants.ONE_RUV, BOB.getBalanceDiff());
+        Assert.assertEquals(100 * Constants.ONE_RUV, BOB.getUnconfirmedBalanceDiff());
     }
 
     @Test
@@ -131,11 +131,11 @@ public class TestApproveTransaction extends BlockchainTest {
         Assert.assertEquals(64, fullHash.length());
         String approvalTransactionBytes = (String)response.get("transactionBytes");
 
-        long fee = 3 * Constants.ONE_NXT;
+        long fee = 3 * Constants.ONE_RUV;
         response = new APICall.Builder("sendMoney").
                 param("secretPhrase", ALICE.getSecretPhrase()).
                 param("recipient", BOB.getStrId()).
-                param("amountNQT", 100 * Constants.ONE_NXT).
+                param("amountNQT", 100 * Constants.ONE_RUV).
                 param("feeNQT", fee).
                 param("phased", "true").
                 param("phasingFinishHeight", baseHeight + 3).
@@ -149,7 +149,7 @@ public class TestApproveTransaction extends BlockchainTest {
         // Transaction is not applied yet
         // Sender
         Assert.assertEquals(-fee, ALICE.getBalanceDiff());
-        Assert.assertEquals(-100 * Constants.ONE_NXT - fee, ALICE.getUnconfirmedBalanceDiff());
+        Assert.assertEquals(-100 * Constants.ONE_RUV - fee, ALICE.getUnconfirmedBalanceDiff());
         // Recipient
         Assert.assertEquals(0, BOB.getBalanceDiff());
         Assert.assertEquals(0, BOB.getUnconfirmedBalanceDiff());
@@ -162,11 +162,11 @@ public class TestApproveTransaction extends BlockchainTest {
 
         // Transaction is applied before finish height
         // Sender
-        Assert.assertEquals(-100 * Constants.ONE_NXT - fee, ALICE.getBalanceDiff());
-        Assert.assertEquals(-100 * Constants.ONE_NXT - fee, ALICE.getUnconfirmedBalanceDiff());
+        Assert.assertEquals(-100 * Constants.ONE_RUV - fee, ALICE.getBalanceDiff());
+        Assert.assertEquals(-100 * Constants.ONE_RUV - fee, ALICE.getUnconfirmedBalanceDiff());
         // Recipient
-        Assert.assertEquals(100 * Constants.ONE_NXT, BOB.getBalanceDiff());
-        Assert.assertEquals(100 * Constants.ONE_NXT, BOB.getUnconfirmedBalanceDiff());
+        Assert.assertEquals(100 * Constants.ONE_RUV, BOB.getBalanceDiff());
+        Assert.assertEquals(100 * Constants.ONE_RUV, BOB.getUnconfirmedBalanceDiff());
     }
 
     @Test
@@ -186,11 +186,11 @@ public class TestApproveTransaction extends BlockchainTest {
         Assert.assertEquals(64, fullHash1.length());
         String approvalTransactionBytes3 = (String)response.get("transactionBytes");
 
-        long fee = 5 * Constants.ONE_NXT;
+        long fee = 5 * Constants.ONE_RUV;
         response = new APICall.Builder("sendMoney").
                 param("secretPhrase", ALICE.getSecretPhrase()).
                 param("recipient", BOB.getStrId()).
-                param("amountNQT", 100 * Constants.ONE_NXT).
+                param("amountNQT", 100 * Constants.ONE_RUV).
                 param("feeNQT", fee).
                 param("phased", "true").
                 param("phasingFinishHeight", baseHeight + 2).
@@ -204,7 +204,7 @@ public class TestApproveTransaction extends BlockchainTest {
         // Transaction is not applied yet
         // Sender
         Assert.assertEquals(-fee, ALICE.getBalanceDiff());
-        Assert.assertEquals(-100 * Constants.ONE_NXT - fee, ALICE.getUnconfirmedBalanceDiff());
+        Assert.assertEquals(-100 * Constants.ONE_RUV - fee, ALICE.getUnconfirmedBalanceDiff());
         // Recipient
         Assert.assertEquals(0, BOB.getBalanceDiff());
         Assert.assertEquals(0, BOB.getUnconfirmedBalanceDiff());
@@ -221,20 +221,20 @@ public class TestApproveTransaction extends BlockchainTest {
 
         // Transaction is applied since 2 out 3 hashes were provided
         // Sender
-        Assert.assertEquals(-100 * Constants.ONE_NXT - fee, ALICE.getBalanceDiff());
-        Assert.assertEquals(-100 * Constants.ONE_NXT - fee, ALICE.getUnconfirmedBalanceDiff());
+        Assert.assertEquals(-100 * Constants.ONE_RUV - fee, ALICE.getBalanceDiff());
+        Assert.assertEquals(-100 * Constants.ONE_RUV - fee, ALICE.getUnconfirmedBalanceDiff());
         // Recipient
-        Assert.assertEquals(100 * Constants.ONE_NXT, BOB.getBalanceDiff());
-        Assert.assertEquals(100 * Constants.ONE_NXT, BOB.getUnconfirmedBalanceDiff());
+        Assert.assertEquals(100 * Constants.ONE_RUV, BOB.getBalanceDiff());
+        Assert.assertEquals(100 * Constants.ONE_RUV, BOB.getUnconfirmedBalanceDiff());
     }
 
     @Test
     public void sendMoneyPhasedByTransactionHashNotApplied() {
-        long fee = 3 * Constants.ONE_NXT;
+        long fee = 3 * Constants.ONE_RUV;
         JSONObject response = new APICall.Builder("sendMoney").
                 param("secretPhrase", ALICE.getSecretPhrase()).
                 param("recipient", BOB.getStrId()).
-                param("amountNQT", 100 * Constants.ONE_NXT).
+                param("amountNQT", 100 * Constants.ONE_RUV).
                 param("feeNQT", fee).
                 param("phased", "true").
                 param("phasingFinishHeight", baseHeight + 2).
@@ -248,7 +248,7 @@ public class TestApproveTransaction extends BlockchainTest {
         // Transaction is not applied yet
         // Sender
         Assert.assertEquals(-fee, ALICE.getBalanceDiff());
-        Assert.assertEquals(-100 * Constants.ONE_NXT - fee, ALICE.getUnconfirmedBalanceDiff());
+        Assert.assertEquals(-100 * Constants.ONE_RUV - fee, ALICE.getUnconfirmedBalanceDiff());
         // Recipient
         Assert.assertEquals(0, BOB.getBalanceDiff());
         Assert.assertEquals(0, BOB.getUnconfirmedBalanceDiff());
@@ -271,7 +271,7 @@ public class TestApproveTransaction extends BlockchainTest {
         Assert.assertEquals(64, fullHash.length());
         String approvalTransactionBytes = (String)response.get("transactionBytes");
 
-        long fee = 2 * Constants.ONE_NXT;
+        long fee = 2 * Constants.ONE_RUV;
         String alias = "alias" + System.currentTimeMillis();
         response = new APICall.Builder("setAlias").
                 param("secretPhrase", ALICE.getSecretPhrase()).
@@ -326,7 +326,7 @@ public class TestApproveTransaction extends BlockchainTest {
                 param("publicKey", CHUCK.getPublicKeyStr()).
                 param("recipient", ALICE.getStrId()).
                 param("message", "approval notice").
-                param("feeNQT", Constants.ONE_NXT).
+                param("feeNQT", Constants.ONE_RUV).
                 build().invoke();
         Logger.logDebugMessage("sendMessage not broadcasted: " + response);
         response = new APICall.Builder("signTransaction").

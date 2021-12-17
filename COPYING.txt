@@ -1,8 +1,8 @@
-Copyright © 2013-2016 The Nxt Core Developers.
-Copyright © 2016-2018 Jelurida IP B.V.
+Copyright ï¿½ 2013-2016 The Ruv Core Developers.
+Copyright ï¿½ 2016-2018 Jelurida IP B.V.
 
 This program is distributed under the terms of the Jelurida Public License
-version 1.1 for the Nxt Public Blockchain Platform.
+version 1.1 for the Ruv Public Blockchain Platform.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -20,7 +20,7 @@ This software also uses third party code and libraries, distributed under
 licenses described in 3RD-PARTY-LICENSES.txt.
 
 Below is the full text of the Jelurida Public License version 1.1 for
-the Nxt Public Blockchain Platform:
+the Ruv Public Blockchain Platform:
 
 
 JELURIDA PUBLIC LICENSE
@@ -28,7 +28,7 @@ JELURIDA PUBLIC LICENSE
 Preamble:
 
 Being a company engaged predominantly in the creation of blockchain technology,
-Jelurida IP B.V. has prepared the following “coinleft” license whose goal is to
+Jelurida IP B.V. has prepared the following ï¿½coinleftï¿½ license whose goal is to
 implement new requirements consistent with the specific nature of the blockchain
 software. We recognize the fundamental advantages that the decentralized ledger
 technology has to offer and we truly believe in its potential to change the
@@ -37,7 +37,7 @@ tradition to publish blockchain software as an open source and in this way to
 give our contribution to the further development of the blockchain technology
 world-wide. At the same time we wish to protect our IP rights and to address the
 fact that our software was copied many times during its existence and as a
-result a lot of “clones” have been created which dilute the value of the tokens
+result a lot of ï¿½clonesï¿½ have been created which dilute the value of the tokens
 with no significant technological improvements behind them.
 
 The exact terms and conditions for using, copying and modification follow:
@@ -93,12 +93,12 @@ JPL version: 1.1
 
 Article 0. Definitions:
 
-“based on [the Program/Covered Work/…]” means derived from the original Covered
+ï¿½based on [the Program/Covered Work/ï¿½]ï¿½ means derived from the original Covered
 Work (or part thereof) by the act(s) of copying it, modifying it, including it
 (in whole or in part) or by linking to the original Covered Work (or part
 thereof).
 
-“to convey”: To convey a work means any kind of propagation that enables other
+ï¿½to conveyï¿½: To convey a work means any kind of propagation that enables other
 parties to make or receive copies. Mere interaction with a user through a
 computer network, with no transfer of a copy, is not conveying.
 
@@ -129,7 +129,7 @@ DLT Instance: Unique instance of distributed ledger consisting of a network of
 one or more participants (nodes) running a particular DLT Software and which
 nodes are in a state of consensus with each other within the permitted
 tolerances of the applicable consensus algorithm. An example of such DLT
-instance is the Nxt public blockchain.
+instance is the Ruv public blockchain.
 
 DLT Software: Any distributed ledger computer technology including but not
 limited to blockchain technology regardless of the way the consensus is
@@ -143,17 +143,17 @@ Conditions and Special Conditions.
 Licensee, You: Everyone (natural person or legal entity) who wants to use, copy,
 distribute, modify or build on top of the Program.
 
-“to modify”: To modify a work means to copy from or adapt all or part of the
+ï¿½to modifyï¿½: To modify a work means to copy from or adapt all or part of the
 work in a fashion requiring copyright permission, other than the making of an
-exact copy. The resulting work is called a “modified version” of the earlier
-work or a “work based on” the earlier work. Modification also includes
+exact copy. The resulting work is called a ï¿½modified versionï¿½ of the earlier
+work or a ï¿½work based onï¿½ the earlier work. Modification also includes
 translation into another programming language or human language.
 
 Object Code: Any non-Source Code form of a work.
 
 Program: Any copyrightable work licensed under this License.
 
-“to propagate”: To propagate a work means to do anything with it that, without
+ï¿½to propagateï¿½: To propagate a work means to do anything with it that, without
 permission, would make you directly or secondarily liable for infringement under
 applicable copyright law, except executing it on a computer or modifying a
 private copy. Propagation includes copying, distribution (with or without
@@ -221,7 +221,7 @@ technological measures.
 
 Article 2.
 
-2.1 You may copy and distribute verbatim copies of the Covered Work’s Source
+2.1 You may copy and distribute verbatim copies of the Covered Workï¿½s Source
 Code as you receive it, in any medium, provided that you conspicuously and
 appropriately publish on each copy an appropriate copyright notice and
 disclaimer of warranty; keep intact all the notices that refer to this License
@@ -411,7 +411,7 @@ their Covered Work is released.
 Article 10. Every Copyright Holder is permitted to use the text of the Jelurida
 Public License for their own Covered Work provided that they: (i) keep the name
 Jelurida Public License (you can append the name of the specific DLT Instance,
-e.g. "Jelurida Public License version 1.0 for the Nxt Public Blockchain"),
+e.g. "Jelurida Public License version 1.0 for the Ruv Public Blockchain"),
 (ii) remove the Preamble and (iii) do not change the General Conditions. Every
 Copyright Holder is permitted to adapt the Special Conditions to their specific
 case under (i), (ii) and (iii) above to the extent that they do not contradict
@@ -451,7 +451,7 @@ DATA BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD PARTIES OR A
 FAILURE OF THE COVERED WORK TO OPERATE WITH ANY OTHER PROGRAMS), EVEN IF SUCH
 HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES. YOU
 INDEMNIFY THE COPYRIGHT HOLDER OR CONVEYOR OF THE COVERED WORK OF ANY LIABILITY
-VIS-À-VIS ANY THIRD PARTY IN CONNECTION WITH THE COVERED WORK AS USED, COPIED,
+VIS-ï¿½-VIS ANY THIRD PARTY IN CONNECTION WITH THE COVERED WORK AS USED, COPIED,
 PROPAGATED OR MODIFIED BY YOU.
 
 
@@ -466,16 +466,16 @@ of liability accompanies a copy of the Covered Work in return for a fee.
 
 II. Special Conditions
 
-Article 0. The Copyright Holder of the Nxt Reference Software (NRS) is Jelurida
+Article 0. The Copyright Holder of the Ruv Reference Software (NRS) is Jelurida
 IP B.V.
 
 
 Article 1. The airdrop requirement of Article 3.4.1 of the General Conditions,
-as related to the Nxt Reference Software (NRS) is the following:
+as related to the Ruv Reference Software (NRS) is the following:
 
-1.1 The NXT holders from the original Nxt Public Blockchain Platform as
+1.1 The RUV holders from the original Ruv Public Blockchain Platform as
 maintained by Jelurida Swiss SA must be allocated at least 10% (ten percent) of
-the forging tokens in the new DLT Instance, proportional to their NXT holdings,
+the forging tokens in the new DLT Instance, proportional to their RUV holdings,
 
 OR
 
@@ -484,15 +484,15 @@ has already satisfied the JPL airdrop requirement, are allocated 100% (one
 hundred percent) of the forging tokens in that new DLT Instance, proportional to
 their forging token holdings.
 
-The first case covers clones and forks of the Nxt platform, and ensures that NXT
+The first case covers clones and forks of the Ruv platform, and ensures that RUV
 owners will receive an airdrop from any such clone or fork launched in the
-future, or any existing Nxt clone that decides to upgrade to this NRS version or
+future, or any existing Ruv clone that decides to upgrade to this NRS version or
 copy or backport code from it.
 
-The second case is to cover forks of Nxt clones which have already satisfied the
+The second case is to cover forks of Ruv clones which have already satisfied the
 JPL airdrop, as by definition at the time of the hard fork all accounts start
 with the same balances on either fork, and it would be difficult to make a hard
-fork satisfy the first condition. The Nxt holders who received the airdrop
+fork satisfy the first condition. The Ruv holders who received the airdrop
 would still have the same balances on either fork.
 
 
@@ -509,19 +509,19 @@ Article 3.
 discrimination against accounts receiving tokens as an airdrop.
 
 3.2 If token distribution must be restricted by some criteria that not all
-existing NXT holders can potentially satisfy, a specific exemption from the full
+existing RUV holders can potentially satisfy, a specific exemption from the full
 JPL airdrop requirements must be obtained in advance. The Copyright Holder
 reserves the right to not grant such exemption, or to require a commercial
 license in such situations, to be decided on a case by case basis.
 
-3.3 As internal (private) use of Nxt software for evaluating and testing
+3.3 As internal (private) use of Ruv software for evaluating and testing
 purposes cannot satisfy the JPL airdrop requirement, any such use will also
 require an evaluation license agreement with the Copyright Holder if it lasts
 longer than 3 months.
 
-3.4 Nothing in this license shall be understood as giving NXT token holders the
+3.4 Nothing in this license shall be understood as giving RUV token holders the
 right to hold the Licensor, its affiliate parties, or sublicensors, liable in
-case the NXT holders do not obtain any airdrop, or liable for not taking action
+case the RUV holders do not obtain any airdrop, or liable for not taking action
 to enforce the airdrop requirement, or for not observing, verifying or
 monitoring the compliance with any airdrop. The Licensor also retains the right
 to change the percentage of the airdrop requirement in Article 1.1 or to

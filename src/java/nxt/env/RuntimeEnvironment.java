@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,15 +14,15 @@
  *
  */
 
-package nxt.env;
+package ruv.env;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class RuntimeEnvironment {
 
-    public static final String RUNTIME_MODE_ARG = "nxt.runtime.mode";
-    public static final String DIRPROVIDER_ARG = "nxt.runtime.dirProvider";
+    public static final String RUNTIME_MODE_ARG = "ruv.runtime.mode";
+    public static final String DIRPROVIDER_ARG = "ruv.runtime.dirProvider";
 
     private static final String osname = System.getProperty("os.name").toLowerCase();
     private static final boolean isHeadless;

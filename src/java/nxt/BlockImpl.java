@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,12 +14,12 @@
  *
  */
 
-package nxt;
+package ruv;
 
-import nxt.AccountLedger.LedgerEvent;
-import nxt.crypto.Crypto;
-import nxt.util.Convert;
-import nxt.util.Logger;
+import ruv.AccountLedger.LedgerEvent;
+import ruv.crypto.Crypto;
+import ruv.util.Convert;
+import ruv.util.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -264,7 +264,7 @@ final class BlockImpl implements Block {
         return json;
     }
 
-    static BlockImpl parseBlock(JSONObject blockData) throws NxtException.NotValidException {
+    static BlockImpl parseBlock(JSONObject blockData) throws RuvException.NotValidException {
         try {
             int version = ((Long) blockData.get("version")).intValue();
             int timestamp = ((Long) blockData.get("timestamp")).intValue();
@@ -284,10 +284,10 @@ final class BlockImpl implements Block {
             BlockImpl block = new BlockImpl(version, timestamp, previousBlock, totalAmountNQT, totalFeeNQT, payloadLength, payloadHash, generatorPublicKey,
                     generationSignature, blockSignature, previousBlockHash, blockTransactions);
             if (!block.checkSignature()) {
-                throw new NxtException.NotValidException("Invalid block signature");
+                throw new RuvException.NotValidException("Invalid block signature");
             }
             return block;
-        } catch (NxtException.NotValidException|RuntimeException e) {
+        } catch (RuvException.NotValidException|RuntimeException e) {
             Logger.logDebugMessage("Failed to parse block: " + blockData.toJSONString());
             throw e;
         }
@@ -345,7 +345,7 @@ final class BlockImpl implements Block {
             }
 
             Account account = Account.getAccount(getGeneratorId());
-            long effectiveBalance = account == null ? 0 : account.getEffectiveBalanceNXT();
+            long effectiveBalance = account == null ? 0 : account.getEffectiveBalanceRUV();
             if (effectiveBalance <= 0) {
                 return false;
             }
@@ -388,13 +388,13 @@ final class BlockImpl implements Block {
                 }
                 totalBackFees += backFees[i];
                 Account previousGeneratorAccount = Account.getAccount(BlockDb.findBlockAtHeight(this.height - i - 1).getGeneratorId());
-                Logger.logDebugMessage("Back fees %f %s to forger at height %d", ((double)backFees[i])/Constants.ONE_NXT, Constants.COIN_SYMBOL, this.height - i - 1);
+                Logger.logDebugMessage("Back fees %f %s to forger at height %d", ((double)backFees[i])/Constants.ONE_RUV, Constants.COIN_SYMBOL, this.height - i - 1);
                 previousGeneratorAccount.addToBalanceAndUnconfirmedBalanceNQT(LedgerEvent.BLOCK_GENERATED, getId(), backFees[i]);
                 previousGeneratorAccount.addToForgedBalanceNQT(backFees[i]);
             }
         }
         if (totalBackFees != 0) {
-            Logger.logDebugMessage("Fee reduced by %f %s at height %d", ((double)totalBackFees)/Constants.ONE_NXT, Constants.COIN_SYMBOL, this.height);
+            Logger.logDebugMessage("Fee reduced by %f %s at height %d", ((double)totalBackFees)/Constants.ONE_RUV, Constants.COIN_SYMBOL, this.height);
         }
         generatorAccount.addToBalanceAndUnconfirmedBalanceNQT(LedgerEvent.BLOCK_GENERATED, getId(), totalFeeNQT - totalBackFees);
         generatorAccount.addToForgedBalanceNQT(totalFeeNQT - totalBackFees);

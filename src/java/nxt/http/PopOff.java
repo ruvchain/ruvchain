@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,10 +14,10 @@
  *
  */
 
-package nxt.http;
+package ruv.http;
 
-import nxt.Block;
-import nxt.Nxt;
+import ruv.Block;
+import ruv.Ruv;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
@@ -47,23 +47,23 @@ public final class PopOff extends APIServlet.APIRequestHandler {
         boolean keepTransactions = "true".equalsIgnoreCase(req.getParameter("keepTransactions"));
         List<? extends Block> blocks;
         try {
-            Nxt.getBlockchainProcessor().setGetMoreBlocks(false);
+            Ruv.getBlockchainProcessor().setGetMoreBlocks(false);
             if (numBlocks > 0) {
-                blocks = Nxt.getBlockchainProcessor().popOffTo(Nxt.getBlockchain().getHeight() - numBlocks);
+                blocks = Ruv.getBlockchainProcessor().popOffTo(Ruv.getBlockchain().getHeight() - numBlocks);
             } else if (height > 0) {
-                blocks = Nxt.getBlockchainProcessor().popOffTo(height);
+                blocks = Ruv.getBlockchainProcessor().popOffTo(height);
             } else {
                 return JSONResponses.missing("numBlocks", "height");
             }
         } finally {
-            Nxt.getBlockchainProcessor().setGetMoreBlocks(true);
+            Ruv.getBlockchainProcessor().setGetMoreBlocks(true);
         }
         JSONArray blocksJSON = new JSONArray();
         blocks.forEach(block -> blocksJSON.add(JSONData.block(block, true, false)));
         JSONObject response = new JSONObject();
         response.put("blocks", blocksJSON);
         if (keepTransactions) {
-            blocks.forEach(block -> Nxt.getTransactionProcessor().processLater(block.getTransactions()));
+            blocks.forEach(block -> Ruv.getTransactionProcessor().processLater(block.getTransactions()));
         }
         return response;
     }

@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,14 +14,14 @@
  *
  */
 
-package nxt.http;
+package ruv.http;
 
-import nxt.Constants;
-import nxt.Nxt;
-import nxt.peer.Peer;
-import nxt.peer.Peers;
-import nxt.util.Logger;
-import nxt.util.ThreadPool;
+import ruv.Constants;
+import ruv.Ruv;
+import ruv.peer.Peer;
+import ruv.peer.Peers;
+import ruv.util.Logger;
+import ruv.util.ThreadPool;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,9 +39,9 @@ public class APIProxy {
     private static final APIProxy instance = new APIProxy();
 
     static final boolean enableAPIProxy = Constants.isLightClient ||
-            (Nxt.getBooleanProperty("nxt.enableAPIProxy") && ! API.isOpenAPI);
-    private static final int blacklistingPeriod = Nxt.getIntProperty("nxt.apiProxyBlacklistingPeriod") / 1000;
-    static final String forcedServerURL = Nxt.getStringProperty("nxt.forceAPIProxyServerURL", "");
+            (Ruv.getBooleanProperty("ruv.enableAPIProxy") && ! API.isOpenAPI);
+    private static final int blacklistingPeriod = Ruv.getIntProperty("ruv.apiProxyBlacklistingPeriod") / 1000;
+    static final String forcedServerURL = Ruv.getStringProperty("ruv.forceAPIProxyServerURL", "");
 
     private volatile String forcedPeerHost;
     private volatile List<String> peersHosts = Collections.emptyList();
@@ -67,7 +67,7 @@ public class APIProxy {
     }
 
     private static final Runnable peersUpdateThread = () -> {
-        int curTime = Nxt.getEpochTime();
+        int curTime = Ruv.getEpochTime();
         instance.blacklistedPeers.entrySet().removeIf((entry) -> {
             if (entry.getValue() < curTime) {
                 Logger.logDebugMessage("Unblacklisting API peer " + entry.getKey());
@@ -180,7 +180,7 @@ public class APIProxy {
     }
 
     static boolean isActivated() {
-        return Constants.isLightClient || (enableAPIProxy && Nxt.getBlockchainProcessor().isDownloading());
+        return Constants.isLightClient || (enableAPIProxy && Ruv.getBlockchainProcessor().isDownloading());
     }
 
     boolean blacklistHost(String host) {
@@ -188,7 +188,7 @@ public class APIProxy {
             Logger.logInfoMessage("Too many blacklisted peers");
             return false;
         }
-        blacklistedPeers.put(host, Nxt.getEpochTime() + blacklistingPeriod);
+        blacklistedPeers.put(host, Ruv.getEpochTime() + blacklistingPeriod);
         if (peersHosts.contains(host)) {
             peersHosts = Collections.emptyList();
             getServingPeer(null);

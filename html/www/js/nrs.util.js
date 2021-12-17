@@ -1,12 +1,12 @@
 /******************************************************************************
- * Copyright © 2013-2016 The Nxt Core Developers.                             *
+ * Copyright © 2013-2016 The Ruv Core Developers.                             *
  * Copyright © 2016-2019 Jelurida IP B.V.                                     *
  *                                                                            *
  * See the LICENSE.txt file at the top-level directory of this distribution   *
  * for licensing information.                                                 *
  *                                                                            *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,*
- * no part of the Nxt software, including this file, may be copied, modified, *
+ * no part of the Ruv software, including this file, may be copied, modified, *
  * propagated, or distributed except according to the terms contained in the  *
  * LICENSE.txt file.                                                          *
  *                                                                            *
@@ -68,7 +68,7 @@ var NRS = (function (NRS, $, undefined) {
 			price = new BigInteger(String(price));
 		}
 
-		return NRS.convertToNXT(price.multiply(new BigInteger("" + Math.pow(10, decimals))), returnAsObject);
+		return NRS.convertToRUV(price.multiply(new BigInteger("" + Math.pow(10, decimals))), returnAsObject);
 	};
 
     NRS.calculatePricePerWholeQNT = function (price, decimals) {
@@ -103,7 +103,7 @@ var NRS = (function (NRS, $, undefined) {
     };
 
     NRS.calculateOrderTotal = function (quantityQNT, priceNQT) {
-        return NRS.convertToNXT(calculateOrderTotalImpl(quantityQNT, priceNQT));
+        return NRS.convertToRUV(calculateOrderTotalImpl(quantityQNT, priceNQT));
     };
 
     NRS.calculatePercentage = function (a, b, rounding_mode) {
@@ -121,7 +121,7 @@ var NRS = (function (NRS, $, undefined) {
 		return NRS.format(result.toString());
 	};
 
-    NRS.convertToNXT = function (amount, returnAsObject) {
+    NRS.convertToRUV = function (amount, returnAsObject) {
         var negative = "";
         var mantissa = "";
 
@@ -375,7 +375,7 @@ var NRS = (function (NRS, $, undefined) {
         var mantissa = "";
 
         if (typeof amount == "object") {
-            var params = NRS.convertToNXT(amount, true);
+            var params = NRS.convertToRUV(amount, true);
 
             negative = params.negative;
             amount = params.amount;
@@ -404,7 +404,7 @@ var NRS = (function (NRS, $, undefined) {
             if (mantissa != "" && mantissa.substring(0, 1) == ".") {
                 offset ++;
             }
-            var maxLength = parseInt(NRS.settings.max_nxt_decimals) + offset;
+            var maxLength = parseInt(NRS.settings.max_ruv_decimals) + offset;
             if (mantissa.length > maxLength) {
                 mantissa = mantissa.substring(0, maxLength);
                 if (mantissa.length == 1 && mantissa.substring(0, 1) == ".") {
@@ -631,7 +631,7 @@ var NRS = (function (NRS, $, undefined) {
         if (NRS.isRsAccount(account)) {
             return String(account).escapeHTML();
         } else {
-            var address = new NxtAddress();
+            var address = new RuvAddress();
             if (address.set(account)) {
                 return address.toString().escapeHTML();
             } else {
@@ -1700,7 +1700,7 @@ var NRS = (function (NRS, $, undefined) {
     };
 
     NRS.isRsAccount = function(account) {
-        return NRS.isRsAccountImpl(account, NRS.constants.ACCOUNT_RS_MATCH ? NRS.constants.ACCOUNT_RS_MATCH : NRS.getRsAccountRegex("NXT"));
+        return NRS.isRsAccountImpl(account, NRS.constants.ACCOUNT_RS_MATCH ? NRS.constants.ACCOUNT_RS_MATCH : NRS.getRsAccountRegex("RUV"));
     };
 
     NRS.isRsAccountImpl = function(account, regex) {
@@ -1722,12 +1722,12 @@ var NRS = (function (NRS, $, undefined) {
             case "_":
                 return NRS.constants.ACCOUNT_MASK_UNDERSCORE;
             default:
-                return NRS.constants.ACCOUNT_MASK_PREFIX ? NRS.constants.ACCOUNT_MASK_PREFIX : "NXT-";
+                return NRS.constants.ACCOUNT_MASK_PREFIX ? NRS.constants.ACCOUNT_MASK_PREFIX : "RUV-";
         }
     };
 
     NRS.printPaperWallet = function(passphrase) {
-        var $pageHeader = $("<h2 data-i18n='nxt_ardor_paper_wallet'>NXT and Ardor Paper Wallet</h2>");
+        var $pageHeader = $("<h2 data-i18n='ruv_ardor_paper_wallet'>RUV and Ardor Paper Wallet</h2>");
         var $passphraseHeader = $("<h3 data-i18n='passphrase'>Passphrase</h3>");
         var $passphraseText = $("<div></div>");
         $passphraseText.text(passphrase);

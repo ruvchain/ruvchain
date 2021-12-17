@@ -1,4 +1,4 @@
 /**
  * ByteBufferHelper. Utility classes for working with a ByteBuffer
  */
-package nxt.util.bbh;
+package ruv.util.bbh;

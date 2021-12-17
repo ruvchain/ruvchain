@@ -1,12 +1,12 @@
 /******************************************************************************
- * Copyright © 2013-2016 The Nxt Core Developers.                             *
+ * Copyright © 2013-2016 The Ruv Core Developers.                             *
  * Copyright © 2016-2019 Jelurida IP B.V.                                     *
  *                                                                            *
  * See the LICENSE.txt file at the top-level directory of this distribution   *
  * for licensing information.                                                 *
  *                                                                            *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,*
- * no part of the Nxt software, including this file, may be copied, modified, *
+ * no part of the Ruv software, including this file, may be copied, modified, *
  * propagated, or distributed except according to the terms contained in the  *
  * LICENSE.txt file.                                                          *
  *                                                                            *
@@ -167,10 +167,10 @@ var NRS = (function(NRS, $, undefined) {
 	NRS.listAccounts = function() {
 		var loginAccount = $('#login_account');
         loginAccount.empty();
-		if (NRS.getStrItem("savedNxtAccounts") && NRS.getStrItem("savedNxtAccounts") != ""){
+		if (NRS.getStrItem("savedRuvAccounts") && NRS.getStrItem("savedRuvAccounts") != ""){
 			$('#login_account_container').show();
 			$('#login_account_container_other').hide();
-			var accounts = NRS.getStrItem("savedNxtAccounts").split(";");
+			var accounts = NRS.getStrItem("savedRuvAccounts").split(";");
 			$.each(accounts, function(index, account) {
 				if (account != ''){
 					$('#login_account')
@@ -250,8 +250,8 @@ var NRS = (function(NRS, $, undefined) {
             $('#login_password').parent().show();
         } else if (type == "scan" && !reader.is(':visible')) {
             NRS.scanQRCode(readerId, function(text) {
-                var nxtAddress = new NxtAddress();
-                if (nxtAddress.set(text)) {
+                var ruvAddress = new RuvAddress();
+                if (ruvAddress.set(text)) {
                     if ($("#remember_me").is(":checked")) {
                         rememberAccount(text);
                     }
@@ -264,26 +264,26 @@ var NRS = (function(NRS, $, undefined) {
     });
 
 	NRS.removeAccount = function(account) {
-		var accounts = NRS.getStrItem("savedNxtAccounts").replace(account+';','');
+		var accounts = NRS.getStrItem("savedRuvAccounts").replace(account+';','');
 		if (accounts == '') {
-			NRS.removeItem('savedNxtAccounts');
+			NRS.removeItem('savedRuvAccounts');
 		} else {
-			NRS.setStrItem("savedNxtAccounts", accounts);
+			NRS.setStrItem("savedRuvAccounts", accounts);
 		}
 		NRS.listAccounts();
 	};
 
     function rememberAccount(account) {
-        var accountsStr = NRS.getStrItem("savedNxtAccounts");
+        var accountsStr = NRS.getStrItem("savedRuvAccounts");
         if (!accountsStr) {
-            NRS.setStrItem("savedNxtAccounts", account + ";");
+            NRS.setStrItem("savedRuvAccounts", account + ";");
             return;
         }
         var accounts = accountsStr.split(";");
         if (accounts.indexOf(account) >= 0) {
             return;
         }
-        NRS.setStrItem("savedNxtAccounts", accountsStr + account + ";");
+        NRS.setStrItem("savedRuvAccounts", accountsStr + account + ";");
     }
 
     // id can be either account id or passphrase
@@ -512,9 +512,9 @@ var NRS = (function(NRS, $, undefined) {
 					/* Add accounts to dropdown for quick switching */
 					var accountIdDropdown = $("#account_id_dropdown");
 					accountIdDropdown.find(".dropdown-menu .switchAccount").remove();
-					if (NRS.getStrItem("savedNxtAccounts") && NRS.getStrItem("savedNxtAccounts")!=""){
+					if (NRS.getStrItem("savedRuvAccounts") && NRS.getStrItem("savedRuvAccounts")!=""){
 						accountIdDropdown.show();
-						accounts = NRS.getStrItem("savedNxtAccounts").split(";");
+						accounts = NRS.getStrItem("savedRuvAccounts").split(";");
 						$.each(accounts, function(index, account) {
 							if (account != ''){
 								$('#account_id_dropdown').find('.dropdown-menu')
@@ -569,7 +569,7 @@ var NRS = (function(NRS, $, undefined) {
 			html = "";
 			html += "<div style='font-size:13px;padding:5px;'>";
 			html += "<p data-i18n='plugin_security_notice_full_access'>";
-			html += "Plugins are not sandboxed or restricted in any way and have full accesss to your client system including your Nxt passphrase.";
+			html += "Plugins are not sandboxed or restricted in any way and have full accesss to your client system including your Ruv passphrase.";
 			html += "</p>";
 			html += "<p data-i18n='plugin_security_notice_trusted_sources'>";
 			html += "Make sure to only run plugins downloaded from trusted sources, otherwise ";
@@ -639,7 +639,7 @@ var NRS = (function(NRS, $, undefined) {
 			indexedDB.deleteDatabase(NRS.legacyDatabase.name);
 		}
 		NRS.removeItem("logged_in");
-		NRS.removeItem("savedNxtAccounts");
+		NRS.removeItem("savedRuvAccounts");
 		NRS.removeItem("language");
         NRS.removeItem("savedPassphrase");
 		NRS.localStorageDrop("data");

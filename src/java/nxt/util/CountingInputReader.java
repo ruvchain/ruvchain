@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,9 +14,9 @@
  *
  */
 
-package nxt.util;
+package ruv.util;
 
-import nxt.NxtException.NxtIOException;
+import ruv.RuvException.RuvIOException;
 
 import java.io.FilterReader;
 import java.io.IOException;
@@ -103,11 +103,11 @@ public class CountingInputReader extends FilterReader {
      * Increment the character count and check if the maximum count has been exceeded
      *
      * @param   c                   Number of characters read
-     * @throws  NxtIOException      Maximum count exceeded
+     * @throws  RuvIOException      Maximum count exceeded
      */
-    private void incCount(long c) throws NxtIOException {
+    private void incCount(long c) throws RuvIOException {
         count += c;
         if (count > limit)
-            throw new NxtIOException("Maximum size exceeded: " + count);
+            throw new RuvIOException("Maximum size exceeded: " + count);
     }
 }

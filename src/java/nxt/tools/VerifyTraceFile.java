@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,10 +14,10 @@
  *
  */
 
-package nxt.tools;
+package ruv.tools;
 
-import nxt.Genesis;
-import nxt.util.Convert;
+import ruv.Genesis;
+import ruv.util.Convert;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -63,7 +63,7 @@ public final class VerifyTraceFile {
     }
 
     public static void main(String[] args) {
-        String fileName = args.length == 1 ? args[0] : "nxt-trace.csv";
+        String fileName = args.length == 1 ? args[0] : "ruv-trace.csv";
         try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
             String line = reader.readLine();
             String[] headers = unquote(line.split("\t"));

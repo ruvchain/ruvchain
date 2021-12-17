@@ -1,5 +1,5 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
@@ -14,7 +14,7 @@
  *
  */
 
-package nxt.util.bbh;
+package ruv.util.bbh;
 
 import java.nio.ByteBuffer;
 import java.util.function.ToIntFunction;

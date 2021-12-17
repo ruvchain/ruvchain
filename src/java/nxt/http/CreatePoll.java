@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,27 +14,27 @@
  *
  */
 
-package nxt.http;
+package ruv.http;
 
-import nxt.Account;
-import nxt.Attachment;
-import nxt.Attachment.MessagingPollCreation.PollBuilder;
-import nxt.Constants;
-import nxt.Nxt;
-import nxt.NxtException;
-import nxt.util.Convert;
+import ruv.Account;
+import ruv.Attachment;
+import ruv.Attachment.MessagingPollCreation.PollBuilder;
+import ruv.Constants;
+import ruv.Ruv;
+import ruv.RuvException;
+import ruv.util.Convert;
 import org.json.simple.JSONStreamAware;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
-import static nxt.http.JSONResponses.INCORRECT_POLL_DESCRIPTION_LENGTH;
-import static nxt.http.JSONResponses.INCORRECT_POLL_NAME_LENGTH;
-import static nxt.http.JSONResponses.INCORRECT_POLL_OPTION_LENGTH;
-import static nxt.http.JSONResponses.INCORRECT_ZEROOPTIONS;
-import static nxt.http.JSONResponses.MISSING_DESCRIPTION;
-import static nxt.http.JSONResponses.MISSING_NAME;
+import static ruv.http.JSONResponses.INCORRECT_POLL_DESCRIPTION_LENGTH;
+import static ruv.http.JSONResponses.INCORRECT_POLL_NAME_LENGTH;
+import static ruv.http.JSONResponses.INCORRECT_POLL_OPTION_LENGTH;
+import static ruv.http.JSONResponses.INCORRECT_ZEROOPTIONS;
+import static ruv.http.JSONResponses.MISSING_DESCRIPTION;
+import static ruv.http.JSONResponses.MISSING_NAME;
 
 public final class CreatePoll extends CreateTransaction {
 
@@ -50,7 +50,7 @@ public final class CreatePoll extends CreateTransaction {
     }
 
     @Override
-    protected JSONStreamAware processRequest(HttpServletRequest req) throws NxtException {
+    protected JSONStreamAware processRequest(HttpServletRequest req) throws RuvException {
 
         String nameValue = Convert.emptyToNull(req.getParameter("name"));
         String descriptionValue = req.getParameter("description");
@@ -87,7 +87,7 @@ public final class CreatePoll extends CreateTransaction {
             return INCORRECT_ZEROOPTIONS;
         }
 
-        int currentHeight = Nxt.getBlockchain().getHeight();
+        int currentHeight = Ruv.getBlockchain().getHeight();
         int finishHeight = ParameterParser.getInt(req, "finishHeight",
                 currentHeight + 2,
                 currentHeight + Constants.MAX_POLL_DURATION + 1, true);

@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,10 +14,10 @@
  *
  */
 
-package nxt.crypto;
+package ruv.crypto;
 
-import nxt.NxtException;
-import nxt.util.Convert;
+import ruv.RuvException;
+import ruv.util.Convert;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -38,12 +38,12 @@ public final class EncryptedData {
     }
 
     public static EncryptedData readEncryptedData(ByteBuffer buffer, int length, int maxLength)
-            throws NxtException.NotValidException {
+            throws RuvException.NotValidException {
         if (length == 0) {
             return EMPTY_DATA;
         }
         if (length > maxLength) {
-            throw new NxtException.NotValidException("Max encrypted data length exceeded: " + length);
+            throw new RuvException.NotValidException("Max encrypted data length exceeded: " + length);
         }
         byte[] data = new byte[length];
         buffer.get(data);
@@ -60,7 +60,7 @@ public final class EncryptedData {
         buffer.order(ByteOrder.LITTLE_ENDIAN);
         try {
             return readEncryptedData(buffer, bytes.length - 32, Integer.MAX_VALUE);
-        } catch (NxtException.NotValidException e) {
+        } catch (RuvException.NotValidException e) {
             throw new RuntimeException(e.toString(), e); // never
         }
     }

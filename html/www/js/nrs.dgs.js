@@ -1,12 +1,12 @@
 /******************************************************************************
- * Copyright © 2013-2016 The Nxt Core Developers.                             *
+ * Copyright © 2013-2016 The Ruv Core Developers.                             *
  * Copyright © 2016-2019 Jelurida IP B.V.                                     *
  *                                                                            *
  * See the LICENSE.txt file at the top-level directory of this distribution   *
  * for licensing information.                                                 *
  *                                                                            *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,*
- * no part of the Nxt software, including this file, may be copied, modified, *
+ * no part of the Ruv software, including this file, may be copied, modified, *
  * propagated, or distributed except according to the terms contained in the  *
  * LICENSE.txt file.                                                          *
  *                                                                            *
@@ -944,7 +944,7 @@ var NRS = (function(NRS, $) {
 							var refund = orderTotalBeforeDiscount.subtract(new BigInteger(String(response.discountNQT)));
 
 							$("#dgs_refund_purchase").val(response.purchase);
-							$("#dgs_refund_refund").val(NRS.convertToNXT(refund));
+							$("#dgs_refund_refund").val(NRS.convertToRUV(refund));
 						} else if (type == "dgs_view_purchase_modal") {
 							var primaryButton = $modal.find("button.btn-primary");
 							primaryButton.data("purchase", response.purchase);
@@ -1100,7 +1100,7 @@ var NRS = (function(NRS, $) {
 					if (type == "dgs_quantity_change_modal") {
 						$("#dgs_quantity_change_current_quantity, #dgs_quantity_change_quantity").val(NRS.escapeRespStr(response.quantity));
 					} else if (type == "dgs_price_change_modal") {
-						$("#dgs_price_change_current_price, #dgs_price_change_price").val(NRS.convertToNXT(response.priceNQT).escapeHTML());
+						$("#dgs_price_change_current_price, #dgs_price_change_price").val(NRS.convertToRUV(response.priceNQT).escapeHTML());
 					} else if (type == "dgs_purchase_modal") {
 						$modal.find("input[name=recipient]").val(response.sellerRS);
 
@@ -1165,7 +1165,7 @@ var NRS = (function(NRS, $) {
 		if (seller == "") {
 			NRS.pages.dgs_search();
 		} else if (NRS.isRsAccount(seller)) {
-			var address = new NxtAddress();
+			var address = new RuvAddress();
 
 			if (!address.set(seller)) {
 				$.growl($.t("error_invalid_seller"), {

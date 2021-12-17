@@ -1,10 +1,10 @@
 /*
-    Reed Solomon Encoding and Decoding for Nxt
+    Reed Solomon Encoding and Decoding for Ruv
 
-    Version: 1.0, license: Public Domain, coder: NxtChg (admin@nxtchg.com)
+    Version: 1.0, license: Public Domain, coder: RuvChg (admin@ruvchg.com)
     Java Version: ChuckOne (ChuckOne@mail.de).
 */
-package nxt.crypto;
+package ruv.crypto;
 
 final class ReedSolomon {
 

@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,9 +14,9 @@
  *
  */
 
-package nxt.util;
+package ruv.util;
 
-import nxt.Nxt;
+import ruv.Ruv;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -58,7 +58,7 @@ public final class ThreadPool {
         if (scheduledThreadPool != null) {
             throw new IllegalStateException("Executor service already started, no new jobs accepted");
         }
-        if (! Nxt.getBooleanProperty("nxt.disable" + name + "Thread")) {
+        if (! Ruv.getBooleanProperty("ruv.disable" + name + "Thread")) {
             backgroundJobs.put(runnable, timeUnit.toMillis(delay));
         } else {
             Logger.logMessage("Will not run " + name + " thread");

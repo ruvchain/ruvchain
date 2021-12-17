@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,21 +14,21 @@
  *
  */
 
-package nxt;
+package ruv;
 
-import nxt.addons.AddOns;
-import nxt.crypto.Crypto;
-import nxt.env.DirProvider;
-import nxt.env.RuntimeEnvironment;
-import nxt.env.RuntimeMode;
-import nxt.env.ServerStatus;
-import nxt.http.API;
-import nxt.http.APIProxy;
-import nxt.peer.Peers;
-import nxt.util.Convert;
-import nxt.util.Logger;
-import nxt.util.ThreadPool;
-import nxt.util.Time;
+import ruv.addons.AddOns;
+import ruv.crypto.Crypto;
+import ruv.env.DirProvider;
+import ruv.env.RuntimeEnvironment;
+import ruv.env.RuntimeMode;
+import ruv.env.ServerStatus;
+import ruv.http.API;
+import ruv.http.APIProxy;
+import ruv.peer.Peers;
+import ruv.util.Convert;
+import ruv.util.Logger;
+import ruv.util.ThreadPool;
+import ruv.util.Time;
 import org.json.simple.JSONObject;
 
 import java.io.File;
@@ -49,16 +49,16 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
-public final class Nxt {
+public final class Ruv {
 
     public static final String VERSION = "1.11.15";
     public static final String APPLICATION = "RuvChain";
 
     private static volatile Time time = new Time.EpochTime();
 
-    public static final String NXT_DEFAULT_PROPERTIES = "nxt-default.properties";
-    public static final String NXT_PROPERTIES = "nxt.properties";
-    public static final String NXT_INSTALLER_PROPERTIES = "nxt-installer.properties";
+    public static final String RUV_DEFAULT_PROPERTIES = "ruv-default.properties";
+    public static final String RUV_PROPERTIES = "ruv.properties";
+    public static final String RUV_INSTALLER_PROPERTIES = "ruv-installer.properties";
     public static final String CONFIG_DIR = "conf";
 
     private static final RuntimeMode runtimeMode;
@@ -68,30 +68,30 @@ public final class Nxt {
     static {
         redirectSystemStreams("out");
         redirectSystemStreams("err");
-        System.out.println("Initializing " + Nxt.APPLICATION + " server version " + Nxt.VERSION);
+        System.out.println("Initializing " + Ruv.APPLICATION + " server version " + Ruv.VERSION);
         printCommandLineArguments();
         runtimeMode = RuntimeEnvironment.getRuntimeMode();
         System.out.printf("Runtime mode %s\n", runtimeMode.getClass().getName());
         dirProvider = RuntimeEnvironment.getDirProvider();
         System.out.println("User home folder " + dirProvider.getUserHomeDir());
-        loadProperties(defaultProperties, NXT_DEFAULT_PROPERTIES, true);
-        if (!VERSION.equals(Nxt.defaultProperties.getProperty("nxt.version"))) {
-            throw new RuntimeException("Using an nxt-default.properties file from a version other than " + VERSION + " is not supported!!!");
+        loadProperties(defaultProperties, RUV_DEFAULT_PROPERTIES, true);
+        if (!VERSION.equals(Ruv.defaultProperties.getProperty("ruv.version"))) {
+            throw new RuntimeException("Using an ruv-default.properties file from a version other than " + VERSION + " is not supported!!!");
         }
     }
 
     private static void redirectSystemStreams(String streamName) {
-        String isStandardRedirect = System.getProperty("nxt.redirect.system." + streamName);
+        String isStandardRedirect = System.getProperty("ruv.redirect.system." + streamName);
         Path path = null;
         if (isStandardRedirect != null) {
             try {
-                path = Files.createTempFile("nxt.system." + streamName + ".", ".log");
+                path = Files.createTempFile("ruv.system." + streamName + ".", ".log");
             } catch (IOException e) {
                 e.printStackTrace();
                 return;
             }
         } else {
-            String explicitFileName = System.getProperty("nxt.system." + streamName);
+            String explicitFileName = System.getProperty("ruv.system." + streamName);
             if (explicitFileName != null) {
                 path = Paths.get(explicitFileName);
             }
@@ -113,8 +113,8 @@ public final class Nxt {
     private static final Properties properties = new Properties(defaultProperties);
 
     static {
-        loadProperties(properties, NXT_INSTALLER_PROPERTIES, true);
-        loadProperties(properties, NXT_PROPERTIES, false);
+        loadProperties(properties, RUV_INSTALLER_PROPERTIES, true);
+        loadProperties(properties, RUV_PROPERTIES, false);
     }
 
     public static void loadProperties(Properties properties, String propertiesFile, boolean isDefault) {
@@ -130,8 +130,8 @@ public final class Nxt {
                 }
             } else {
                 try (InputStream is = ClassLoader.getSystemResourceAsStream(propertiesFile)) {
-                    // When running nxt.exe from a Windows installation we always have nxt.properties in the classpath but this is not the nxt properties file
-                    // Therefore we first load it from the classpath and then look for the real nxt.properties in the user folder.
+                    // When running ruv.exe from a Windows installation we always have ruv.properties in the classpath but this is not the ruv properties file
+                    // Therefore we first load it from the classpath and then look for the real ruv.properties in the user folder.
                     if (is != null) {
                         System.out.printf("Loading %s from classpath\n", propertiesFile);
                         properties.load(is);
@@ -288,15 +288,15 @@ public final class Nxt {
         return new TransactionImpl.BuilderImpl((byte)1, senderPublicKey, amountNQT, feeNQT, deadline, (Attachment.AbstractAttachment)attachment);
     }
 
-    public static Transaction.Builder newTransactionBuilder(byte[] transactionBytes) throws NxtException.NotValidException {
+    public static Transaction.Builder newTransactionBuilder(byte[] transactionBytes) throws RuvException.NotValidException {
         return TransactionImpl.newTransactionBuilder(transactionBytes);
     }
 
-    public static Transaction.Builder newTransactionBuilder(JSONObject transactionJSON) throws NxtException.NotValidException {
+    public static Transaction.Builder newTransactionBuilder(JSONObject transactionJSON) throws RuvException.NotValidException {
         return TransactionImpl.newTransactionBuilder(transactionJSON);
     }
 
-    public static Transaction.Builder newTransactionBuilder(byte[] transactionBytes, JSONObject prunableAttachments) throws NxtException.NotValidException {
+    public static Transaction.Builder newTransactionBuilder(byte[] transactionBytes, JSONObject prunableAttachments) throws RuvException.NotValidException {
         return TransactionImpl.newTransactionBuilder(transactionBytes, prunableAttachments);
     }
 
@@ -305,12 +305,12 @@ public final class Nxt {
     }
 
     static void setTime(Time time) {
-        Nxt.time = time;
+        Ruv.time = time;
     }
 
     public static void main(String[] args) {
         try {
-            Runtime.getRuntime().addShutdownHook(new Thread(Nxt::shutdown));
+            Runtime.getRuntime().addShutdownHook(new Thread(Ruv::shutdown));
             init();
         } catch (Throwable t) {
             System.out.println("Fatal error: " + t.toString());
@@ -336,7 +336,7 @@ public final class Nxt {
         BlockchainProcessorImpl.getInstance().shutdown();
         Peers.shutdown();
         Db.shutdown();
-        Logger.logShutdownMessage(Nxt.APPLICATION + " server " + VERSION + " stopped.");
+        Logger.logShutdownMessage(Ruv.APPLICATION + " server " + VERSION + " stopped.");
         Logger.shutdown();
         runtimeMode.shutdown();
     }
@@ -391,10 +391,10 @@ public final class Nxt {
                 AddOns.init();
                 API.init();
                 DebugTrace.init();
-                int timeMultiplier = (Constants.isTestnet && Constants.isOffline) ? Math.max(Nxt.getIntProperty("nxt.timeMultiplier"), 1) : 1;
+                int timeMultiplier = (Constants.isTestnet && Constants.isOffline) ? Math.max(Ruv.getIntProperty("ruv.timeMultiplier"), 1) : 1;
                 ThreadPool.start(timeMultiplier);
                 if (timeMultiplier > 1) {
-                    setTime(new Time.FasterTime(Math.max(getEpochTime(), Nxt.getBlockchain().getLastBlock().getTimestamp()), timeMultiplier));
+                    setTime(new Time.FasterTime(Math.max(getEpochTime(), Ruv.getBlockchain().getLastBlock().getTimestamp()), timeMultiplier));
                     Logger.logMessage("TIME WILL FLOW " + timeMultiplier + " TIMES FASTER!");
                 }
                 try {
@@ -403,10 +403,10 @@ public final class Nxt {
                 testSecureRandom();
                 long currentTime = System.currentTimeMillis();
                 Logger.logMessage("Initialization took " + (currentTime - startTime) / 1000 + " seconds");
-                Logger.logMessage(Nxt.APPLICATION + " server " + VERSION + " started successfully.");
-                Logger.logMessage("Copyright © 2013-2016 The Nxt Core Developers.");
+                Logger.logMessage(Ruv.APPLICATION + " server " + VERSION + " started successfully.");
+                Logger.logMessage("Copyright © 2013-2016 The Ruv Core Developers.");
                 Logger.logMessage("Copyright © 2016-2019 Jelurida IP B.V.");
-                Logger.logMessage("Distributed under the Jelurida Public License version 1.1 for the Nxt Public Blockchain Platform, with ABSOLUTELY NO WARRANTY.");
+                Logger.logMessage("Distributed under the Jelurida Public License version 1.1 for the Ruv Public Blockchain Platform, with ABSOLUTELY NO WARRANTY.");
                 if (API.getWelcomePageUri() != null) {
                     Logger.logMessage("Client UI is at " + API.getWelcomePageUri());
                 }
@@ -420,14 +420,14 @@ public final class Nxt {
             } catch (Exception e) {
                 Logger.logErrorMessage(e.getMessage(), e);
                 runtimeMode.alert(e.getMessage() + "\n" +
-                        "See additional information in " + dirProvider.getLogFileDir() + System.getProperty("file.separator") + "nxt.log");
+                        "See additional information in " + dirProvider.getLogFileDir() + System.getProperty("file.separator") + "ruv.log");
                 System.exit(1);
             }
         }
 
         private static void init() {
             if (initialized) {
-                throw new RuntimeException("Nxt.init has already been called");
+                throw new RuntimeException("Ruv.init has already been called");
             }
             initialized = true;
         }
@@ -437,7 +437,7 @@ public final class Nxt {
     }
 
     private static void setSystemProperties() {
-      // Override system settings that the user has define in nxt.properties file.
+      // Override system settings that the user has define in ruv.properties file.
       String[] systemProperties = new String[] {
         "socksProxyHost",
         "socksProxyPort",
@@ -493,7 +493,7 @@ public final class Nxt {
             thread.join(2000);
             if (thread.isAlive()) {
                 throw new RuntimeException("SecureRandom implementation too slow!!! " +
-                        "Install haveged if on linux, or set nxt.useStrongSecureRandom=false.");
+                        "Install haveged if on linux, or set ruv.useStrongSecureRandom=false.");
             }
         } catch (InterruptedException ignore) {}
     }
@@ -531,13 +531,13 @@ public final class Nxt {
     }
 
     public static boolean isDesktopApplicationEnabled() {
-        return RuntimeEnvironment.isDesktopApplicationEnabled() && Nxt.getBooleanProperty("nxt.launchDesktopApplication");
+        return RuntimeEnvironment.isDesktopApplicationEnabled() && Ruv.getBooleanProperty("ruv.launchDesktopApplication");
     }
 
     private static void launchDesktopApplication() {
         runtimeMode.launchDesktopApplication();
     }
 
-    private Nxt() {} // never
+    private Ruv() {} // never
 
 }

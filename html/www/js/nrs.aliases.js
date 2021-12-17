@@ -1,12 +1,12 @@
 /******************************************************************************
- * Copyright © 2013-2016 The Nxt Core Developers.                             *
+ * Copyright © 2013-2016 The Ruv Core Developers.                             *
  * Copyright © 2016-2019 Jelurida IP B.V.                                     *
  *                                                                            *
  * See the LICENSE.txt file at the top-level directory of this distribution   *
  * for licensing information.                                                 *
  *                                                                            *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,*
- * no part of the Nxt software, including this file, may be copied, modified, *
+ * no part of the Ruv software, including this file, may be copied, modified, *
  * propagated, or distributed except according to the terms contained in the  *
  * LICENSE.txt file.                                                          *
  *                                                                            *
@@ -133,13 +133,13 @@ var NRS = (function (NRS, $, undefined) {
         var errorMessage = "";
 
         if (data.modal == "cancel_alias_sale") {
-            data.priceNXT = "0";
+            data.priceRUV = "0";
             data.recipient = NRS.accountRS;
 
             successMessage = $.t("success_cancel_alias");
             errorMessage = $.t("error_cancel_alias");
         } else if (data.modal == "transfer_alias") {
-            data.priceNXT = "0";
+            data.priceRUV = "0";
 
             successMessage = $.t("success_transfer_alias");
             errorMessage = $.t("error_transfer_alias");
@@ -156,7 +156,7 @@ var NRS = (function (NRS, $, undefined) {
             errorMessage = $.t("error_sell_alias");
 
             if (data.recipient == NRS.constants.GENESIS_RS) {
-                if (!data.priceNXT || data.priceNXT == "0") {
+                if (!data.priceRUV || data.priceRUV == "0") {
                     return {
                         "error": $.t("error_not_specified", {
                             "name": $.t("price").toLowerCase()
@@ -208,7 +208,7 @@ var NRS = (function (NRS, $, undefined) {
             $.growl(
                 $.t("success_alias_sell", {
                     "alias_name": String(data.aliasName).escapeHTML(),
-                    "price": NRS.convertToNXT(data.priceNQT).escapeHTML()
+                    "price": NRS.convertToRUV(data.priceNQT).escapeHTML()
                 }), {
                     "type": "success"
                 }
@@ -300,14 +300,14 @@ var NRS = (function (NRS, $, undefined) {
                     $modal.find("input[name=recipient]").val(NRS.escapeRespStr(response.accountRS));
                     $modal.find("input[name=aliasName]").val(alias.escapeHTML());
                     $modal.find(".alias_name_display").html(alias.escapeHTML());
-                    $modal.find("input[name=amountNXT]").val(NRS.convertToNXT(response.priceNQT)).prop("readonly", true);
+                    $modal.find("input[name=amountRUV]").val(NRS.convertToRUV(response.priceNQT)).prop("readonly", true);
                 }
             }
         }, { isAsync: false });
     });
 
     NRS.forms.buyAliasError = function () {
-        $("#buy_alias_modal").find("input[name=priceNXT]").prop("readonly", false);
+        $("#buy_alias_modal").find("input[name=priceRUV]").prop("readonly", false);
     };
 
     NRS.forms.buyAliasComplete = function (response, data) {
@@ -318,7 +318,7 @@ var NRS = (function (NRS, $, undefined) {
         $.growl(
             $.t("success_alias_buy", {
                 "alias_name": data.aliasName,
-                "price": NRS.convertToNXT(data.amountNQT).escapeHTML()
+                "price": NRS.convertToRUV(data.amountNQT).escapeHTML()
             }), {
                 "type": "success"
             }
@@ -345,7 +345,7 @@ var NRS = (function (NRS, $, undefined) {
                     var aliasURI = [];
                     if (/http:\/\//i.test(response.aliasURI)) {
                         setAliasType("uri", response.aliasURI);
-                    } else if ((aliasURI = /acct:(.*)@nxt/.exec(response.aliasURI)) || (aliasURI = /nacc:(.*)/.exec(response.aliasURI))) {
+                    } else if ((aliasURI = /acct:(.*)@ruv/.exec(response.aliasURI)) || (aliasURI = /nacc:(.*)/.exec(response.aliasURI))) {
                         setAliasType("account", response.aliasURI);
                         response.aliasURI = String(aliasURI[1]).toUpperCase();
                     } else {
@@ -388,16 +388,16 @@ var NRS = (function (NRS, $, undefined) {
         data.aliasURI = $.trim(data.aliasURI).toLowerCase();
 
         if (data.type == "account") {
-            if (!(/acct:(.*)@nxt/.test(data.aliasURI)) && !(/nacc:(.*)/.test(data.aliasURI))) {
+            if (!(/acct:(.*)@ruv/.test(data.aliasURI)) && !(/nacc:(.*)/.test(data.aliasURI))) {
                 if (NRS.isRsAccount(data.aliasURI)) {
-                    var address = new NxtAddress();
+                    var address = new RuvAddress();
 
                     if (!address.set(data.aliasURI)) {
                         return {
                             "error": $.t("error_invalid_account_id")
                         };
                     } else {
-                        data.aliasURI = "acct:" + data.aliasURI + "@nxt";
+                        data.aliasURI = "acct:" + data.aliasURI + "@ruv";
                     }
                 } else if (NRS.isNumericAccount(data.aliasURI)) {
                     return {
@@ -444,7 +444,7 @@ var NRS = (function (NRS, $, undefined) {
             registerAliasUri.val("").mask(NRS.getAccountMask("*"));
 
             if (uri) {
-                var match = uri.match(/acct:(.*)@nxt/i);
+                var match = uri.match(/acct:(.*)@ruv/i);
                 if (!match) {
                     match = uri.match(/nacc:(.*)/i);
                 }
@@ -454,7 +454,7 @@ var NRS = (function (NRS, $, undefined) {
                 }
 
                 if (NRS.isNumericAccount(uri)) {
-                    var address = new NxtAddress();
+                    var address = new RuvAddress();
 
                     if (address.set(uri)) {
                         uri = address.toString();

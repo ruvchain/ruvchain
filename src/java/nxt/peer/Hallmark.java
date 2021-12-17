@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,12 +14,12 @@
  *
  */
 
-package nxt.peer;
+package ruv.peer;
 
-import nxt.Account;
-import nxt.Constants;
-import nxt.crypto.Crypto;
-import nxt.util.Convert;
+import ruv.Account;
+import ruv.Constants;
+import ruv.crypto.Crypto;
+import ruv.util.Convert;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -47,8 +47,8 @@ public final class Hallmark {
         if (host.length() == 0 || host.length() > 100) {
             throw new IllegalArgumentException("Hostname length should be between 1 and 100");
         }
-        if (weight <= 0 || weight > Constants.MAX_BALANCE_NXT) {
-            throw new IllegalArgumentException("Weight should be between 1 and " + Constants.MAX_BALANCE_NXT);
+        if (weight <= 0 || weight > Constants.MAX_BALANCE_RUV) {
+            throw new IllegalArgumentException("Weight should be between 1 and " + Constants.MAX_BALANCE_RUV);
         }
 
         byte[] publicKey = Crypto.getPublicKey(secretPhrase);
@@ -100,7 +100,7 @@ public final class Hallmark {
         byte[] data = new byte[hallmarkBytes.length - 64];
         System.arraycopy(hallmarkBytes, 0, data, 0, data.length);
 
-        boolean isValid = host.length() < 100 && weight > 0 && weight <= Constants.MAX_BALANCE_NXT
+        boolean isValid = host.length() < 100 && weight > 0 && weight <= Constants.MAX_BALANCE_RUV
                 && Crypto.verify(signature, data, publicKey);
         try {
             return new Hallmark(hallmarkString, publicKey, signature, host, weight, date, isValid);

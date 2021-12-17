@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,14 +14,14 @@
  *
  */
 
-package nxt.http.shuffling;
+package ruv.http.shuffling;
 
-import nxt.Constants;
-import nxt.HoldingType;
-import nxt.Tester;
-import nxt.http.APICall;
-import nxt.util.Convert;
-import nxt.util.Logger;
+import ruv.Constants;
+import ruv.HoldingType;
+import ruv.Tester;
+import ruv.http.APICall;
+import ruv.util.Convert;
+import ruv.util.Logger;
 import org.json.simple.JSONObject;
 
 class ShufflingUtil {
@@ -43,7 +43,7 @@ class ShufflingUtil {
     static JSONObject create(Tester creator, int participantCount) {
         APICall apiCall = new APICall.Builder("shufflingCreate").
                 secretPhrase(creator.getSecretPhrase()).
-                feeNQT(Constants.ONE_NXT).
+                feeNQT(Constants.ONE_RUV).
                 param("amount", String.valueOf(defaultShufflingAmount)).
                 param("participantCount", String.valueOf(participantCount)).
                 param("registrationPeriod", 10).
@@ -56,7 +56,7 @@ class ShufflingUtil {
     static JSONObject createAssetShuffling(Tester creator) {
         APICall apiCall = new APICall.Builder("shufflingCreate").
                 secretPhrase(creator.getSecretPhrase()).
-                feeNQT(Constants.ONE_NXT).
+                feeNQT(Constants.ONE_RUV).
                 param("amount", String.valueOf(defaultHoldingShufflingAmount)).
                 param("participantCount", "4").
                 param("registrationPeriod", 10).
@@ -71,7 +71,7 @@ class ShufflingUtil {
     static JSONObject createCurrencyShuffling(Tester creator) {
         APICall apiCall = new APICall.Builder("shufflingCreate").
                 secretPhrase(creator.getSecretPhrase()).
-                feeNQT(Constants.ONE_NXT).
+                feeNQT(Constants.ONE_RUV).
                 param("amount", String.valueOf(defaultHoldingShufflingAmount)).
                 param("participantCount", "4").
                 param("registrationPeriod", 10).
@@ -86,7 +86,7 @@ class ShufflingUtil {
     static JSONObject register(String shufflingFullHash, Tester tester) {
         APICall apiCall = new APICall.Builder("shufflingRegister").
                 secretPhrase(tester.getSecretPhrase()).
-                feeNQT(Constants.ONE_NXT).
+                feeNQT(Constants.ONE_RUV).
                 param("shufflingFullHash", shufflingFullHash).
                 build();
         JSONObject response = apiCall.invoke();
@@ -136,7 +136,7 @@ class ShufflingUtil {
                 param("shuffling", shufflingId).
                 param("secretPhrase", tester.getSecretPhrase()).
                 param("shufflingStateHash", shufflingStateHash).
-                feeNQT(Constants.ONE_NXT).
+                feeNQT(Constants.ONE_RUV).
                 build();
         JSONObject response = apiCall.invoke();
         Logger.logDebugMessage("shufflingVerifyResponse:" + response);
@@ -152,7 +152,7 @@ class ShufflingUtil {
                 param("shuffling", shufflingId).
                 param("secretPhrase", tester.getSecretPhrase()).
                 param("shufflingStateHash", shufflingStateHash).
-                feeNQT(10 * Constants.ONE_NXT);
+                feeNQT(10 * Constants.ONE_RUV);
         if (cancellingAccountId != 0) {
             builder.param("cancellingAccount", Long.toUnsignedString(cancellingAccountId));
         }
@@ -205,12 +205,12 @@ class ShufflingUtil {
         return response;
     }
 
-    static JSONObject sendMoney(Tester sender, Tester recipient, long amountNXT) {
+    static JSONObject sendMoney(Tester sender, Tester recipient, long amountRUV) {
         JSONObject response = new APICall.Builder("sendMoney").
                 param("secretPhrase", sender.getSecretPhrase()).
                 param("recipient", recipient.getStrId()).
-                param("amountNQT", amountNXT * Constants.ONE_NXT).
-                param("feeNQT", Constants.ONE_NXT).
+                param("amountNQT", amountRUV * Constants.ONE_RUV).
+                param("feeNQT", Constants.ONE_RUV).
                 build().invoke();
         Logger.logMessage("sendMoneyReponse: " + response.toJSONString());
         return response;

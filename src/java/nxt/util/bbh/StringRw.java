@@ -1,5 +1,5 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
@@ -14,10 +14,10 @@
  *
  */
 
-package nxt.util.bbh;
+package ruv.util.bbh;
 
-import nxt.NxtException;
-import nxt.util.Convert;
+import ruv.RuvException;
+import ruv.util.Convert;
 
 import java.nio.ByteBuffer;
 
@@ -40,7 +40,7 @@ public class StringRw implements ObjectRw<String> {
     }
 
     @Override
-    public String readFromBuffer(ByteBuffer buffer) throws NxtException.NotValidException {
+    public String readFromBuffer(ByteBuffer buffer) throws RuvException.NotValidException {
         return fromBytes(byteArrayRw.readFromBuffer(buffer));
     }
 

@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,13 +14,13 @@
  *
  */
 
-package nxt.http;
+package ruv.http;
 
-import nxt.Block;
-import nxt.Blockchain;
-import nxt.Generator;
-import nxt.Nxt;
-import nxt.NxtException;
+import ruv.Block;
+import ruv.Blockchain;
+import ruv.Generator;
+import ruv.Ruv;
+import ruv.RuvException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
@@ -54,7 +54,7 @@ import java.util.List;
  * <li>account - The account identifier
  * <li>accountRS - The account RS identifier
  * <li>deadline - The difference between the generation time and the last block timestamp
- * <li>effectiveBalanceNXT - The account effective balance
+ * <li>effectiveBalanceRUV - The account effective balance
  * <li>hitTime - The generation time for the account
  * </ul>
  * </ul>
@@ -68,10 +68,10 @@ public final class GetNextBlockGeneratorsTemp extends APIServlet.APIRequestHandl
     }
 
     @Override
-    protected JSONStreamAware processRequest(HttpServletRequest req) throws NxtException {
+    protected JSONStreamAware processRequest(HttpServletRequest req) throws RuvException {
         JSONObject response = new JSONObject();
         int limit = Math.max(1, ParameterParser.getInt(req, "limit", 1, Integer.MAX_VALUE, false));
-        Blockchain blockchain = Nxt.getBlockchain();
+        Blockchain blockchain = Ruv.getBlockchain();
         blockchain.readLock();
         try {
             Block lastBlock = blockchain.getLastBlock();
@@ -87,7 +87,7 @@ public final class GetNextBlockGeneratorsTemp extends APIServlet.APIRequestHandl
                 }
                 JSONObject resp = new JSONObject();
                 JSONData.putAccount(resp, "account", generator.getAccountId());
-                resp.put("effectiveBalanceNXT", generator.getEffectiveBalance());
+                resp.put("effectiveBalanceRUV", generator.getEffectiveBalance());
                 resp.put("hitTime", generator.getHitTime());
                 resp.put("deadline", (int)generator.getHitTime() - lastBlock.getTimestamp());
                 generators.add(resp);

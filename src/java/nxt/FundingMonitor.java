@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,14 +14,14 @@
  *
  */
 
-package nxt;
+package ruv;
 
-import nxt.crypto.Crypto;
-import nxt.db.DbIterator;
-import nxt.util.Convert;
-import nxt.util.Filter;
-import nxt.util.Listener;
-import nxt.util.Logger;
+import ruv.crypto.Crypto;
+import ruv.db.DbIterator;
+import ruv.util.Convert;
+import ruv.util.Filter;
+import ruv.util.Listener;
+import ruv.util.Logger;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.json.simple.parser.ParseException;
@@ -37,7 +37,7 @@ import java.util.concurrent.Semaphore;
 /**
  * Monitor account balances based on account properties
  * <p>
- * NXT, ASSET and CURRENCY balances can be monitored.  If a balance falls below the threshold, a transaction
+ * RUV, ASSET and CURRENCY balances can be monitored.  If a balance falls below the threshold, a transaction
  * will be submitted to transfer units from the funding account to the monitored account.  A transfer will
  * remain pending if the number of blocks since the previous transfer transaction is less than the monitor
  * interval.
@@ -54,7 +54,7 @@ public final class FundingMonitor {
     public static final int MIN_FUND_INTERVAL = 10;
 
     /** Maximum number of monitors */
-    private static final int MAX_MONITORS = Nxt.getIntProperty("nxt.maxNumberOfMonitors");
+    private static final int MAX_MONITORS = Ruv.getIntProperty("ruv.maxNumberOfMonitors");
 
     /** Monitor started */
     private static volatile boolean started = false;
@@ -108,7 +108,7 @@ public final class FundingMonitor {
      * Create a monitor
      *
      * @param   holdingType         Holding type
-     * @param   holdingId           Asset or Currency identifier, ignored for NXT monitor
+     * @param   holdingId           Asset or Currency identifier, ignored for RUV monitor
      * @param   property            Account property name
      * @param   amount              Fund amount
      * @param   threshold           Fund threshold
@@ -120,7 +120,7 @@ public final class FundingMonitor {
                                     long amount, long threshold, int interval,
                                     long accountId, String secretPhrase) {
         this.holdingType = holdingType;
-        this.holdingId = (holdingType != HoldingType.NXT ? holdingId : 0);
+        this.holdingId = (holdingType != HoldingType.RUV ? holdingId : 0);
         this.property = property;
         this.amount = amount;
         this.threshold = threshold;
@@ -210,7 +210,7 @@ public final class FundingMonitor {
      * string: {"amount":"long","threshold":"long","interval":integer}
      *
      * @param   holdingType         Holding type
-     * @param   holdingId           Asset or currency identifier, ignored for NXT monitor
+     * @param   holdingId           Asset or currency identifier, ignored for RUV monitor
      * @param   property            Account property name
      * @param   amount              Fund amount
      * @param   threshold           Fund threshold
@@ -232,7 +232,7 @@ public final class FundingMonitor {
         //
         FundingMonitor monitor = new FundingMonitor(holdingType, holdingId, property,
                 amount, threshold, interval, accountId, secretPhrase);
-        Nxt.getBlockchain().readLock();
+        Ruv.getBlockchain().readLock();
         try {
             //
             // Locate monitored accounts based on the account property and the setter identifier
@@ -273,7 +273,7 @@ public final class FundingMonitor {
                         holdingType.name(), monitor.accountName, monitor.property, Long.toUnsignedString(monitor.holdingId)));
             }
         } finally {
-            Nxt.getBlockchain().readUnlock();
+            Ruv.getBlockchain().readUnlock();
         }
         return true;
     }
@@ -350,7 +350,7 @@ public final class FundingMonitor {
      * Pending fund transactions will still be processed
      *
      * @param   holdingType         Monitor holding type
-     * @param   holdingId           Asset or currency identifier, ignored for NXT monitor
+     * @param   holdingId           Asset or currency identifier, ignored for RUV monitor
      * @param   property            Account property
      * @param   accountId           Fund account identifier
      * @return                      TRUE if the monitor was stopped
@@ -366,7 +366,7 @@ public final class FundingMonitor {
             while (monitorIt.hasNext()) {
                 monitor = monitorIt.next();
                 if (monitor.holdingType == holdingType && monitor.property.equals(property) &&
-                        (holdingType == HoldingType.NXT || monitor.holdingId == holdingId) &&
+                        (holdingType == HoldingType.RUV || monitor.holdingId == holdingId) &&
                         monitor.accountId == accountId) {
                     monitorIt.remove();
                     wasStopped = true;
@@ -471,7 +471,7 @@ public final class FundingMonitor {
             Account.addCurrencyListener(new CurrencyEventHandler(), Account.Event.CURRENCY_BALANCE);
             Account.addPropertyListener(new SetPropertyEventHandler(), Account.Event.SET_PROPERTY);
             Account.addPropertyListener(new DeletePropertyEventHandler(), Account.Event.DELETE_PROPERTY);
-            Nxt.getBlockchainProcessor().addListener(new BlockEventHandler(), BlockchainProcessor.Event.BLOCK_PUSHED);
+            Ruv.getBlockchainProcessor().addListener(new BlockEventHandler(), BlockchainProcessor.Event.BLOCK_PUSHED);
             //
             // All done
             //
@@ -550,7 +550,7 @@ public final class FundingMonitor {
                         try {
                             Account targetAccount = Account.getAccount(monitoredAccount.accountId);
                             Account fundingAccount = Account.getAccount(monitoredAccount.monitor.accountId);
-                            if (Nxt.getBlockchain().getHeight() - monitoredAccount.height < monitoredAccount.interval) {
+                            if (Ruv.getBlockchain().getHeight() - monitoredAccount.height < monitoredAccount.interval) {
                                 if (!suspendedEvents.contains(monitoredAccount)) {
                                     suspendedEvents.add(monitoredAccount);
                                 }
@@ -562,8 +562,8 @@ public final class FundingMonitor {
                                         monitoredAccount.monitor.accountName));
                             } else {
                                 switch (monitoredAccount.monitor.holdingType) {
-                                    case NXT:
-                                        processNxtEvent(monitoredAccount, targetAccount, fundingAccount);
+                                    case RUV:
+                                        processRuvEvent(monitoredAccount, targetAccount, fundingAccount);
                                         break;
                                     case ASSET:
                                         processAssetEvent(monitoredAccount, targetAccount, fundingAccount);
@@ -593,30 +593,30 @@ public final class FundingMonitor {
     }
 
     /**
-     * Process a NXT event
+     * Process a RUV event
      *
      * @param   monitoredAccount            Monitored account
      * @param   targetAccount               Target account
      * @param   fundingAccount              Funding account
-     * @throws  NxtException                Unable to create transaction
+     * @throws  RuvException                Unable to create transaction
      */
-    private static void processNxtEvent(MonitoredAccount monitoredAccount, Account targetAccount, Account fundingAccount)
-                                            throws NxtException {
+    private static void processRuvEvent(MonitoredAccount monitoredAccount, Account targetAccount, Account fundingAccount)
+                                            throws RuvException {
         FundingMonitor monitor = monitoredAccount.monitor;
         if (targetAccount.getBalanceNQT() < monitoredAccount.threshold) {
-            Transaction.Builder builder = Nxt.newTransactionBuilder(monitor.publicKey,
+            Transaction.Builder builder = Ruv.newTransactionBuilder(monitor.publicKey,
                     monitoredAccount.amount, 0, (short)1440, Attachment.ORDINARY_PAYMENT);
             builder.recipientId(monitoredAccount.accountId)
-                   .timestamp(Nxt.getBlockchain().getLastBlockTimestamp());
+                   .timestamp(Ruv.getBlockchain().getLastBlockTimestamp());
             Transaction transaction = builder.build(monitor.secretPhrase);
             if (Math.addExact(monitoredAccount.amount, transaction.getFeeNQT()) > fundingAccount.getUnconfirmedBalanceNQT()) {
                 Logger.logWarningMessage(String.format("Funding account %s has insufficient funds; funding transaction discarded",
                         monitor.accountName));
             } else {
-                Nxt.getTransactionProcessor().broadcast(transaction);
-                monitoredAccount.height = Nxt.getBlockchain().getHeight();
+                Ruv.getTransactionProcessor().broadcast(transaction);
+                monitoredAccount.height = Ruv.getBlockchain().getHeight();
                 Logger.logDebugMessage(String.format("%s funding transaction %s for %f %s submitted from %s to %s",
-                        Constants.COIN_SYMBOL, transaction.getStringId(), (double)monitoredAccount.amount / Constants.ONE_NXT,
+                        Constants.COIN_SYMBOL, transaction.getStringId(), (double)monitoredAccount.amount / Constants.ONE_RUV,
                         Constants.COIN_SYMBOL, monitor.accountName, monitoredAccount.accountName));
             }
         }
@@ -628,10 +628,10 @@ public final class FundingMonitor {
      * @param   monitoredAccount            Monitored account
      * @param   targetAccount               Target account
      * @param   fundingAccount              Funding account
-     * @throws  NxtException                Unable to create transaction
+     * @throws  RuvException                Unable to create transaction
      */
     private static void processAssetEvent(MonitoredAccount monitoredAccount, Account targetAccount, Account fundingAccount)
-                                            throws NxtException {
+                                            throws RuvException {
         FundingMonitor monitor = monitoredAccount.monitor;
         Account.AccountAsset targetAsset = Account.getAccountAsset(targetAccount.getId(), monitor.holdingId);
         Account.AccountAsset fundingAsset = Account.getAccountAsset(fundingAccount.getId(), monitor.holdingId);
@@ -641,17 +641,17 @@ public final class FundingMonitor {
                             monitor.accountName, Long.toUnsignedString(monitor.holdingId)));
         } else if (targetAsset == null || targetAsset.getQuantityQNT() < monitoredAccount.threshold) {
             Attachment attachment = new Attachment.ColoredCoinsAssetTransfer(monitor.holdingId, monitoredAccount.amount);
-            Transaction.Builder builder = Nxt.newTransactionBuilder(monitor.publicKey,
+            Transaction.Builder builder = Ruv.newTransactionBuilder(monitor.publicKey,
                     0, 0, (short)1440, attachment);
             builder.recipientId(monitoredAccount.accountId)
-                   .timestamp(Nxt.getBlockchain().getLastBlockTimestamp());
+                   .timestamp(Ruv.getBlockchain().getLastBlockTimestamp());
             Transaction transaction = builder.build(monitor.secretPhrase);
             if (transaction.getFeeNQT() > fundingAccount.getUnconfirmedBalanceNQT()) {
                 Logger.logWarningMessage(String.format("Funding account %s has insufficient funds; funding transaction discarded",
                         monitor.accountName));
             } else {
-                Nxt.getTransactionProcessor().broadcast(transaction);
-                monitoredAccount.height = Nxt.getBlockchain().getHeight();
+                Ruv.getTransactionProcessor().broadcast(transaction);
+                monitoredAccount.height = Ruv.getBlockchain().getHeight();
                 Logger.logDebugMessage(String.format("ASSET funding transaction %s submitted for %d units from %s to %s",
                         transaction.getStringId(), monitoredAccount.amount,
                         monitor.accountName, monitoredAccount.accountName));
@@ -665,10 +665,10 @@ public final class FundingMonitor {
      * @param   monitoredAccount            Monitored account
      * @param   targetAccount               Target account
      * @param   fundingAccount              Funding account
-     * @throws  NxtException                Unable to create transaction
+     * @throws  RuvException                Unable to create transaction
      */
     private static void processCurrencyEvent(MonitoredAccount monitoredAccount, Account targetAccount, Account fundingAccount)
-                                            throws NxtException {
+                                            throws RuvException {
         FundingMonitor monitor = monitoredAccount.monitor;
         Account.AccountCurrency targetCurrency = Account.getAccountCurrency(targetAccount.getId(), monitor.holdingId);
         Account.AccountCurrency fundingCurrency = Account.getAccountCurrency(fundingAccount.getId(), monitor.holdingId);
@@ -678,17 +678,17 @@ public final class FundingMonitor {
                             monitor.accountName, Long.toUnsignedString(monitor.holdingId)));
         } else if (targetCurrency == null || targetCurrency.getUnits() < monitoredAccount.threshold) {
             Attachment attachment = new Attachment.MonetarySystemCurrencyTransfer(monitor.holdingId, monitoredAccount.amount);
-            Transaction.Builder builder = Nxt.newTransactionBuilder(monitor.publicKey,
+            Transaction.Builder builder = Ruv.newTransactionBuilder(monitor.publicKey,
                     0, 0, (short)1440, attachment);
             builder.recipientId(monitoredAccount.accountId)
-                   .timestamp(Nxt.getBlockchain().getLastBlockTimestamp());
+                   .timestamp(Ruv.getBlockchain().getLastBlockTimestamp());
             Transaction transaction = builder.build(monitor.secretPhrase);
             if (transaction.getFeeNQT() > fundingAccount.getUnconfirmedBalanceNQT()) {
                 Logger.logWarningMessage(String.format("Funding account %s has insufficient funds; funding transaction discarded",
                         monitor.accountName));
             } else {
-                Nxt.getTransactionProcessor().broadcast(transaction);
-                monitoredAccount.height = Nxt.getBlockchain().getHeight();
+                Ruv.getTransactionProcessor().broadcast(transaction);
+                monitoredAccount.height = Ruv.getBlockchain().getHeight();
                 Logger.logDebugMessage(String.format("CURRENCY funding transaction %s submitted for %d units from %s to %s",
                         transaction.getStringId(), monitoredAccount.amount,
                         monitor.accountName, monitoredAccount.accountName));
@@ -812,13 +812,13 @@ public final class FundingMonitor {
             }
             long balance = account.getBalanceNQT();
             //
-            // Check the NXT balance for monitored accounts
+            // Check the RUV balance for monitored accounts
             //
             synchronized(monitors) {
                 List<MonitoredAccount> accountList = accounts.get(account.getId());
                 if (accountList != null) {
                     accountList.forEach((maccount) -> {
-                       if (maccount.monitor.holdingType == HoldingType.NXT && balance < maccount.threshold &&
+                       if (maccount.monitor.holdingType == HoldingType.RUV && balance < maccount.threshold &&
                                !pendingEvents.contains(maccount)) {
                            pendingEvents.add(maccount);
                        }

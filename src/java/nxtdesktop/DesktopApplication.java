@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,7 +14,7 @@
  *
  */
 
-package nxtdesktop;
+package ruvdesktop;
 
 import com.sun.javafx.scene.web.Debugger;
 import javafx.application.Application;
@@ -29,18 +29,18 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import netscape.javascript.JSObject;
-import nxt.Block;
-import nxt.BlockchainProcessor;
-import nxt.Constants;
-import nxt.Nxt;
-import nxt.PrunableMessage;
-import nxt.TaggedData;
-import nxt.Transaction;
-import nxt.TransactionProcessor;
-import nxt.http.API;
-import nxt.util.Convert;
-import nxt.util.Logger;
-import nxt.util.TrustAllSSLProvider;
+import ruv.Block;
+import ruv.BlockchainProcessor;
+import ruv.Constants;
+import ruv.Ruv;
+import ruv.PrunableMessage;
+import ruv.TaggedData;
+import ruv.Transaction;
+import ruv.TransactionProcessor;
+import ruv.http.API;
+import ruv.util.Convert;
+import ruv.util.Logger;
+import ruv.util.TrustAllSSLProvider;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.awt.*;
@@ -130,7 +130,7 @@ public class DesktopApplication extends Application {
         browser.setMinHeight(height);
         browser.setMinWidth(width);
         webEngine = browser.getEngine();
-        webEngine.setUserDataDirectory(Nxt.getConfDir());
+        webEngine.setUserDataDirectory(Ruv.getConfDir());
 
         Worker<Void> loadWorker = webEngine.getLoadWorker();
         loadWorker.stateProperty().addListener(
@@ -150,12 +150,12 @@ public class DesktopApplication extends Application {
                     stage.setTitle(Constants.PROJECT_NAME + " Desktop - " + webEngine.getLocation());
                     nrs = (JSObject) webEngine.executeScript("NRS");
                     updateClientState("Desktop Wallet started");
-                    BlockchainProcessor blockchainProcessor = Nxt.getBlockchainProcessor();
+                    BlockchainProcessor blockchainProcessor = Ruv.getBlockchainProcessor();
                     blockchainProcessor.addListener((block) ->
                             updateClientState(BlockchainProcessor.Event.BLOCK_PUSHED, block), BlockchainProcessor.Event.BLOCK_PUSHED);
-                    Nxt.getTransactionProcessor().addListener(transaction ->
+                    Ruv.getTransactionProcessor().addListener(transaction ->
                             updateClientState(TransactionProcessor.Event.ADDED_UNCONFIRMED_TRANSACTIONS, transaction), TransactionProcessor.Event.ADDED_UNCONFIRMED_TRANSACTIONS);
-                    Nxt.getTransactionProcessor().addListener(transaction ->
+                    Ruv.getTransactionProcessor().addListener(transaction ->
                             updateClientState(TransactionProcessor.Event.REMOVED_UNCONFIRMED_TRANSACTIONS, transaction), TransactionProcessor.Event.REMOVED_UNCONFIRMED_TRANSACTIONS);
 
                     if (ENABLE_JAVASCRIPT_DEBUGGER) {
@@ -190,7 +190,7 @@ public class DesktopApplication extends Application {
 
         Scene scene = new Scene(browser);
         String address = API.getServerRootUri().toString();
-        stage.getIcons().add(new Image(address + "/img/nxt-icon-32x32.png"));
+        stage.getIcons().add(new Image(address + "/img/ruv-icon-32x32.png"));
         stage.initStyle(StageStyle.DECORATED);
         stage.setScene(scene);
         stage.sizeToScene();
@@ -199,7 +199,7 @@ public class DesktopApplication extends Application {
     }
 
     private void updateClientState(BlockchainProcessor.Event blockEvent, Block block) {
-        if (Nxt.getBlockchainProcessor().isDownloading()) {
+        if (Ruv.getBlockchainProcessor().isDownloading()) {
             if (System.currentTimeMillis() - updateTime < 10000L) {
                 return;
             }
@@ -226,7 +226,7 @@ public class DesktopApplication extends Application {
             HttpsURLConnection.setDefaultSSLSocketFactory(TrustAllSSLProvider.getSslSocketFactory());
             HttpsURLConnection.setDefaultHostnameVerifier(TrustAllSSLProvider.getHostNameVerifier());
         }
-        String defaultAccount = Nxt.getStringProperty("nxt.defaultDesktopAccount");
+        String defaultAccount = Ruv.getStringProperty("ruv.defaultDesktopAccount");
         if (defaultAccount != null && !defaultAccount.equals("")) {
             url += "?account=" + defaultAccount;
         }
@@ -281,7 +281,7 @@ public class DesktopApplication extends Application {
         if (requestType.equals("downloadTaggedData")) {
             if (taggedData == null && retrieve) {
                 try {
-                    if (Nxt.getBlockchainProcessor().restorePrunedTransaction(transactionId) == null) {
+                    if (Ruv.getBlockchainProcessor().restorePrunedTransaction(transactionId) == null) {
                         growl("Pruned transaction data not currently available from any peer");
                         return;
                     }
@@ -305,7 +305,7 @@ public class DesktopApplication extends Application {
             PrunableMessage prunableMessage = PrunableMessage.getPrunableMessage(transactionId);
             if (prunableMessage == null && retrieve) {
                 try {
-                    if (Nxt.getBlockchainProcessor().restorePrunedTransaction(transactionId) == null) {
+                    if (Ruv.getBlockchainProcessor().restorePrunedTransaction(transactionId) == null) {
                         growl("Pruned message not currently available from any peer");
                         return;
                     }

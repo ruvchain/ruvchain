@@ -1,11 +1,11 @@
 #!/bin/sh
 APPLICATION="RuvChain"
-if [ -e ~/.${APPLICATION}/nxt.pid ]; then
-    PID=`cat ~/.${APPLICATION}/nxt.pid`
+if [ -e ~/.${APPLICATION}/ruv.pid ]; then
+    PID=`cat ~/.${APPLICATION}/ruv.pid`
     ps -p $PID > /dev/null
     STATUS=$?
     if [ $STATUS -eq 0 ]; then
-        echo "Nxt server already running"
+        echo "Ruv server already running"
         exit 1
     fi
 fi
@@ -17,6 +17,6 @@ if [ -x jre/bin/java ]; then
 else
     JAVA=java
 fi
-nohup ${JAVA} -cp classes:lib/*:conf:addons/classes:addons/lib/* -Dnxt.runtime.mode=desktop nxt.Nxt > /dev/null 2>&1 &
-echo $! > ~/.${APPLICATION}/nxt.pid
+nohup ${JAVA} -cp classes:lib/*:conf:addons/classes:addons/lib/* -Druv.runtime.mode=desktop ruv.Ruv > /dev/null 2>&1 &
+echo $! > ~/.${APPLICATION}/ruv.pid
 cd - > /dev/null

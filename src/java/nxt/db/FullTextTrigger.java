@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2018 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,11 +14,11 @@
  *
  */
 
-package nxt.db;
+package ruv.db;
 
-import nxt.Db;
-import nxt.util.Logger;
-import nxt.util.ReadWriteUpdateLock;
+import ruv.Db;
+import ruv.util.Logger;
+import ruv.util.ReadWriteUpdateLock;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.DateTools;
@@ -70,19 +70,19 @@ import java.util.stream.Stream;
  * the default schema (PUBLIC).
  *
  * The database aliases are defined as follows:
- *   CREATE ALIAS FTL_CREATE_INDEX FOR "nxt.db.FullTextTrigger.createIndex"
+ *   CREATE ALIAS FTL_CREATE_INDEX FOR "ruv.db.FullTextTrigger.createIndex"
  *       CALL FTL_CREATE(schema, table, columnList)
- *   CREATE ALIAS FTL_DROP_INDEX FOR "nxt.db.FullTextTrigger.dropIndex"
+ *   CREATE ALIAS FTL_DROP_INDEX FOR "ruv.db.FullTextTrigger.dropIndex"
  *       CALL FTL_DROP(schema, table)
- *   CREATE ALIAS FTL_SEARCH FOR "nxt.db.FullTextTrigger.search"
+ *   CREATE ALIAS FTL_SEARCH FOR "ruv.db.FullTextTrigger.search"
  *       CALL FTL_SEARCH(schema, table, query, limit, offset)
  *
  * FTL_CREATE_INDEX is called to create a fulltext index for a table.  It is
- * provided as a convenience for use in NxtDbVersion when creating a new index
+ * provided as a convenience for use in RuvDbVersion when creating a new index
  * after the database has been created.
  *
  * FTL_DROP_INDEX is called to drop a fulltext index for a table.  It is
- * provided as a convenience for use in NxtDbVersion when dropping a table
+ * provided as a convenience for use in RuvDbVersion when dropping a table
  * after the database has been created.
  *
  * FTL_SEARCH is used to return the search result set as part of a SELECT statement.
@@ -94,7 +94,7 @@ import java.util.stream.Stream;
  *   SCORE   - the search hit score (Float)
  *
  * The table index trigger is defined as follows:
- *   CREATE TRIGGER trigger_name AFTER INSERT,UPDATE,DELETE ON table_name FOR EACH ROW CALL "nxt.db.FullTextTrigger"
+ *   CREATE TRIGGER trigger_name AFTER INSERT,UPDATE,DELETE ON table_name FOR EACH ROW CALL "ruv.db.FullTextTrigger"
  */
 public class FullTextTrigger implements Trigger, TransactionalDb.TransactionCallback {
 
@@ -171,7 +171,7 @@ public class FullTextTrigger implements Trigger, TransactionalDb.TransactionCall
     /**
      * Initialize the fulltext support for a new database
      *
-     * This method should be called from NxtDbVersion when performing the database version update
+     * This method should be called from RuvDbVersion when performing the database version update
      * that enables NRS fulltext search support
      */
     public static void init() {

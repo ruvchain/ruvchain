@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,10 +14,10 @@
  *
  */
 
-package nxt.tools;
+package ruv.tools;
 
-import nxt.Nxt;
-import nxt.env.service.NxtService_ServiceManagement;
+import ruv.Ruv;
+import ruv.env.service.RuvService_ServiceManagement;
 
 import java.io.IOException;
 import java.nio.file.FileVisitOption;
@@ -36,10 +36,10 @@ public class ManifestGenerator {
 
     public static void main(String[] args) {
         ManifestGenerator manifestGenerator = new ManifestGenerator();
-        manifestGenerator.generate("./resource/nxt.manifest.mf", Nxt.class.getCanonicalName(), "./lib");
-        String serviceClassName = NxtService_ServiceManagement.class.getCanonicalName();
+        manifestGenerator.generate("./resource/ruv.manifest.mf", Ruv.class.getCanonicalName(), "./lib");
+        String serviceClassName = RuvService_ServiceManagement.class.getCanonicalName();
         serviceClassName = serviceClassName.substring(0, serviceClassName.length() - "_ServiceManagement".length());
-        manifestGenerator.generate("./resource/nxtservice.manifest.mf", serviceClassName, "./lib");
+        manifestGenerator.generate("./resource/ruvservice.manifest.mf", serviceClassName, "./lib");
     }
 
     private void generate(String fileName, String className, String ... directories) {

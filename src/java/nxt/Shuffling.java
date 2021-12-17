@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,19 +14,19 @@
  *
  */
 
-package nxt;
+package ruv;
 
-import nxt.crypto.AnonymouslyEncryptedData;
-import nxt.crypto.Crypto;
-import nxt.db.DbClause;
-import nxt.db.DbIterator;
-import nxt.db.DbKey;
-import nxt.db.DbUtils;
-import nxt.db.VersionedEntityDbTable;
-import nxt.util.Convert;
-import nxt.util.Listener;
-import nxt.util.Listeners;
-import nxt.util.Logger;
+import ruv.crypto.AnonymouslyEncryptedData;
+import ruv.crypto.Crypto;
+import ruv.db.DbClause;
+import ruv.db.DbIterator;
+import ruv.db.DbKey;
+import ruv.db.DbUtils;
+import ruv.db.VersionedEntityDbTable;
+import ruv.util.Convert;
+import ruv.util.Listener;
+import ruv.util.Listeners;
+import ruv.util.Logger;
 
 import java.security.MessageDigest;
 import java.sql.Connection;
@@ -126,7 +126,7 @@ public final class Shuffling {
 
     }
 
-    private static final boolean deleteFinished = Nxt.getBooleanProperty("nxt.deleteFinishedShufflings");
+    private static final boolean deleteFinished = Ruv.getBooleanProperty("ruv.deleteFinishedShufflings");
 
     private static final Listeners<Shuffling, Event> listeners = new Listeners<>();
 
@@ -154,7 +154,7 @@ public final class Shuffling {
     };
 
     static {
-        Nxt.getBlockchainProcessor().addListener(block -> {
+        Ruv.getBlockchainProcessor().addListener(block -> {
             if (block.getTransactions().size() == Constants.MAX_NUMBER_OF_TRANSACTIONS
                     || block.getPayloadLength() > Constants.MAX_PAYLOAD_LENGTH - Constants.MIN_TRANSACTION_SIZE) {
                 return;
@@ -335,7 +335,7 @@ public final class Shuffling {
             DbUtils.setLongZeroToNull(pstmt, ++i, this.assigneeAccountId);
             DbUtils.setArrayEmptyToNull(pstmt, ++i, this.recipientPublicKeys);
             pstmt.setByte(++i, this.registrantCount);
-            pstmt.setInt(++i, Nxt.getBlockchain().getHeight());
+            pstmt.setInt(++i, Ruv.getBlockchain().getHeight());
             pstmt.executeUpdate();
         }
     }
@@ -435,7 +435,7 @@ public final class Shuffling {
         byte[] shufflingStateHash = null;
         int participantIndex = 0;
         List<ShufflingParticipant> shufflingParticipants = new ArrayList<>();
-        Nxt.getBlockchain().readLock();
+        Ruv.getBlockchain().readLock();
         // Read the participant list for the shuffling
         try (DbIterator<ShufflingParticipant> participants = ShufflingParticipant.getParticipants(id)) {
             for (ShufflingParticipant participant : participants) {
@@ -450,7 +450,7 @@ public final class Shuffling {
                 shufflingStateHash = getParticipantsHash(shufflingParticipants);
             }
         } finally {
-            Nxt.getBlockchain().readUnlock();
+            Ruv.getBlockchain().readUnlock();
         }
         boolean isLast = participantIndex == participantCount - 1;
         // decrypt the tokens bundled in the current data
@@ -510,7 +510,7 @@ public final class Shuffling {
     }
 
     public Attachment.ShufflingCancellation revealKeySeeds(final String secretPhrase, long cancellingAccountId, byte[] shufflingStateHash) {
-        Nxt.getBlockchain().readLock();
+        Ruv.getBlockchain().readLock();
         try (DbIterator<ShufflingParticipant> participants = ShufflingParticipant.getParticipants(id)) {
             if (cancellingAccountId != this.assigneeAccountId) {
                 throw new RuntimeException(String.format("Current shuffling cancellingAccountId %s does not match %s",
@@ -565,7 +565,7 @@ public final class Shuffling {
             return new Attachment.ShufflingCancellation(this.id, data, keySeeds.toArray(new byte[keySeeds.size()][]),
                     shufflingStateHash, cancellingAccountId);
         } finally {
-            Nxt.getBlockchain().readUnlock();
+            Ruv.getBlockchain().readUnlock();
         }
     }
 
@@ -669,7 +669,7 @@ public final class Shuffling {
             for (ShufflingParticipant participant : participants) {
                 Account participantAccount = Account.getAccount(participant.getAccountId());
                 holdingType.addToBalance(participantAccount, event, this.id, this.holdingId, -amount);
-                if (holdingType != HoldingType.NXT) {
+                if (holdingType != HoldingType.RUV) {
                     participantAccount.addToBalanceNQT(event, this.id, -Constants.SHUFFLING_DEPOSIT_NQT);
                 }
             }
@@ -679,7 +679,7 @@ public final class Shuffling {
             Account recipientAccount = Account.addOrGetAccount(recipientId);
             recipientAccount.apply(recipientPublicKey);
             holdingType.addToBalanceAndUnconfirmedBalance(recipientAccount, event, this.id, this.holdingId, amount);
-            if (holdingType != HoldingType.NXT) {
+            if (holdingType != HoldingType.RUV) {
                 recipientAccount.addToBalanceAndUnconfirmedBalanceNQT(event, this.id, Constants.SHUFFLING_DEPOSIT_NQT);
             }
         }
@@ -700,11 +700,11 @@ public final class Shuffling {
                 Account participantAccount = Account.getAccount(participant.getAccountId());
                 holdingType.addToUnconfirmedBalance(participantAccount, event, this.id, this.holdingId, this.amount);
                 if (participantAccount.getId() != blamedAccountId) {
-                    if (holdingType != HoldingType.NXT) {
+                    if (holdingType != HoldingType.RUV) {
                         participantAccount.addToUnconfirmedBalanceNQT(event, this.id, Constants.SHUFFLING_DEPOSIT_NQT);
                     }
                 } else {
-                    if (holdingType == HoldingType.NXT) {
+                    if (holdingType == HoldingType.RUV) {
                         participantAccount.addToUnconfirmedBalanceNQT(event, this.id, -Constants.SHUFFLING_DEPOSIT_NQT);
                     }
                     participantAccount.addToBalanceNQT(event, this.id, -Constants.SHUFFLING_DEPOSIT_NQT);
@@ -718,13 +718,13 @@ public final class Shuffling {
                 Account previousGeneratorAccount = Account.getAccount(BlockDb.findBlockAtHeight(block.getHeight() - i - 1).getGeneratorId());
                 previousGeneratorAccount.addToBalanceAndUnconfirmedBalanceNQT(AccountLedger.LedgerEvent.BLOCK_GENERATED, block.getId(), fee);
                 previousGeneratorAccount.addToForgedBalanceNQT(fee);
-                Logger.logDebugMessage("Shuffling penalty %f %s awarded to forger at height %d", ((double)fee) / Constants.ONE_NXT, Constants.COIN_SYMBOL, block.getHeight() - i - 1);
+                Logger.logDebugMessage("Shuffling penalty %f %s awarded to forger at height %d", ((double)fee) / Constants.ONE_RUV, Constants.COIN_SYMBOL, block.getHeight() - i - 1);
             }
             fee = Constants.SHUFFLING_DEPOSIT_NQT - 3 * fee;
             Account blockGeneratorAccount = Account.getAccount(block.getGeneratorId());
             blockGeneratorAccount.addToBalanceAndUnconfirmedBalanceNQT(AccountLedger.LedgerEvent.BLOCK_GENERATED, block.getId(), fee);
             blockGeneratorAccount.addToForgedBalanceNQT(fee);
-            Logger.logDebugMessage("Shuffling penalty %f %s awarded to forger at height %d", ((double)fee) / Constants.ONE_NXT, Constants.COIN_SYMBOL, block.getHeight());
+            Logger.logDebugMessage("Shuffling penalty %f %s awarded to forger at height %d", ((double)fee) / Constants.ONE_RUV, Constants.COIN_SYMBOL, block.getHeight());
         }
         setStage(Stage.CANCELLED, blamedAccountId, (short)0);
         shufflingTable.insert(this);

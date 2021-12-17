@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,21 +14,21 @@
  *
  */
 
-package nxt.http;
+package ruv.http;
 
-import nxt.Attachment;
-import nxt.Nxt;
-import nxt.NxtException;
-import nxt.Transaction;
+import ruv.Attachment;
+import ruv.Ruv;
+import ruv.RuvException;
+import ruv.Transaction;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 
-import static nxt.http.JSONResponses.HASHES_MISMATCH;
-import static nxt.http.JSONResponses.INCORRECT_TRANSACTION;
-import static nxt.http.JSONResponses.UNKNOWN_TRANSACTION;
+import static ruv.http.JSONResponses.HASHES_MISMATCH;
+import static ruv.http.JSONResponses.INCORRECT_TRANSACTION;
+import static ruv.http.JSONResponses.UNKNOWN_TRANSACTION;
 
 public final class VerifyTaggedData extends APIServlet.APIRequestHandler {
 
@@ -40,10 +40,10 @@ public final class VerifyTaggedData extends APIServlet.APIRequestHandler {
     }
 
     @Override
-    protected JSONStreamAware processRequest(HttpServletRequest req) throws NxtException {
+    protected JSONStreamAware processRequest(HttpServletRequest req) throws RuvException {
 
         long transactionId = ParameterParser.getUnsignedLong(req, "transaction", true);
-        Transaction transaction = Nxt.getBlockchain().getTransaction(transactionId);
+        Transaction transaction = Ruv.getBlockchain().getTransaction(transactionId);
         if (transaction == null) {
             return UNKNOWN_TRANSACTION;
         }

@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,28 +14,28 @@
  *
  */
 
-package nxt.http;
+package ruv.http;
 
-import nxt.Account;
-import nxt.Asset;
-import nxt.Currency;
-import nxt.FundingMonitor;
-import nxt.HoldingType;
-import nxt.NxtException;
-import nxt.crypto.Crypto;
+import ruv.Account;
+import ruv.Asset;
+import ruv.Currency;
+import ruv.FundingMonitor;
+import ruv.HoldingType;
+import ruv.RuvException;
+import ruv.crypto.Crypto;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
 
 import javax.servlet.http.HttpServletRequest;
 
-import static nxt.http.JSONResponses.MONITOR_ALREADY_STARTED;
-import static nxt.http.JSONResponses.UNKNOWN_ACCOUNT;
-import static nxt.http.JSONResponses.incorrect;
+import static ruv.http.JSONResponses.MONITOR_ALREADY_STARTED;
+import static ruv.http.JSONResponses.UNKNOWN_ACCOUNT;
+import static ruv.http.JSONResponses.incorrect;
 
 /**
  * Start a funding monitor
  * <p>
- * A funding monitor will transfer NXT, ASSET or CURRENCY from the funding account
+ * A funding monitor will transfer RUV, ASSET or CURRENCY from the funding account
  * to a recipient account when the amount held by the recipient account drops below
  * the threshold.  The transfer will not be done until the current block
  * height is greater than equal to the block height of the last transfer plus the
@@ -55,7 +55,7 @@ import static nxt.http.JSONResponses.incorrect;
  * For example, {"amount":25,"threshold":10,"interval":1440}.  The specified values will
  * override the default values specified when the account monitor is started.
  * <p>
- * NXT amounts are specified with 8 decimal places.  Asset and Currency decimal places
+ * RUV amounts are specified with 8 decimal places.  Asset and Currency decimal places
  * are determined by the asset or currency definition.
  */
 public final class StartFundingMonitor extends APIServlet.APIRequestHandler {
@@ -72,10 +72,10 @@ public final class StartFundingMonitor extends APIServlet.APIRequestHandler {
      *
      * @param   req                 Client request
      * @return                      Client response
-     * @throws  NxtException        Unable to process request
+     * @throws  RuvException        Unable to process request
      */
     @Override
-    protected JSONStreamAware processRequest(HttpServletRequest req) throws NxtException {
+    protected JSONStreamAware processRequest(HttpServletRequest req) throws RuvException {
         HoldingType holdingType = ParameterParser.getHoldingType(req);
         long holdingId = ParameterParser.getHoldingId(req, holdingType);
         String property = ParameterParser.getAccountProperty(req, true);

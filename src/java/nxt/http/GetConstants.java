@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,13 +14,13 @@
  *
  */
 
-package nxt.http;
+package ruv.http;
 
-import nxt.*;
-import nxt.crypto.HashFunction;
-import nxt.peer.Peer;
-import nxt.util.JSON;
-import nxt.util.Logger;
+import ruv.*;
+import ruv.crypto.HashFunction;
+import ruv.peer.Peer;
+import ruv.util.JSON;
+import ruv.util.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
@@ -43,7 +43,7 @@ public final class GetConstants extends APIServlet.APIRequestHandler {
                 response.put("coinSymbol", Constants.COIN_SYMBOL);
                 response.put("accountPrefix", Constants.ACCOUNT_PREFIX);
                 response.put("projectName", Constants.PROJECT_NAME);
-                response.put("genesisBlockId", Long.toUnsignedString(Nxt.getBlockchainProcessor().getGenesisBlockId()));
+                response.put("genesisBlockId", Long.toUnsignedString(Ruv.getBlockchainProcessor().getGenesisBlockId()));
                 response.put("genesisAccountId", Long.toUnsignedString(Genesis.CREATOR_ID));
                 response.put("epochBeginning", Genesis.EPOCH_BEGINNING);
                 response.put("maxBlockPayloadLength", Constants.MAX_PAYLOAD_LENGTH);

@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,11 +14,11 @@
  *
  */
 
-package nxt.tools;
+package ruv.tools;
 
-import nxt.Constants;
-import nxt.Nxt;
-import nxt.util.Logger;
+import ruv.Constants;
+import ruv.Ruv;
+import ruv.util.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,11 +32,11 @@ import java.sql.Statement;
  *
  * To run the database compact tool on Linux or Mac:
  *
- *   java -cp "classes:lib/*:conf" nxt.tools.CompactDatabase
+ *   java -cp "classes:lib/*:conf" ruv.tools.CompactDatabase
  *
  * To run the database compact tool on Windows:
  *
- *   java -cp "classes;lib/*;conf" -Dnxt.runtime.mode=desktop nxt.tools.CompactDatabase
+ *   java -cp "classes;lib/*;conf" -Druv.runtime.mode=desktop ruv.tools.CompactDatabase
  */
 public class CompactDatabase {
 
@@ -47,7 +47,7 @@ public class CompactDatabase {
      */
     public static void main(String[] args) {
         //
-        // Initialize Nxt properties and logging
+        // Initialize Ruv properties and logging
         //
         Logger.init();
         //
@@ -69,24 +69,24 @@ public class CompactDatabase {
         //
         // Get the database URL
         //
-        String dbPrefix = Constants.isTestnet ? "nxt.testDb" : "nxt.db";
-        String dbType = Nxt.getStringProperty(dbPrefix + "Type");
+        String dbPrefix = Constants.isTestnet ? "ruv.testDb" : "ruv.db";
+        String dbType = Ruv.getStringProperty(dbPrefix + "Type");
         if (!"h2".equals(dbType)) {
             Logger.logErrorMessage("Database type must be 'h2'");
             return 1;
         }
-        String dbUrl = Nxt.getStringProperty(dbPrefix + "Url");
+        String dbUrl = Ruv.getStringProperty(dbPrefix + "Url");
         if (dbUrl == null) {
-            String dbPath = Nxt.getDbDir(Nxt.getStringProperty(dbPrefix + "Dir"));
+            String dbPath = Ruv.getDbDir(Ruv.getStringProperty(dbPrefix + "Dir"));
             dbUrl = String.format("jdbc:%s:%s", dbType, dbPath);
         }
-        String dbParams = Nxt.getStringProperty(dbPrefix + "Params");
+        String dbParams = Ruv.getStringProperty(dbPrefix + "Params");
         dbUrl += ";" + dbParams;
         if (!dbUrl.contains("MV_STORE=")) {
             dbUrl += ";MV_STORE=FALSE";
         }
-        String dbUsername = Nxt.getStringProperty(dbPrefix + "Username", "sa");
-        String dbPassword = Nxt.getStringProperty(dbPrefix + "Password", "sa", true);
+        String dbUsername = Ruv.getStringProperty(dbPrefix + "Username", "sa");
+        String dbPassword = Ruv.getStringProperty(dbPrefix + "Password", "sa", true);
         //
         // Get the database path.  This is the third colon-separated operand and is
         // terminated by a semi-colon or by the end of the string.
@@ -137,9 +137,9 @@ public class CompactDatabase {
         //
         int phase = 0;
         File sqlFile = new File(dbDir, "backup.sql.gz");
-        File dbFile = new File(dbDir, "nxt.h2.db");
+        File dbFile = new File(dbDir, "ruv.h2.db");
         if (!dbFile.exists()) {
-            dbFile = new File(dbDir, "nxt.mv.db");
+            dbFile = new File(dbDir, "ruv.mv.db");
             if (!dbFile.exists()) {
                 Logger.logErrorMessage("NRS database not found");
                 return 1;
@@ -198,13 +198,13 @@ public class CompactDatabase {
                     //
                     // We failed while creating the new database
                     //
-                    File newFile = new File(dbDir, "nxt.h2.db");
+                    File newFile = new File(dbDir, "ruv.h2.db");
                     if (newFile.exists()) {
                         if (!newFile.delete()) {
                             Logger.logErrorMessage(String.format("Unable to delete '%s'", newFile.getPath()));
                         }
                     } else {
-                        newFile = new File(dbDir, "nxt.mv.db");
+                        newFile = new File(dbDir, "ruv.mv.db");
                         if (newFile.exists()) {
                             if (!newFile.delete()) {
                                 Logger.logErrorMessage(String.format("Unable to delete '%s'", newFile.getPath()));

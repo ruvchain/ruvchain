@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,16 +14,16 @@
  *
  */
 
-package nxt;
+package ruv;
 
-import nxt.crypto.HashFunction;
-import nxt.db.DbClause;
-import nxt.db.DbIterator;
-import nxt.db.DbKey;
-import nxt.db.DbUtils;
-import nxt.db.EntityDbTable;
-import nxt.db.ValuesDbTable;
-import nxt.util.Convert;
+import ruv.crypto.HashFunction;
+import ruv.db.DbClause;
+import ruv.db.DbIterator;
+import ruv.db.DbKey;
+import ruv.db.DbUtils;
+import ruv.db.EntityDbTable;
+import ruv.db.ValuesDbTable;
+import ruv.util.Convert;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -64,7 +64,7 @@ public final class PhasingPoll extends AbstractPoll {
             this.dbKey = resultDbKeyFactory.newKey(this.id);
             this.result = result;
             this.approved = result >= poll.getQuorum();
-            this.height = Nxt.getBlockchain().getHeight();
+            this.height = Ruv.getBlockchain().getHeight();
         }
 
         private PhasingPollResult(ResultSet rs, DbKey dbKey) throws SQLException {
@@ -170,7 +170,7 @@ public final class PhasingPoll extends AbstractPoll {
                 int i = 0;
                 pstmt.setLong(++i, poll.getId());
                 pstmt.setLong(++i, accountId);
-                pstmt.setInt(++i, Nxt.getBlockchain().getHeight());
+                pstmt.setInt(++i, Ruv.getBlockchain().getHeight());
                 pstmt.executeUpdate();
             }
         }
@@ -199,7 +199,7 @@ public final class PhasingPoll extends AbstractPoll {
                 pstmt.setLong(++i, poll.getId());
                 pstmt.setBytes(++i, linkedFullHash);
                 pstmt.setLong(++i, Convert.fullHashToId(linkedFullHash));
-                pstmt.setInt(++i, Nxt.getBlockchain().getHeight());
+                pstmt.setInt(++i, Ruv.getBlockchain().getHeight());
                 pstmt.executeUpdate();
             }
         }
@@ -268,7 +268,7 @@ public final class PhasingPoll extends AbstractPoll {
                     + "ORDER BY transaction.height DESC, transaction.transaction_index DESC "
                     + DbUtils.limitsClause(from, to));
             int i = 0;
-            pstmt.setInt(++i, Nxt.getBlockchain().getHeight());
+            pstmt.setInt(++i, Ruv.getBlockchain().getHeight());
             pstmt.setLong(++i, voterId);
             DbUtils.setLimits(++i, pstmt, from, to);
 
@@ -298,7 +298,7 @@ public final class PhasingPoll extends AbstractPoll {
             int i = 0;
             pstmt.setLong(++i, holdingId);
             pstmt.setByte(++i, votingModel.getCode());
-            pstmt.setInt(++i, Nxt.getBlockchain().getHeight());
+            pstmt.setInt(++i, Ruv.getBlockchain().getHeight());
             if (accountId != 0) {
                 pstmt.setLong(++i, accountId);
             }
@@ -324,7 +324,7 @@ public final class PhasingPoll extends AbstractPoll {
             int i = 0;
             pstmt.setLong(++i, accountId);
             pstmt.setLong(++i, accountId);
-            pstmt.setInt(++i, Nxt.getBlockchain().getHeight());
+            pstmt.setInt(++i, Ruv.getBlockchain().getHeight());
             DbUtils.setLimits(++i, pstmt, from, to);
 
             return BlockchainImpl.getInstance().getTransactions(con, pstmt);
@@ -344,7 +344,7 @@ public final class PhasingPoll extends AbstractPoll {
             int i = 0;
             pstmt.setLong(++i, accountId);
             pstmt.setLong(++i, accountId);
-            pstmt.setInt(++i, Nxt.getBlockchain().getHeight());
+            pstmt.setInt(++i, Ruv.getBlockchain().getHeight());
             try (ResultSet rs = pstmt.executeQuery()) {
                 rs.next();
                 return rs.getInt(1);
@@ -382,7 +382,7 @@ public final class PhasingPoll extends AbstractPoll {
                      " AND phasing_poll.finish_height > ?")) {
             int i = 0;
             pstmt.setLong(++i, accountId);
-            pstmt.setInt(++i, Nxt.getBlockchain().getHeight());
+            pstmt.setInt(++i, Ruv.getBlockchain().getHeight());
             try (ResultSet rs = pstmt.executeQuery()) {
                 rs.next();
                 return rs.getLong("fees");
@@ -472,7 +472,7 @@ public final class PhasingPoll extends AbstractPoll {
         if (voteWeighting.getVotingModel() == VoteWeighting.VotingModel.NONE) {
             return 0;
         }
-        int height = Math.min(this.finishHeight, Nxt.getBlockchain().getHeight());
+        int height = Math.min(this.finishHeight, Ruv.getBlockchain().getHeight());
         if (voteWeighting.getVotingModel() == VoteWeighting.VotingModel.TRANSACTION) {
             int count = 0;
             for (byte[] hash : getLinkedFullHashes()) {
@@ -515,7 +515,7 @@ public final class PhasingPoll extends AbstractPoll {
             pstmt.setByte(++i, voteWeighting.getMinBalanceModel().getCode());
             DbUtils.setBytes(pstmt, ++i, hashedSecret);
             pstmt.setByte(++i, algorithm);
-            pstmt.setInt(++i, Nxt.getBlockchain().getHeight());
+            pstmt.setInt(++i, Ruv.getBlockchain().getHeight());
             pstmt.executeUpdate();
         }
     }

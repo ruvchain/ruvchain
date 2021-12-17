@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2018 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,10 +14,10 @@
  *
  */
 
-package nxt.db;
+package ruv.db;
 
-import nxt.Nxt;
-import nxt.util.Logger;
+import ruv.Ruv;
+import ruv.util.Logger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -37,9 +37,9 @@ public class TransactionalDb extends BasicDb {
     private static final long txInterval;
     static {
         long temp;
-        stmtThreshold = (temp=Nxt.getIntProperty("nxt.statementLogThreshold")) != 0 ? temp : 1000;
-        txThreshold = (temp=Nxt.getIntProperty("nxt.transactionLogThreshold")) != 0 ? temp : 5000;
-        txInterval = (temp=Nxt.getIntProperty("nxt.transactionLogInterval")) != 0 ? temp*60*1000 : 15*60*1000;
+        stmtThreshold = (temp=Ruv.getIntProperty("ruv.statementLogThreshold")) != 0 ? temp : 1000;
+        txThreshold = (temp=Ruv.getIntProperty("ruv.transactionLogThreshold")) != 0 ? temp : 5000;
+        txInterval = (temp=Ruv.getIntProperty("ruv.transactionLogInterval")) != 0 ? temp*60*1000 : 15*60*1000;
     }
 
     private final ThreadLocal<DbConnection> localConnection = new ThreadLocal<>();
@@ -130,7 +130,7 @@ public class TransactionalDb extends BasicDb {
         long elapsed = now - ((DbConnection)con).txStart;
         if (elapsed >= txThreshold) {
             logThreshold(String.format("Database transaction required %.3f seconds at height %d",
-                                       (double)elapsed/1000.0, Nxt.getBlockchain().getHeight()));
+                                       (double)elapsed/1000.0, Ruv.getBlockchain().getHeight()));
         } else {
             long count, times;
             boolean logStats = false;
@@ -185,7 +185,7 @@ public class TransactionalDb extends BasicDb {
         boolean firstLine = true;
         for (int i=3; i<stackTrace.length; i++) {
             String line = stackTrace[i].toString();
-            if (!line.startsWith("nxt."))
+            if (!line.startsWith("ruv."))
                 break;
             if (firstLine)
                 firstLine = false;
@@ -262,7 +262,7 @@ public class TransactionalDb extends BasicDb {
             long elapsed = System.currentTimeMillis() - start;
             if (elapsed > stmtThreshold)
                 logThreshold(String.format("SQL statement required %.3f seconds at height %d:\n%s",
-                                           (double)elapsed/1000.0, Nxt.getBlockchain().getHeight(), sql));
+                                           (double)elapsed/1000.0, Ruv.getBlockchain().getHeight(), sql));
             return b;
         }
 
@@ -273,7 +273,7 @@ public class TransactionalDb extends BasicDb {
             long elapsed = System.currentTimeMillis() - start;
             if (elapsed > stmtThreshold)
                 logThreshold(String.format("SQL statement required %.3f seconds at height %d:\n%s",
-                                           (double)elapsed/1000.0, Nxt.getBlockchain().getHeight(), sql));
+                                           (double)elapsed/1000.0, Ruv.getBlockchain().getHeight(), sql));
             return r;
         }
 
@@ -284,7 +284,7 @@ public class TransactionalDb extends BasicDb {
             long elapsed = System.currentTimeMillis() - start;
             if (elapsed > stmtThreshold)
                 logThreshold(String.format("SQL statement required %.3f seconds at height %d:\n%s",
-                                           (double)elapsed/1000.0, Nxt.getBlockchain().getHeight(), sql));
+                                           (double)elapsed/1000.0, Ruv.getBlockchain().getHeight(), sql));
             return c;
         }
     }
@@ -301,7 +301,7 @@ public class TransactionalDb extends BasicDb {
             long elapsed = System.currentTimeMillis() - start;
             if (elapsed > stmtThreshold)
                 logThreshold(String.format("SQL statement required %.3f seconds at height %d:\n%s",
-                                           (double)elapsed/1000.0, Nxt.getBlockchain().getHeight(), getSQL()));
+                                           (double)elapsed/1000.0, Ruv.getBlockchain().getHeight(), getSQL()));
             return b;
         }
 
@@ -312,7 +312,7 @@ public class TransactionalDb extends BasicDb {
             long elapsed = System.currentTimeMillis() - start;
             if (elapsed > stmtThreshold)
                 logThreshold(String.format("SQL statement required %.3f seconds at height %d:\n%s",
-                                           (double)elapsed/1000.0, Nxt.getBlockchain().getHeight(), getSQL()));
+                                           (double)elapsed/1000.0, Ruv.getBlockchain().getHeight(), getSQL()));
             return r;
         }
 
@@ -323,7 +323,7 @@ public class TransactionalDb extends BasicDb {
             long elapsed = System.currentTimeMillis() - start;
             if (elapsed > stmtThreshold)
                 logThreshold(String.format("SQL statement required %.3f seconds at height %d:\n%s",
-                                           (double)elapsed/1000.0, Nxt.getBlockchain().getHeight(), getSQL()));
+                                           (double)elapsed/1000.0, Ruv.getBlockchain().getHeight(), getSQL()));
             return c;
         }
     }

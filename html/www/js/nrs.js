@@ -1,12 +1,12 @@
 /******************************************************************************
- * Copyright © 2013-2016 The Nxt Core Developers.                             *
+ * Copyright © 2013-2016 The Ruv Core Developers.                             *
  * Copyright © 2016-2019 Jelurida IP B.V.                                     *
  *                                                                            *
  * See the LICENSE.txt file at the top-level directory of this distribution   *
  * for licensing information.                                                 *
  *                                                                            *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,*
- * no part of the Nxt software, including this file, may be copied, modified, *
+ * no part of the Ruv software, including this file, may be copied, modified, *
  * propagated, or distributed except according to the terms contained in the  *
  * LICENSE.txt file.                                                          *
  *                                                                            *
@@ -32,7 +32,7 @@
  * @depends {crypto/3rdparty/jssha256.js}
  * @depends {util/converters.js}
  * @depends {util/extensions.js}
- * @depends {util/nxtaddress.js}
+ * @depends {util/ruvaddress.js}
  */
 var NRS = (function(NRS, $, undefined) {
 	"use strict";
@@ -218,7 +218,7 @@ var NRS = (function(NRS, $, undefined) {
         $("#nrs_version_info").text(constants.PROJECT_NAME + " " + $.t("version"));
         $(".help-about").text($.t("about") + " " + constants.PROJECT_NAME);
         $(".modal-title-info").text(constants.PROJECT_NAME + " " + $.t("info"));
-        if (constants.PROJECT_NAME != "NXT") {
+        if (constants.PROJECT_NAME != "RUV") {
             $(".branding-message").html("<p>" + constants.PROJECT_NAME + " " + $.t("branding_message") + "<p>");
 		}
 	}
@@ -1100,9 +1100,9 @@ var NRS = (function(NRS, $, undefined) {
 	NRS.getRequestPath = function (noProxy) {
 		var url = NRS.getRemoteNodeUrl();
 		if (!NRS.state.apiProxy || noProxy) {
-			return url + "/nxt";
+			return url + "/ruv";
 		} else {
-			return url + "/nxt-proxy";
+			return url + "/ruv-proxy";
 		}
 	};
 
@@ -1468,7 +1468,7 @@ var NRS = (function(NRS, $, undefined) {
 				}
 				rows += "<tr>" +
 					"<td>" + NRS.getAccountLink({ lessorRS: lessor }, "lessor") + "</td>" +
-					"<td>" + NRS.escapeRespStr(lessorInfo.effectiveBalanceNXT) + "</td>" +
+					"<td>" + NRS.escapeRespStr(lessorInfo.effectiveBalanceRUV) + "</td>" +
 					"<td><label>" + String(blocksLeft).escapeHTML() + " <i class='fa fa-question-circle show_popover' data-toggle='tooltip' title='" + blocksLeftTooltip + "' data-placement='right' style='color:#4CAA6E'></i></label></td>" +
 					"<td><label>" + String(nextLessee).escapeHTML() + " <i class='fa fa-question-circle show_popover' data-toggle='tooltip' title='" + nextTooltip + "' data-placement='right' style='color:#4CAA6E'></i></label></td>" +
 				"</tr>";
@@ -1524,7 +1524,7 @@ var NRS = (function(NRS, $, undefined) {
 						data.maximum_duration_short = response.maxDuration;
 					}
 					if (response.maxFees) {
-						data.maximum_fees = NRS.convertToNXT(response.maxFees);
+						data.maximum_fees = NRS.convertToRUV(response.maxFees);
 					}
 					infoTable.find("tbody").append(NRS.createInfoTable(data));
 					infoTable.show();

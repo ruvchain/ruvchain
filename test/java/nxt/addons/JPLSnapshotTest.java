@@ -1,9 +1,9 @@
-package nxt.addons;
+package ruv.addons;
 
-import nxt.BlockchainTest;
-import nxt.Constants;
-import nxt.http.APICall;
-import nxt.util.Convert;
+import ruv.BlockchainTest;
+import ruv.Constants;
+import ruv.http.APICall;
+import ruv.util.Convert;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -20,9 +20,9 @@ public class JPLSnapshotTest extends BlockchainTest {
     private static final String INPUT_JSON_STR =
             "{\n" +
             "    \"balances\": {\n" +
-            "        \"NXT-NZKH-MZRE-2CTT-98NPZ\": 30000000000000000,\n" +
-            "        \"NXT-X5JH-TJKJ-DVGC-5T2V8\": 30000000000000000,\n" +
-            "        \"NXT-LTR8-GMHB-YG56-4NWSE\": 30000000000000000\n" +
+            "        \"RUV-NZKH-MZRE-2CTT-98NPZ\": 30000000000000000,\n" +
+            "        \"RUV-X5JH-TJKJ-DVGC-5T2V8\": 30000000000000000,\n" +
+            "        \"RUV-LTR8-GMHB-YG56-4NWSE\": 30000000000000000\n" +
             "    },\n" +
             "    \"publicKeys\": [\n" +
             "        \"bf0ced0472d8ba3df9e21808e98e61b34404aad737e2bae1778cebc698b40f37\",\n" +
@@ -48,7 +48,7 @@ public class JPLSnapshotTest extends BlockchainTest {
             }
         }
         Assert.assertEquals(aliceCurrentBalance, aliceSnapshotBalance);
-        Assert.assertTrue(total > Constants.MAX_BALANCE_NQT - 100000 * Constants.ONE_NXT); // some funds were sent to genesis or are locked in claimable currency
+        Assert.assertTrue(total > Constants.MAX_BALANCE_NQT - 100000 * Constants.ONE_RUV); // some funds were sent to genesis or are locked in claimable currency
     }
 
     @Test
@@ -69,7 +69,7 @@ public class JPLSnapshotTest extends BlockchainTest {
             }
         }
         Assert.assertTrue(Constants.MAX_BALANCE_NQT - total < 10000);
-        Assert.assertTrue(BigInteger.valueOf(aliceCurrentBalance).divide(BigInteger.valueOf(10)).subtract(BigInteger.valueOf(aliceSnapshotBalance)).longValueExact() < Constants.ONE_NXT);
+        Assert.assertTrue(BigInteger.valueOf(aliceCurrentBalance).divide(BigInteger.valueOf(10)).subtract(BigInteger.valueOf(aliceSnapshotBalance)).longValueExact() < Constants.ONE_RUV);
         JSONObject inputGenesis = (JSONObject)JSONValue.parse(INPUT_JSON_STR);
         JSONObject inputBalances = (JSONObject) inputGenesis.get("balances");
         for (Map.Entry<String, Long> entry : ((Map<String, Long>)inputBalances).entrySet()) {

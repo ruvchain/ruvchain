@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,9 +14,9 @@
  *
  */
 
-package nxt.http;
+package ruv.http;
 
-import nxt.Nxt;
+import ruv.Ruv;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
 
@@ -45,16 +45,16 @@ public final class Scan extends APIServlet.APIRequestHandler {
             } catch (NumberFormatException ignore) {}
             long start = System.currentTimeMillis();
             try {
-                Nxt.getBlockchainProcessor().setGetMoreBlocks(false);
+                Ruv.getBlockchainProcessor().setGetMoreBlocks(false);
                 if (numBlocks > 0) {
-                    Nxt.getBlockchainProcessor().scan(Nxt.getBlockchain().getHeight() - numBlocks + 1, validate);
+                    Ruv.getBlockchainProcessor().scan(Ruv.getBlockchain().getHeight() - numBlocks + 1, validate);
                 } else if (height >= 0) {
-                    Nxt.getBlockchainProcessor().scan(height, validate);
+                    Ruv.getBlockchainProcessor().scan(height, validate);
                 } else {
                     return JSONResponses.missing("numBlocks", "height");
                 }
             } finally {
-                Nxt.getBlockchainProcessor().setGetMoreBlocks(true);
+                Ruv.getBlockchainProcessor().setGetMoreBlocks(true);
             }
             long end = System.currentTimeMillis();
             response.put("done", true);

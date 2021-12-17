@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,7 +14,7 @@
  *
  */
 
-package nxt.tools;
+package ruv.tools;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -23,8 +23,8 @@ import java.io.IOException;
 public final class CompareTraceFiles {
 
     public static void main(String[] args) {
-        String testFile = args.length > 0 ? args[0] : "nxt-trace.csv";
-        String defaultFile = args.length > 1 ? args[1] : "nxt-trace-default.csv";
+        String testFile = args.length > 0 ? args[0] : "ruv-trace.csv";
+        String defaultFile = args.length > 1 ? args[1] : "ruv-trace-default.csv";
         try (BufferedReader defaultReader = new BufferedReader(new FileReader(defaultFile));
              BufferedReader testReader = new BufferedReader(new FileReader(testFile))) {
             System.out.println(defaultReader.readLine());

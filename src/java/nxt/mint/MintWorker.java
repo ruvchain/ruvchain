@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,20 +14,20 @@
  *
  */
 
-package nxt.mint;
+package ruv.mint;
 
-import nxt.Attachment;
-import nxt.Constants;
-import nxt.CurrencyMinting;
-import nxt.Nxt;
-import nxt.NxtException;
-import nxt.Transaction;
-import nxt.crypto.Crypto;
-import nxt.crypto.HashFunction;
-import nxt.http.API;
-import nxt.util.Convert;
-import nxt.util.Logger;
-import nxt.util.TrustAllSSLProvider;
+import ruv.Attachment;
+import ruv.Constants;
+import ruv.CurrencyMinting;
+import ruv.Ruv;
+import ruv.RuvException;
+import ruv.Transaction;
+import ruv.crypto.Crypto;
+import ruv.crypto.HashFunction;
+import ruv.http.API;
+import ruv.util.Convert;
+import ruv.util.Logger;
+import ruv.util.TrustAllSSLProvider;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
@@ -68,16 +68,16 @@ public class MintWorker {
     }
 
     private void mint() {
-        String currencyCode = Convert.emptyToNull(Nxt.getStringProperty("nxt.mint.currencyCode"));
+        String currencyCode = Convert.emptyToNull(Ruv.getStringProperty("ruv.mint.currencyCode"));
         if (currencyCode == null) {
-            throw new IllegalArgumentException("nxt.mint.currencyCode not specified");
+            throw new IllegalArgumentException("ruv.mint.currencyCode not specified");
         }
-        String secretPhrase = Convert.emptyToNull(Nxt.getStringProperty("nxt.mint.secretPhrase", null, true));
+        String secretPhrase = Convert.emptyToNull(Ruv.getStringProperty("ruv.mint.secretPhrase", null, true));
         if (secretPhrase == null) {
-            throw new IllegalArgumentException("nxt.mint.secretPhrase not specified");
+            throw new IllegalArgumentException("ruv.mint.secretPhrase not specified");
         }
-        boolean isSubmitted = Nxt.getBooleanProperty("nxt.mint.isSubmitted");
-        boolean isStopOnError = Nxt.getBooleanProperty("nxt.mint.stopOnError");
+        boolean isSubmitted = Ruv.getBooleanProperty("ruv.mint.isSubmitted");
+        boolean isStopOnError = Ruv.getBooleanProperty("ruv.mint.stopOnError");
         byte[] publicKeyHash = Crypto.sha256().digest(Crypto.getPublicKey(secretPhrase));
         long accountId = Convert.fullHashToId(publicKeyHash);
         String rsAccount = Convert.rsAccount(accountId);
@@ -91,7 +91,7 @@ public class MintWorker {
         }
         byte algorithm = (byte)(long) currency.get("algorithm");
         byte decimal = (byte)(long) currency.get("decimals");
-        String unitsStr = Nxt.getStringProperty("nxt.mint.unitsPerMint");
+        String unitsStr = Ruv.getStringProperty("ruv.mint.unitsPerMint");
         double wholeUnits = 1;
         if (unitsStr != null && unitsStr.length() > 0) {
             wholeUnits = Double.parseDouble(unitsStr);
@@ -101,11 +101,11 @@ public class MintWorker {
         long counter = (long) mintingTarget.get("counter");
         byte[] target = Convert.parseHexString((String) mintingTarget.get("targetBytes"));
         BigInteger difficulty = new BigInteger((String)mintingTarget.get("difficulty"));
-        long initialNonce = Nxt.getIntProperty("nxt.mint.initialNonce");
+        long initialNonce = Ruv.getIntProperty("ruv.mint.initialNonce");
         if (initialNonce == 0) {
             initialNonce = new Random().nextLong();
         }
-        int threadPoolSize = Nxt.getIntProperty("nxt.mint.threadPoolSize");
+        int threadPoolSize = Ruv.getIntProperty("ruv.mint.threadPoolSize");
         if (threadPoolSize == 0) {
             threadPoolSize = Runtime.getRuntime().availableProcessors();
             Logger.logDebugMessage("Thread pool size " + threadPoolSize);
@@ -155,7 +155,7 @@ public class MintWorker {
             response = currencyMint(secretPhrase, currencyId, solution, units, counter);
         } else {
             response = new JSONObject();
-            response.put("message", "nxt.mint.isSubmitted=false therefore currency mint transaction is not submitted");
+            response.put("message", "ruv.mint.isSubmitted=false therefore currency mint transaction is not submitted");
         }
         return response;
     }
@@ -178,7 +178,7 @@ public class MintWorker {
     private JSONObject currencyMint(String secretPhrase, long currencyId, long nonce, long units, long counter) {
         JSONObject ecBlock = getECBlock();
         Attachment attachment = new Attachment.MonetarySystemCurrencyMinting(nonce, currencyId, units, counter);
-        Transaction.Builder builder = Nxt.newTransactionBuilder(Crypto.getPublicKey(secretPhrase), 0, Constants.ONE_NXT,
+        Transaction.Builder builder = Ruv.newTransactionBuilder(Crypto.getPublicKey(secretPhrase), 0, Constants.ONE_RUV,
                 (short) 120, attachment)
                 .timestamp(((Long) ecBlock.get("timestamp")).intValue())
                 .ecBlockHeight(((Long) ecBlock.get("ecBlockHeight")).intValue())
@@ -189,7 +189,7 @@ public class MintWorker {
             params.put("requestType", "broadcastTransaction");
             params.put("transactionBytes", Convert.toHexString(transaction.getBytes()));
             return getJsonResponse(params);
-        } catch (NxtException.NotValidException e) {
+        } catch (RuvException.NotValidException e) {
             Logger.logInfoMessage("local signing failed", e);
             JSONObject response = new JSONObject();
             response.put("error", e.toString());
@@ -222,7 +222,7 @@ public class MintWorker {
     private JSONObject getJsonResponse(Map<String, String> params) {
         JSONObject response;
         HttpURLConnection connection = null;
-        String host = Convert.emptyToNull(Nxt.getStringProperty("nxt.mint.serverAddress"));
+        String host = Convert.emptyToNull(Ruv.getStringProperty("ruv.mint.serverAddress"));
         if (host == null) {
             try {
                 host = InetAddress.getLocalHost().getHostAddress();
@@ -231,17 +231,17 @@ public class MintWorker {
             }
         }
         String protocol = "http";
-        boolean useHttps = Nxt.getBooleanProperty("nxt.mint.useHttps");
+        boolean useHttps = Ruv.getBooleanProperty("ruv.mint.useHttps");
         if (useHttps) {
             protocol = "https";
             HttpsURLConnection.setDefaultSSLSocketFactory(TrustAllSSLProvider.getSslSocketFactory());
             HttpsURLConnection.setDefaultHostnameVerifier(TrustAllSSLProvider.getHostNameVerifier());
         }
-        int port = Constants.isTestnet ? API.TESTNET_API_PORT : Nxt.getIntProperty("nxt.apiServerPort");
+        int port = Constants.isTestnet ? API.TESTNET_API_PORT : Ruv.getIntProperty("ruv.apiServerPort");
         String urlParams = getUrlParams(params);
         URL url;
         try {
-            url = new URL(protocol, host, port, "/nxt?" + urlParams);
+            url = new URL(protocol, host, port, "/ruv?" + urlParams);
         } catch (MalformedURLException e) {
             throw new IllegalStateException(e);
         }

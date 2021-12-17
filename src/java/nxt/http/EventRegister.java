@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,11 +14,11 @@
  *
  */
 
-package nxt.http;
+package ruv.http;
 
-import nxt.http.EventListener.EventListenerException;
-import nxt.http.EventListener.EventRegistration;
-import nxt.util.Convert;
+import ruv.http.EventListener.EventListenerException;
+import ruv.http.EventListener.EventRegistration;
+import ruv.util.Convert;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
 
@@ -47,11 +47,11 @@ import java.util.List;
  * if both parameters are omitted or are false.</p>
  *
  * <p>Event registration will be canceled if the application does not
- * issue an EventWait before the time interval specified by nxt.apiEventTimeout
+ * issue an EventWait before the time interval specified by ruv.apiEventTimeout
  * expires.  The timer is reset each time an EventWait is processed.</p>
  *
  * <p>An application cannot register events if the maximum number of event users
- * specified by nxt.apiMaxEventUsers has been reached.</p>
+ * specified by ruv.apiMaxEventUsers has been reached.</p>
  *
  * <p>Request parameters:</p>
  * <ul>

@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013-2016 The Nxt Core Developers.
+ * Copyright © 2013-2016 The Ruv Core Developers.
  * Copyright © 2016-2019 Jelurida IP B.V.
  *
  * See the LICENSE.txt file at the top-level directory of this distribution
  * for licensing information.
  *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,
- * no part of the Nxt software, including this file, may be copied, modified,
+ * no part of the Ruv software, including this file, may be copied, modified,
  * propagated, or distributed except according to the terms contained in the
  * LICENSE.txt file.
  *
@@ -14,13 +14,13 @@
  *
  */
 
-package nxt.http;
+package ruv.http;
 
-import nxt.Account;
-import nxt.Attachment;
-import nxt.Constants;
-import nxt.HoldingType;
-import nxt.NxtException;
+import ruv.Account;
+import ruv.Attachment;
+import ruv.Constants;
+import ruv.HoldingType;
+import ruv.RuvException;
 import org.json.simple.JSONStreamAware;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,12 +35,12 @@ public final class ShufflingCreate extends CreateTransaction {
     }
 
     @Override
-    protected JSONStreamAware processRequest(HttpServletRequest req) throws NxtException {
+    protected JSONStreamAware processRequest(HttpServletRequest req) throws RuvException {
         HoldingType holdingType = ParameterParser.getHoldingType(req);
         long holdingId = ParameterParser.getHoldingId(req, holdingType);
         long amount = ParameterParser.getLong(req, "amount", 0L, Long.MAX_VALUE, true);
-        if (holdingType == HoldingType.NXT && amount < Constants.SHUFFLING_DEPOSIT_NQT) {
-            return JSONResponses.incorrect("amount", "Minimum shuffling amount is " + Constants.SHUFFLING_DEPOSIT_NQT / Constants.ONE_NXT + " " + Constants.COIN_SYMBOL);
+        if (holdingType == HoldingType.RUV && amount < Constants.SHUFFLING_DEPOSIT_NQT) {
+            return JSONResponses.incorrect("amount", "Minimum shuffling amount is " + Constants.SHUFFLING_DEPOSIT_NQT / Constants.ONE_RUV + " " + Constants.COIN_SYMBOL);
         }
         byte participantCount = ParameterParser.getByte(req, "participantCount", Constants.MIN_NUMBER_OF_SHUFFLING_PARTICIPANTS,
                 Constants.MAX_NUMBER_OF_SHUFFLING_PARTICIPANTS, true);
@@ -52,7 +52,7 @@ public final class ShufflingCreate extends CreateTransaction {
         }
         try {
             return createTransaction(req, account, attachment);
-        } catch (NxtException.InsufficientBalanceException e) {
+        } catch (RuvException.InsufficientBalanceException e) {
             return JSONResponses.notEnoughHolding(holdingType);
         }
     }

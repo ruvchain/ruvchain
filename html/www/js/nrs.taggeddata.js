@@ -1,12 +1,12 @@
 /******************************************************************************
- * Copyright © 2013-2016 The Nxt Core Developers.                             *
+ * Copyright © 2013-2016 The Ruv Core Developers.                             *
  * Copyright © 2016-2019 Jelurida IP B.V.                                     *
  *                                                                            *
  * See the LICENSE.txt file at the top-level directory of this distribution   *
  * for licensing information.                                                 *
  *                                                                            *
  * Unless otherwise agreed in a custom licensing agreement with Jelurida B.V.,*
- * no part of the Nxt software, including this file, may be copied, modified, *
+ * no part of the Ruv software, including this file, may be copied, modified, *
  * propagated, or distributed except according to the terms contained in the  *
  * LICENSE.txt file.                                                          *
  *                                                                            *
@@ -243,7 +243,7 @@ var NRS = (function(NRS, $) {
 		if (account == "") {
 			NRS.pages.tagged_data_search();
 		} else if (NRS.isRsAccount(account)) {
-			var address = new NxtAddress();
+			var address = new RuvAddress();
 			if (!address.set(account)) {
 				$.growl($.t("error_invalid_account"), {
 					"type": "danger"
@@ -297,7 +297,7 @@ var NRS = (function(NRS, $) {
         NRS.sendRequest("getTransaction", {
             "transaction": transaction
         }, function (response) {
-            var fee = NRS.convertToNXT(NRS.escapeRespStr(response.feeNQT));
+            var fee = NRS.convertToRUV(NRS.escapeRespStr(response.feeNQT));
             $('#extend_data_fee').val(fee);
             $('#extend_data_fee_label').html(String(fee) + " " + NRS.constants.COIN_SYMBOL);
         })
