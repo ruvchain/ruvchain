@@ -1,5 +1,5 @@
 rmdir /s /q wallet
-call cordova create wallet org.ruv.mobile.wallet "RUV Mobile Wallet" --template ..\..\html
+call cordova create wallet org.ruv.mobile.wallet "RUVCHAIN Mobile Wallet" --template ..\..\html
 cd wallet
 rmdir /s /q icons
 xcopy /y/i/s ..\..\icons icons
