@@ -62,7 +62,7 @@ var NRS = (function(NRS, $, undefined) {
 	    is_simulate_app: false,
         is_testnet: false,
         remote_node_address: "",
-        remote_node_port: 7876,
+        remote_node_port: 5251,
         is_remote_node_ssl: false,
         validators_count: 3,
         bootstrap_nodes_count: 5
@@ -159,7 +159,7 @@ var NRS = (function(NRS, $, undefined) {
             .use(i18nextBrowserLanguageDetector)
             .use(i18nextSprintfPostProcessor)
             .init({
-                fallbackLng: "en",
+                fallbackLng: "ru-RU",
                 fallbackOnEmpty: true,
                 lowerCaseLng: true,
                 detectLngFromLocalStorage: true,
@@ -218,7 +218,7 @@ var NRS = (function(NRS, $, undefined) {
         $("#nrs_version_info").text(constants.PROJECT_NAME + " " + $.t("version"));
         $(".help-about").text($.t("about") + " " + constants.PROJECT_NAME);
         $(".modal-title-info").text(constants.PROJECT_NAME + " " + $.t("info"));
-        if (constants.PROJECT_NAME != "RUV") {
+        if (constants.PROJECT_NAME != "RUVCHAIN") {
             $(".branding-message").html("<p>" + constants.PROJECT_NAME + " " + $.t("branding_message") + "<p>");
 		}
 	}
