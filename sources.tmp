@@ -1,3 +1,4 @@
+src/java/ruv/RuvException.java
 src/java/ruv/TaggedData.java
 src/java/ruv/Block.java
 src/java/ruv/Account.java
@@ -12,7 +13,6 @@ src/java/ruv/PrunableMessage.java
 src/java/ruv/TransactionScheduler.java
 src/java/ruv/Generator.java
 src/java/ruv/ShufflingTransaction.java
-src/java/ruv/RuvException.java
 src/java/ruv/CurrencyTransfer.java
 src/java/ruv/crypto/Crypto.java
 src/java/ruv/crypto/Scrypt.java
@@ -58,6 +58,7 @@ src/java/ruv/peer/PeerWebSocket.java
 src/java/ruv/peer/Errors.java
 src/java/ruv/peer/PeerImpl.java
 src/java/ruv/VoteWeighting.java
+src/java/ruv/Ruv.java
 src/java/ruv/db/DbUtils.java
 src/java/ruv/db/VersionedValuesDbTable.java
 src/java/ruv/db/EntityDbTable.java
@@ -88,7 +89,6 @@ src/java/ruv/addons/Demo.java
 src/java/ruv/addons/AddOns.java
 src/java/ruv/addons/PopOffCounter.java
 src/java/ruv/addons/DownloadTimer.java
-src/java/ruv/Ruv.java
 src/java/ruv/Attachment.java
 src/java/ruv/ExchangeRequest.java
 src/java/ruv/CurrencyFounder.java
@@ -109,8 +109,8 @@ src/java/ruv/AccountLedger.java
 src/java/ruv/AssetDelete.java
 src/java/ruv/Appendix.java
 src/java/ruv/Blockchain.java
-src/java/ruv/env/service/RuvService_ServiceManagement.java
-src/java/ruv/env/service/RuvService.java
+src/java/ruv/env/service/NxtService_ServiceManagement.java
+src/java/ruv/env/service/NxtService.java
 src/java/ruv/env/CommandLineMode.java
 src/java/ruv/env/DefaultDirProvider.java
 src/java/ruv/env/UnixUserDirProvider.java
@@ -133,7 +133,7 @@ src/java/ruv/PhasingParams.java
 src/java/ruv/TransactionType.java
 src/java/ruv/CurrencyBuyOffer.java
 src/java/ruv/BlockchainProcessorImpl.java
-src/java/ruv/RuvDbVersion.java
+src/java/ruv/NxtDbVersion.java
 src/java/ruv/CurrencyMinting.java
 src/java/ruv/FundingMonitor.java
 src/java/ruv/HoldingType.java
