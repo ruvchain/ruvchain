@@ -6,7 +6,7 @@ then
 	exit 1
 fi
 rm -rf wallet
-cordova create wallet org.ruv.mobile.wallet "RUVCHAIN Mobile Wallet" --template ../../html
+cordova create wallet org.ruv.mobile.wallet "RuvChain Mobile Wallet" --template ../../html
 cd wallet
 rm -rf icons
 rm -rf plugins

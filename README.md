@@ -1,8 +1,8 @@
 ----
-# Welcome to RUVCHAIN! #
+# Welcome to RuvChain! #
 
 ----
-## What is RUVCHAIN? ##
+## What is RuvChain? ##
 RUV is a cryptocurrency to make the world a better place.
 
 ----
