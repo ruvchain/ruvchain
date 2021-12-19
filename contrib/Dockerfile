@@ -4,7 +4,7 @@
 #
 # 1. install docker, see docker.com
 # 2. clone the git repo including this Dockerfile
-# 3. build the container with ```docker build -t ruv .```
+# 3. build the container with ```docker build -t ruvchain .```
 # 4. run the created ruv container with ```docker run -d -p 127.0.0.1:5251:5251 -p 5250:5250 ruv```
 # 5. inspect with docker logs (image hash, find out with docker ps, or assign a name)
 
