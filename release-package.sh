@@ -94,25 +94,25 @@ rm -f ${PACKAGE}.jar
 echo creating change log ${CHANGELOG}
 echo "Release $1" > ${CHANGELOG}
 echo >> ${CHANGELOG}
-echo "https://bitbucket.org/JeanLucPicard/ruv/downloads/${PACKAGE}.zip" >> ${CHANGELOG}
+echo "https://github.com/ruvchain/ruvchain/downloads/${PACKAGE}.zip" >> ${CHANGELOG}
 echo >> ${CHANGELOG}
 echo "sha256:" >> ${CHANGELOG}
 echo >> ${CHANGELOG}
 sha256sum ${PACKAGE}.zip >> ${CHANGELOG}
 
 echo >> ${CHANGELOG}
-echo "https://bitbucket.org/JeanLucPicard/ruv/downloads/${PACKAGE}.sh" >> ${CHANGELOG}
+echo "https://github.com/ruvchain/ruvchain/downloads/${PACKAGE}.sh" >> ${CHANGELOG}
 echo >> ${CHANGELOG}
 echo "sha256:" >> ${CHANGELOG}
 echo >> ${CHANGELOG}
 sha256sum ${PACKAGE}.sh >> ${CHANGELOG}
 
 echo >> ${CHANGELOG}
-echo "https://bitbucket.org/JeanLucPicard/ruv/downloads/${PACKAGE}.exe" >> ${CHANGELOG}
+echo "https://github.com/ruvchain/ruvchain/downloads/${PACKAGE}.exe" >> ${CHANGELOG}
 echo >> ${CHANGELOG}
 #echo "sha256:" >> ${CHANGELOG}
 #sha256sum ${PACKAGE}.exe >> ${CHANGELOG}
-echo "https://bitbucket.org/JeanLucPicard/ruv/downloads/ruv-installer-${VERSION}.dmg" >> ${CHANGELOG}
+echo "https://github.com/ruvchain/ruvchain/downloads/ruv-installer-${VERSION}.dmg" >> ${CHANGELOG}
 echo >> ${CHANGELOG}
 
 echo "The exe, dmg, and sh packages must have a digital signature by \"Stichting RUV\"." >> ${CHANGELOG}
@@ -131,11 +131,11 @@ echo >> ${CHANGELOG}
 cat changelogs/${CHANGELOG} >> ${CHANGELOG}
 echo >> ${CHANGELOG}
 
-gpg --detach-sign --armour --sign-with 0x811D6940E1E4240C ${PACKAGE}.zip
-gpg --detach-sign --armour --sign-with 0x811D6940E1E4240C ${PACKAGE}.sh
-#gpg --detach-sign --armour --sign-with 0x811D6940E1E4240C ${PACKAGE}.exe
+gpg --detach-sign --armour --sign-with 0x63448B20CC2895BB ${PACKAGE}.zip
+gpg --detach-sign --armour --sign-with 0x63448B20CC2895BB ${PACKAGE}.sh
+#gpg --detach-sign --armour --sign-with 0x63448B20CC2895BB ${PACKAGE}.exe
 
-gpg --clearsign --sign-with 0x811D6940E1E4240C ${CHANGELOG}
+gpg --clearsign --sign-with 0x63448B20CC2895BB ${CHANGELOG}
 rm -f ${CHANGELOG}
 gpgv ${PACKAGE}.zip.asc ${PACKAGE}.zip
 gpgv ${PACKAGE}.sh.asc ${PACKAGE}.sh
