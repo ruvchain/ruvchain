@@ -70,11 +70,11 @@ rm -rf ruv
 
 echo creating change log ${CHANGELOG}
 echo -e "Release $1\n" > ${CHANGELOG}
-echo -e "https://bitbucket.org/JeanLucPicard/ruv/downloads/${PACKAGE}.exe\n" >> ${CHANGELOG}
+echo -e "https://github.com/ruvchain/ruvchain/downloads/${PACKAGE}.exe\n" >> ${CHANGELOG}
 echo -e "sha256:\n" >> ${CHANGELOG}
 sha256sum ${PACKAGE}.exe >> ${CHANGELOG}
 
-echo -e "https://bitbucket.org/JeanLucPicard/ruv/downloads/${PACKAGE}.jar\n" >> ${CHANGELOG}
+echo -e "https://github.com/ruvchain/ruvchain/downloads/${PACKAGE}.jar\n" >> ${CHANGELOG}
 echo -e "sha256:\n" >> ${CHANGELOG}
 sha256sum ${PACKAGE}.jar >> ${CHANGELOG}
 
