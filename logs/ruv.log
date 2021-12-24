@@ -2267,3 +2267,17 @@ CREATE UNIQUE INDEX IF NOT EXISTS public_key_account_id_height_idx ON public_key
 2021-12-24 11:51:29 FINE: Forger 15103195658676562633 deadline 28 hit 1068698
 2021-12-24 11:51:57 FINE: Account 15103195658676562633 generated block 15441744720697357742 at height 686 timestamp 1068699 fee 0.0
 2021-12-24 11:51:58 FINE: Forger 2272035442991962470 deadline 26 hit 1068725
+2021-12-24 11:52:24 FINE: Account 2272035442991962470 generated block 10338896394888775011 at height 687 timestamp 1068726 fee 0.0
+2021-12-24 11:52:57 FINE: Forger 13286761524037830610 deadline 92 hit 1068818
+2021-12-24 11:53:57 FINE: Account 13286761524037830610 generated block 5453959129643589782 at height 688 timestamp 1068819 fee 0.0
+2021-12-24 11:54:18 FINE: Forger 4133776282203837076 deadline 80 hit 1068899
+2021-12-24 11:54:56 INFO: Shutting down...
+2021-12-24 11:54:56 INFO: ruv.maxNumberOfMonitors = "100"
+2021-12-24 11:54:56 INFO: Stopping background jobs...
+2021-12-24 11:54:56 INFO: shutting down scheduledThreadPool
+2021-12-24 11:54:56 INFO: ...Done
+2021-12-24 11:54:56 INFO: shutting down networkService
+2021-12-24 11:54:56 INFO: shutting down sendingService
+2021-12-24 11:54:56 INFO: shutting down peersService
+2021-12-24 11:54:57 INFO: Database shutdown completed
+2021-12-24 11:54:57 INFO: RuvChain server 1.11.15 stopped.
