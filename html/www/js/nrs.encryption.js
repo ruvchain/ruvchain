@@ -474,8 +474,8 @@ var NRS = (function (NRS, $) {
 			var encrypted = "";
 			var nonce = "";
 			var nonceField = (typeof title != "string" ? title.nonce : key + "Nonce");
+			var otherAccount = _encryptedNote.account;
 			if (key == "encryptedMessage" || key == "encryptToSelfMessage") {
-                var otherAccount = _encryptedNote.account;
 			    if (key == "encryptToSelfMessage") {
 					otherAccount = accountId;
 				}
